@@ -1,0 +1,35 @@
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+
+/**
+ * A black sheet that dissolves off the page, so the hero blooms in rather than
+ * snapping on half-loaded.
+ */
+export default function PageLoader() {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(false), 2200);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          key="loader"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 1.4, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'black',
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+    </AnimatePresence>
+  );
+}
