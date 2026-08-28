@@ -611,8 +611,9 @@ h3{
 
 /* ----- PROJECTS ----- */
 .project-container{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 30px;
     width: 100%;
 }
@@ -620,6 +621,8 @@ h3{
     position: relative;
     display: flex;
     flex-direction: column;
+    flex: 1 1 310px;
+    max-width: 400px;
     overflow: hidden;
     transition: transform .4s ease, box-shadow .4s ease, border-color .4s ease;
 }
@@ -988,7 +991,8 @@ footer{
     .wrapper{ padding-inline: 7vw; }
     nav{ padding-inline: 7vw; }
     .featured-name{ font-size: clamp(28px, 8vw, 40px); }
-    .project-container{ grid-template-columns: 1fr; gap: 24px; }
+    .project-container{ gap: 24px; }
+    .project-box{ flex-basis: 100%; max-width: none; }
     .form-inputs{ flex-direction: column; }
     .input-field{ width: 100%; }
     .featured-text-btn{ width: 100%; }
