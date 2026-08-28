@@ -1,0 +1,285 @@
+/* ============================================================
+   和 — JAPANESE THEMED SCROLL BACKGROUND
+   Layered ukiyo-e backdrop: washi paper, rising sun, kumo clouds,
+   Mt. Fuji ridgelines, seigaiha waves, asanoha lattice, sakura.
+
+   All layers live inside a single fixed, pointer-events-none
+   container behind the page. Parallax is driven by two custom
+   properties written once per animation frame by japanese-bg.js:
+     --jp-sy : scroll offset in px (unitless number)
+     --jp-sp : scroll progress through the document, 0 -> 1
+   ============================================================ */
+
+:root{
+    /* ----- 和色 / TRADITIONAL JAPANESE PALETTE ----- */
+    --washi:        #f6f1e6;   /* 和紙  paper          */
+    --washi-deep:   #ece2cf;   /* aged paper           */
+    --sumi:         #23201c;   /* 墨   ink             */
+    --ai:           #1b3b6f;   /* 藍   indigo          */
+    --ai-soft:      #3a6ea5;   /* faded indigo         */
+    --shu:          #d94f3d;   /* 朱   vermillion      */
+    --shu-deep:     #b23a2b;
+    --kin:          #c9a227;   /* 金   gold leaf       */
+    --matcha:       #6b7d5a;   /* 抹茶 green           */
+    --sakura:       #eeb4c0;   /* 桜   blossom         */
+
+    /* how far each depth layer travels per pixel of scroll */
+    --p-sun:   -0.055;
+    --p-cloud: -0.028;
+    --p-far:   -0.075;
+    --p-near:  -0.135;
+    --p-wave:  -0.200;
+}
+
+/* ------------------------------------------------------------
+   CONTAINER
+   ------------------------------------------------------------ */
+.jp-bg{
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    contain: strict;
+    background: var(--washi);
+}
+
+/* Every full-bleed layer shares this. `slice` guarantees the art
+   fills the viewport at ANY aspect ratio -- ultrawide monitors crop
+   vertically, tall phones crop horizontally, nothing ever letterboxes. */
+.jp-layer{
+    position: absolute;
+    inset: -6%;               /* bleed, so parallax never exposes an edge */
+    width: 112%;
+    height: 112%;
+    display: block;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/* ------------------------------------------------------------
+   1. 空 — SKY WASH
+   ------------------------------------------------------------ */
+.jp-sky{
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(120% 80% at 78% 12%, rgba(217,79,61,.07) 0%, rgba(217,79,61,0) 55%),
+        radial-gradient(100% 70% at 20% 88%, rgba(27,59,111,.09) 0%, rgba(27,59,111,0) 62%),
+        linear-gradient(178deg,
+            #fbf7ee   0%,
+            var(--washi) 34%,
+            #efe6d4  68%,
+            #e6dcc6 100%);
+}
+
+/* ------------------------------------------------------------
+   2. 日の丸 — THE RISING SUN
+   ------------------------------------------------------------ */
+.jp-sun{
+    position: absolute;
+    top: 9vh;
+    right: 14vw;
+    width:  clamp(104px, 17vmin, 236px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%,
+                #e8705c 0%, var(--shu) 46%, var(--shu-deep) 100%);
+    opacity: .52;
+    will-change: transform;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * var(--p-sun) * 1px), 0);
+}
+/* soft haze around the disc */
+.jp-sun::before{
+    content: "";
+    position: absolute;
+    inset: -55%;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+                rgba(217,79,61,.22) 0%,
+                rgba(217,79,61,.09) 42%,
+                rgba(217,79,61,0)   70%);
+}
+/* slow breathing ring, like a hanko impression */
+.jp-sun::after{
+    content: "";
+    position: absolute;
+    inset: -14%;
+    border-radius: 50%;
+    border: 1px solid rgba(178,58,43,.32);
+    animation: jpSunPulse 11s ease-in-out infinite;
+}
+@keyframes jpSunPulse{
+    0%,100%{ transform: scale(1);    opacity: .55; }
+    50%    { transform: scale(1.09); opacity: .16; }
+}
+
+/* ------------------------------------------------------------
+   3. 雲 — DRIFTING KUMO CLOUD BANDS
+   ------------------------------------------------------------ */
+.jp-clouds{
+    opacity: .34;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * var(--p-cloud) * 1px), 0);
+}
+.jp-cloud-a{ animation: jpDriftA 96s linear infinite; }
+.jp-cloud-b{ animation: jpDriftB 148s linear infinite; }
+@keyframes jpDriftA{
+    from{ transform: translateX(-150px); }
+    to  { transform: translateX( 150px); }
+}
+@keyframes jpDriftB{
+    from{ transform: translateX( 110px); }
+    to  { transform: translateX(-110px); }
+}
+
+/* ------------------------------------------------------------
+   4/5. 富士山 — RIDGELINES (two depths)
+   ------------------------------------------------------------ */
+.jp-mtn-far{
+    opacity: .17;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * var(--p-far) * 1px), 0);
+}
+.jp-mtn-near{
+    opacity: .26;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * var(--p-near) * 1px), 0);
+}
+
+/* ------------------------------------------------------------
+   6. 青海波 — SEIGAIHA WAVE BAND
+   ------------------------------------------------------------ */
+.jp-waves{
+    opacity: .18;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * var(--p-wave) * 1px), 0);
+}
+.jp-wave-tide{ animation: jpTide 34s ease-in-out infinite; }
+@keyframes jpTide{
+    0%,100%{ transform: translateX(0); }
+    50%    { transform: translateX(-60px); }   /* exactly one seigaiha tile */
+}
+
+/* ------------------------------------------------------------
+   7. 麻の葉 — ASANOHA LATTICE OVERLAY
+   ------------------------------------------------------------ */
+.jp-asanoha{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: .032;
+    /* barely-there rotation keeps the lattice from reading as a grid */
+    transform: rotate(0.5deg) scale(1.02);
+}
+
+/* ------------------------------------------------------------
+   8. 桜 — SAKURA PETAL CANVAS
+   ------------------------------------------------------------ */
+.jp-petals{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ------------------------------------------------------------
+   9. 和紙 — PAPER GRAIN + VIGNETTE
+   ------------------------------------------------------------ */
+.jp-grain{
+    position: absolute;
+    inset: 0;
+    opacity: .26;
+    mix-blend-mode: multiply;
+    background-repeat: repeat;
+    background-size: 150px 150px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.42'/%3E%3C/svg%3E");
+}
+.jp-vignette{
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(130% 100% at 50% 42%,
+                rgba(0,0,0,0) 58%, rgba(60,48,32,.10) 100%);
+}
+
+/* ------------------------------------------------------------
+   縦書き — VERTICAL KANJI MARGIN TEXT
+   Decorative only; hidden from assistive tech and from narrow
+   viewports where it would collide with content.
+   ------------------------------------------------------------ */
+.jp-tategaki{
+    position: absolute;
+    top: 14vh;
+    left: 2.2vw;
+    writing-mode: vertical-rl;
+    font-family: "Shippori Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
+    font-size: clamp(13px, 1.15vw, 19px);
+    letter-spacing: .42em;
+    color: var(--ai);
+    opacity: .13;
+    white-space: nowrap;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * -0.045 * 1px), 0);
+}
+.jp-tategaki--right{
+    left: auto;
+    right: 2.2vw;
+    top: auto;
+    bottom: 12vh;
+    color: var(--shu-deep);
+    opacity: .12;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * 0.05 * 1px), 0);
+}
+@media (max-width: 1180px){
+    .jp-tategaki{ display: none; }
+}
+
+/* ------------------------------------------------------------
+   MOBILE / SMALL VIEWPORT TUNING
+   Big radial gradients are the expensive part on phones, so the
+   haze is trimmed and the lattice lightened.
+   ------------------------------------------------------------ */
+@media (max-width: 700px){
+    .jp-sun{
+        top: 9vh;
+        right: 7vw;
+        width: clamp(96px, 26vmin, 170px);
+    }
+    .jp-sun::before{ inset: -38%; }
+    .jp-asanoha{ opacity: .035; }
+    .jp-grain{ opacity: .28; background-size: 130px 130px; }
+    .jp-clouds{ opacity: .38; }
+}
+
+/* Coarse pointers on the smallest screens skip the heaviest layer. */
+@media (pointer: coarse) and (max-width: 480px){
+    .jp-grain{ display: none; }
+}
+
+/* ------------------------------------------------------------
+   ACCESSIBILITY — honour reduced motion.
+   The scene stays, all movement stops. japanese-bg.js additionally
+   skips the parallax loop and the petal simulation.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce){
+    .jp-sun::after,
+    .jp-cloud-a,
+    .jp-cloud-b,
+    .jp-wave-tide{
+        animation: none !important;
+    }
+    .jp-sun,
+    .jp-clouds,
+    .jp-mtn-far,
+    .jp-mtn-near,
+    .jp-waves,
+    .jp-tategaki,
+    .jp-tategaki--right{
+        transform: none !important;
+    }
+    .jp-petals{ display: none; }
+}
+
+/* Older browsers without `contain: strict` still need the clip. */
+@supports not (contain: strict){
+    .jp-bg{ clip-path: inset(0); }
+}

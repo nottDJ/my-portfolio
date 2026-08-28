@@ -1,0 +1,504 @@
+/* ============================================================
+   PROJECT CARD ILLUSTRATIONS — 作品図
+   ------------------------------------------------------------
+   One hand-authored inline SVG per project, animated in pure CSS.
+   No libraries, no bitmaps, no SMIL.
+
+   Two rules everything here follows:
+
+   1. An SVG element must never carry both a `transform` attribute
+      and an animated CSS transform — the CSS one wins outright and
+      the authored placement is lost. Where both are needed the
+      markup nests an outer placement <g> around an inner animated <g>.
+
+   2. Scaling or rotating an SVG element needs an explicit
+      `transform-box`; otherwise `transform-origin` resolves
+      differently across engines.
+
+   The five loops run at 12/13/14/15s so the cards never fall into
+   step with each other and start pulsing as a group.
+   ============================================================ */
+
+
+/* ============================================================
+   1. ArchX3D — 立体化
+   A gold cutting plane rises through the floor plan; hairline
+   wireframe becomes solid wall in its wake, under a floating
+   kawara roof. Seal lands when the walls top out.
+   ============================================================ */
+
+.a3d-mask,
+.a3d-plane{
+    animation: a3dBuild 14s cubic-bezier(.65, 0, .35, 1) infinite;
+}
+@keyframes a3dBuild{
+    0%           { transform: translateY(0); }
+    30%          { transform: translateY(-88px); }
+    88%          { transform: translateY(-88px); }
+    100%         { transform: translateY(0); }
+}
+.a3d-plane{ animation-name: a3dBuild, a3dPlaneFade; }
+@keyframes a3dPlaneFade{
+    0%, 30%      { stroke-opacity: .9; }
+    46%, 88%     { stroke-opacity: .12; }
+    100%         { stroke-opacity: .9; }
+}
+
+.a3d-roof{
+    animation: a3dHover 9s ease-in-out infinite alternate;
+}
+@keyframes a3dHover{
+    from{ transform: translateY(-6px); }
+    to  { transform: translateY(6px); }
+}
+.a3d-shadow{
+    animation: a3dShadow 9s ease-in-out infinite alternate;
+}
+@keyframes a3dShadow{
+    from{ opacity: .18; rx: 62px; }
+    to  { opacity: .10; rx: 71px; }
+}
+
+/* the first-person walkthrough sweeping the room */
+.a3d-cone{
+    transform-box: view-box;
+    transform-origin: 252px 206px;
+    animation: a3dLook 11s ease-in-out infinite alternate;
+}
+@keyframes a3dLook{
+    from{ transform: rotate(-15deg); }
+    to  { transform: rotate(15deg); }
+}
+
+.a3d-lamp{ animation: a3dLamp 7s ease-in-out infinite alternate; }
+@keyframes a3dLamp{
+    from{ opacity: .55; }
+    to  { opacity: .95; }
+}
+
+.a3d-nami{ animation: a3dTide 22s linear infinite; }
+@keyframes a3dTide{
+    from{ transform: translateX(0); }
+    to  { transform: translateX(-26px); }   /* exactly one tile */
+}
+
+.a3d-seal{
+    transform-box: view-box;
+    transform-origin: 364px 212px;
+    animation: a3dSeal 14s cubic-bezier(.65, 0, .35, 1) infinite;
+}
+@keyframes a3dSeal{
+    0%, 26%      { opacity: 0; transform: scale(1.25); }
+    33%, 88%     { opacity: 1; transform: scale(1); }
+    100%         { opacity: 0; transform: scale(1.25); }
+}
+
+
+/* ============================================================
+   2. Face Recognition — 出席印
+   The lens locks on, a vermillion 出 seal flies across and presses
+   into the next empty lecture hour. A second sighting of the same
+   student inside that hour sets off, fades, and is refused.
+   ============================================================ */
+
+.fr-scan{ animation: frScan 4s linear infinite; }
+@keyframes frScan{
+    from{ transform: translateY(0); }
+    to  { transform: translateY(168px); }
+}
+
+.fr-rec{ animation: frRec 2.4s ease-in-out infinite alternate; }
+@keyframes frRec{
+    from{ opacity: 1;   r: 3.6px; }
+    to  { opacity: .35; r: 2.8px; }
+}
+
+.fr-box{
+    transform-box: view-box;
+    transform-origin: 104px 128px;
+    animation: frLock 12s ease-out infinite;
+}
+@keyframes frLock{
+    0%       { opacity: 0; transform: scale(1.14); }
+    9%, 92%  { opacity: 1; transform: scale(1); }
+    100%     { opacity: 0; transform: scale(1.14); }
+}
+
+.fr-plate{ animation: frPlate 12s ease-out infinite; }
+@keyframes frPlate{
+    0%       { opacity: 0; transform: translateY(5px); }
+    11%, 92% { opacity: 1; transform: translateY(0); }
+    100%     { opacity: 0; transform: translateY(0); }
+}
+
+/* the seal's flight, from the name plate to the register row */
+.fr-stamp{
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: frStamp 12s cubic-bezier(.45, .05, .3, 1) infinite;
+}
+@keyframes frStamp{
+    0%       { opacity: 0; transform: translate(-147px, 34px) scale(1.5); }
+    12%      { opacity: 1; transform: translate(-147px, 34px) scale(1.5); }
+    30%      { opacity: 1; transform: translate(0, 0) scale(1.28); }
+    35%      { transform: translate(0, 0) scale(.9); }
+    39%      { transform: translate(0, 0) scale(1.06); }
+    43%, 92% { opacity: 1; transform: translate(0, 0) scale(1); }
+    98%,100% { opacity: 0; transform: translate(0, 0) scale(1); }
+}
+
+.fr-name{ animation: frName 12s ease-out infinite; }
+@keyframes frName{
+    0%, 43%  { stroke-dashoffset: 50; }
+    52%, 92% { stroke-dashoffset: 0; }
+    98%,100% { stroke-dashoffset: 50; }
+}
+
+.fr-tick{ animation: frTick 12s ease-out infinite; }
+@keyframes frTick{
+    0%, 54%  { opacity: 0; }
+    60%, 92% { opacity: 1; }
+    98%,100% { opacity: 0; }
+}
+
+/* the duplicate: same flight, refused halfway */
+.fr-ghost{
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: frGhost 12s ease-out infinite;
+}
+@keyframes frGhost{
+    0%, 58%   { opacity: 0; transform: translate(-147px, 34px) scale(1.4); }
+    64%       { opacity: .5; }
+    76%       { opacity: .3; transform: translate(-62px, 15px) scale(1.14); }
+    84%, 100% { opacity: 0; transform: translate(-48px, 12px) scale(1.1); }
+}
+
+
+/* ============================================================
+   3. Fake News Detection — 真偽
+   Text, image and audio collapse into one ink stroke. The verdict
+   ring reads 真 and the answer leaves in a straight line, closing
+   itself in an ensō; it reads 偽 and the same corridor detonates
+   into queries reaching three ema tablets.
+   ============================================================ */
+
+.fn-nami{ animation: fnTide 24s linear infinite; }
+@keyframes fnTide{
+    from{ transform: translateX(0); }
+    to  { transform: translateX(-26px); }
+}
+
+.fn-feed{
+    stroke-dasharray: 4 7;
+    animation: fnFeed 2.6s linear infinite;
+}
+@keyframes fnFeed{
+    from{ stroke-dashoffset: 0; }
+    to  { stroke-dashoffset: -22px; }
+}
+
+/* verdict swap — exactly one state is ever visible */
+.fn-ring-true,
+.fn-kanji-true{ animation: fnStateTrue 12s ease-in-out infinite; }
+.fn-ring-false,
+.fn-kanji-false{ animation: fnStateFalse 12s ease-in-out infinite; }
+@keyframes fnStateTrue{
+    0%, 3%    { opacity: 0; }
+    8%, 44%   { opacity: 1; }
+    49%, 100% { opacity: 0; }
+}
+@keyframes fnStateFalse{
+    0%, 49%   { opacity: 0; }
+    54%, 94%  { opacity: 1; }
+    99%, 100% { opacity: 0; }
+}
+
+/* 真 — certainty never touches the network */
+.fn-true{ animation: fnStateTrue 12s ease-in-out infinite; }
+.fn-enso{ animation: fnEnso 12s ease-out infinite; }
+@keyframes fnEnso{
+    0%, 12%   { stroke-dashoffset: 82; }
+    26%, 44%  { stroke-dashoffset: 0; }
+    49%, 100% { stroke-dashoffset: 82; }
+}
+
+/* The three sources exist in both states, so they are always drawn --
+   they simply go dim while the verdict is confident and nothing is
+   being asked of them. */
+.fn-tablets{ animation: fnTablets 12s ease-in-out infinite; }
+@keyframes fnTablets{
+    0%, 44%   { opacity: .4; }
+    58%, 94%  { opacity: 1; }
+    99%, 100% { opacity: .4; }
+}
+
+/* 偽 — doubt fans out */
+.fn-false{ animation: fnStateFalse 12s ease-in-out infinite; }
+
+.fn-rays path{ animation: fnRay 12s ease-out infinite; }
+.fn-rays path:nth-child(1){ animation-delay: 0s; }
+.fn-rays path:nth-child(2){ animation-delay: .07s; }
+.fn-rays path:nth-child(3){ animation-delay: .14s; }
+.fn-rays path:nth-child(4){ animation-delay: .21s; }
+.fn-rays path:nth-child(5){ animation-delay: .28s; }
+.fn-rays path:nth-child(6){ animation-delay: .35s; }
+@keyframes fnRay{
+    0%, 54%   { stroke-dashoffset: 52; }
+    64%, 94%  { stroke-dashoffset: 0; }
+    99%, 100% { stroke-dashoffset: 52; }
+}
+
+.fn-trunks path{ animation: fnTrunk 12s ease-out infinite; }
+.fn-trunks path:nth-child(2){ animation-delay: .12s; }
+.fn-trunks path:nth-child(3){ animation-delay: .24s; }
+@keyframes fnTrunk{
+    0%, 64%   { stroke-dashoffset: 58; }
+    74%, 94%  { stroke-dashoffset: 0; }
+    99%, 100% { stroke-dashoffset: 58; }
+}
+
+/* retrieval is appended under the verdict, never fed back through it */
+.fn-appendix path{ animation: fnAppendix 12s ease-out infinite; }
+.fn-appendix path:nth-child(2){ animation-delay: .18s; }
+.fn-appendix path:nth-child(3){ animation-delay: .36s; }
+@keyframes fnAppendix{
+    0%, 76%   { stroke-dashoffset: 32; }
+    86%, 94%  { stroke-dashoffset: 0; }
+    99%, 100% { stroke-dashoffset: 32; }
+}
+
+
+/* ============================================================
+   4. Smart Sluice — 水門
+   Inflow rises, the derived target bed sinks away from the measured
+   one, and the gold caliper stretches across the silt that has to be
+   dredged. Everything shares one 15s clock because in the model
+   these are all one derivation.
+   ============================================================ */
+
+.ss-gate{ animation: ssGate 15s cubic-bezier(.45, 0, .55, 1) infinite; }
+@keyframes ssGate{
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+}
+
+.ss-mark{ animation: ssMark 15s cubic-bezier(.45, 0, .55, 1) infinite; }
+@keyframes ssMark{
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-26px); }
+}
+
+/* scaling about the waterline pins both shorelines and sinks only
+   the sag, so the measured bed above it never appears to move */
+.ss-gap{
+    transform-box: view-box;
+    transform-origin: 200px 122px;
+    animation: ssDeepen 15s cubic-bezier(.45, 0, .55, 1) infinite;
+}
+@keyframes ssDeepen{
+    0%, 100% { transform: scaleY(.78); }
+    50%      { transform: scaleY(1); }
+}
+
+.ss-caliper{
+    transform-box: view-box;
+    transform-origin: 252px 182px;
+    animation: ssSpan 15s cubic-bezier(.45, 0, .55, 1) infinite;
+}
+.ss-caliper path{ vector-effect: non-scaling-stroke; }
+@keyframes ssSpan{
+    0%, 100% { transform: scaleY(.45); }
+    50%      { transform: scaleY(1); }
+}
+
+/* the engineering term swings; the carry-over beside it never does */
+.ss-cost{
+    transform-box: view-box;
+    transform-origin: 246px 241px;
+    animation: ssCost 15s cubic-bezier(.45, 0, .55, 1) infinite;
+}
+@keyframes ssCost{
+    0%, 100% { transform: scaleX(.35); }
+    50%      { transform: scaleX(1); }
+}
+
+.ss-hanko{ animation: ssPress 15s cubic-bezier(.45, 0, .55, 1) infinite; }
+@keyframes ssPress{
+    0%, 100% { opacity: .68; }
+    50%      { opacity: 1; }
+}
+
+.ss-waves{ animation: ssSwell 20s linear infinite; }
+@keyframes ssSwell{
+    from{ transform: translateX(0); }
+    to  { transform: translateX(26px); }
+}
+
+.ss-inflow{ animation: ssPour 3.4s linear infinite; }
+@keyframes ssPour{
+    from{ stroke-dashoffset: 0; }
+    to  { stroke-dashoffset: -32px; }
+}
+
+.ss-kumo{ animation: ssDrift 30s ease-in-out infinite alternate; }
+@keyframes ssDrift{
+    from{ transform: translateX(0); }
+    to  { transform: translateX(10px); }
+}
+
+
+/* ============================================================
+   5. Programmable Digital Rupee — 関所
+   The rule is brush-written and sealed, the coin rolls the corridor
+   clearing gates as it goes, and the fourth gate slams shut. The
+   coin recoils and stops. The last gate is never evaluated.
+   ============================================================ */
+
+.dr-rule path{ animation: drWrite 13s ease-out infinite; }
+.dr-rule path:nth-child(2){ animation-delay: .45s; }
+.dr-rule path:nth-child(3){ animation-delay: .9s; }
+@keyframes drWrite{
+    0%       { stroke-dashoffset: 64; }
+    7%, 94%  { stroke-dashoffset: 0; }
+    99%,100% { stroke-dashoffset: 64; }
+}
+
+.dr-seal{
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: drSeal 13s cubic-bezier(.2, 1.2, .4, 1) infinite;
+}
+@keyframes drSeal{
+    0%, 13%  { opacity: 0; transform: scale(1.35); }
+    18%, 94% { opacity: 1; transform: scale(1); }
+    99%,100% { opacity: 0; transform: scale(1.35); }
+}
+
+/* base placement, so the coin is never parked at the SVG origin
+   when animations are unavailable */
+.dr-coin{ transform: translate(208px, 170px); }
+.dr-coin{ animation: drRoll 13s ease-out infinite; }
+@keyframes drRoll{
+    0%       { opacity: 0; transform: translate(20px, 170px); }
+    6%       { opacity: 1; transform: translate(20px, 170px); }
+    14%      { transform: translate(62px, 170px); }    /* gate 1 cleared */
+    20%      { transform: translate(62px, 170px); }
+    28%      { transform: translate(120px, 170px); }   /* gate 2 cleared */
+    34%      { transform: translate(120px, 170px); }
+    42%      { transform: translate(178px, 170px); }   /* gate 3 cleared */
+    48%      { transform: translate(178px, 170px); }
+    56%      { transform: translate(214px, 170px); }   /* hits the barrier */
+    59%      { transform: translate(205px, 170px); }   /* recoil */
+    62%      { transform: translate(211px, 170px); }
+    65%, 94% { opacity: 1; transform: translate(208px, 170px); }
+    99%,100% { opacity: 0; transform: translate(208px, 170px); }
+}
+
+.dr-coin-spin{
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: drSpin 13s cubic-bezier(.25, .6, .3, 1) infinite;
+}
+@keyframes drSpin{
+    0%       { transform: rotate(0deg); }
+    56%,100% { transform: rotate(320deg); }
+}
+
+.dr-bead{ animation: drBead 13s cubic-bezier(.2, 1.4, .4, 1) infinite; }
+.dr-bead:nth-child(1){ animation-delay: 0s; }
+.dr-bead:nth-child(2){ animation-delay: 1.8s; }
+.dr-bead:nth-child(3){ animation-delay: 3.6s; }
+.dr-bead--stop{ animation-delay: 5.4s !important; }
+@keyframes drBead{
+    0%, 14%  { opacity: 0; r: 0; }
+    18%, 88% { opacity: 1; }
+    97%,100% { opacity: 0; }
+}
+
+.dr-shutter{ animation: drSlam 13s cubic-bezier(.55, 0, .9, .35) infinite; }
+@keyframes drSlam{
+    0%, 52%   { transform: translateY(-84px); }
+    56%, 90%  { transform: translateY(0); }
+    97%, 100% { transform: translateY(-84px); }
+}
+
+.dr-ripple{ animation: drRipple 13s ease-out infinite; }
+@keyframes drRipple{
+    0%, 56%   { r: 4px;  stroke-opacity: .85; }
+    68%, 100% { r: 34px; stroke-opacity: 0; }
+}
+
+.dr-stop{
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: drStop 13s cubic-bezier(.2, 1.2, .4, 1) infinite;
+}
+@keyframes drStop{
+    0%, 56%  { opacity: 0; transform: scale(1.4); }
+    62%, 92% { opacity: 1; transform: scale(1); }
+    98%,100% { opacity: 0; transform: scale(1.4); }
+}
+
+/* the gate the pipeline never got to */
+.dr-unreached{ animation: drUnreached 13s ease-out infinite; }
+@keyframes drUnreached{
+    0%, 56%   { opacity: 1; }
+    66%, 92%  { opacity: .3; }
+    99%, 100% { opacity: 1; }
+}
+
+.dr-nami{ animation: drTide 20s linear infinite; }
+@keyframes drTide{
+    from{ transform: translateX(0); }
+    to  { transform: translateX(-26px); }
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   Stopping the animations is not enough: several elements are
+   authored in their *pre*-animation state (zero-length dashes,
+   zero opacity), so each card is resolved here to the single frame
+   that tells the most of its story.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+
+    .a3d-mask, .a3d-plane, .a3d-roof, .a3d-shadow, .a3d-cone,
+    .a3d-lamp, .a3d-nami, .a3d-seal,
+    .fr-scan, .fr-rec, .fr-box, .fr-plate, .fr-stamp, .fr-name,
+    .fr-tick, .fr-ghost,
+    .fn-nami, .fn-feed, .fn-true, .fn-false, .fn-enso,
+    .fn-ring-true, .fn-ring-false, .fn-kanji-true, .fn-kanji-false,
+    .fn-rays path, .fn-trunks path, .fn-appendix path, .fn-tablets,
+    .ss-gate, .ss-mark, .ss-gap, .ss-caliper, .ss-cost,
+    .ss-hanko, .ss-waves, .ss-inflow, .ss-kumo,
+    .dr-rule path, .dr-seal, .dr-coin, .dr-coin-spin, .dr-bead,
+    .dr-shutter, .dr-ripple, .dr-stop, .dr-unreached, .dr-nami{
+        animation: none !important;
+    }
+
+    /* 1 — walls built, seal landed */
+    .a3d-mask, .a3d-plane{ transform: translateY(-88px); }
+    .a3d-plane{ stroke-opacity: .12; }
+
+    /* 2 — locked on, row stamped, no duplicate in flight */
+    .fr-scan, .fr-ghost{ opacity: 0; }
+    .fr-name{ stroke-dashoffset: 0; }
+    .fr-tick{ opacity: 1; }
+
+    /* 3 — hold the escalation state; it carries more of the mechanism */
+    .fn-true, .fn-ring-true, .fn-kanji-true{ opacity: 0; }
+    .fn-false, .fn-ring-false, .fn-kanji-false{ opacity: 1; }
+    .fn-rays path, .fn-trunks path, .fn-appendix path{ stroke-dashoffset: 0; }
+    .fn-tablets{ opacity: 1; }
+
+    /* 4 — already resolves to the deep-silt frame from the markup */
+
+    /* 5 — rule written, barrier down, coin refused */
+    .dr-rule path{ stroke-dashoffset: 0; }
+    .dr-coin{ transform: translate(208px, 170px); opacity: 1; }
+    .dr-shutter{ transform: translateY(0); }
+    .dr-ripple{ opacity: 0; }
+    .dr-unreached{ opacity: .3; }
+}

@@ -1,18 +1,1020 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="./favicon.png" />
-    <meta
-      name="description"
-      content="Divij — frontend developer and designer building fast, cinematic web experiences."
-    />
-    <title>DIVIJ — Frontend Developer &amp; Designer</title>
-    <script type="module" crossorigin src="./assets/index-CQnSQb1x.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-B7XUyyhg.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Divij K P — CS undergraduate at SRM building applied machine learning, computer vision and backend systems. Chennai, India.">
+    <meta name="theme-color" content="#f6f1e6">
+
+    <!-- --------- FONTS ---------- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Shippori+Mincho:wght@500;600;700&display=swap">
+
+    <!-- --------- UNICONS ---------- -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
+    <!-- --------- CSS ---------- -->
+    <link rel="stylesheet" href="japanese-bg.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="project-art.css">
+
+    <!-- --------- FAVICON ---------- -->
+    <link rel="shortcut icon" href="assets/images/dj.png" type="image/x-icon">
+
+    <title>Portfolio | DIVIJ</title>
+</head>
+<body>
+
+<!-- ============================================================
+     和 — JAPANESE SCROLL BACKDROP
+     Purely decorative, hidden from assistive tech. Driven by
+     japanese-bg.js; degrades to a static scene without JS.
+     ============================================================ -->
+<div class="jp-bg" aria-hidden="true">
+
+    <div class="jp-sky"></div>
+    <div class="jp-sun"></div>
+
+    <!-- 雲 kumo clouds -->
+    <svg class="jp-layer jp-clouds" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <defs>
+            <path id="jpKumo" d="M0,64 C8,40 30,30 48,42 C56,16 92,10 106,34 C124,12 158,16 166,40
+                                 C188,24 214,36 216,58 C238,48 262,58 264,68 L264,74 L0,74 Z"/>
+        </defs>
+        <g class="jp-cloud-a" fill="#3a6ea5" opacity=".30">
+            <use href="#jpKumo" transform="translate(-60,132) scale(1.9)"/>
+            <use href="#jpKumo" transform="translate(880,54)  scale(1.3)"/>
+            <use href="#jpKumo" transform="translate(1180,236) scale(1.6)"/>
+        </g>
+        <g class="jp-cloud-b" fill="#1b3b6f" opacity=".15">
+            <use href="#jpKumo" transform="translate(300,318) scale(2.5)"/>
+            <use href="#jpKumo" transform="translate(1010,392) scale(1.8)"/>
+        </g>
+    </svg>
+
+    <!-- 富士山 far ridgeline -->
+    <svg class="jp-layer jp-mtn-far" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" focusable="false">
+        <path fill="#1b3b6f" d="M-60,900 L-60,806
+            C90,790 190,764 300,772 C400,779 470,756 560,766 C620,772 650,781 680,779
+            C772,764 848,700 908,592
+            L919,602 L930,594 L941,600 L952,592 L963,598
+            C1030,706 1110,766 1200,779 C1280,790 1360,778 1500,770 L1500,900 Z"/>
+        <!-- 雪冠 snow cap -->
+        <path fill="#fbf7ee" opacity=".8" d="M908,592 L919,602 L930,594 L941,600 L952,592 L963,598
+            C971,616 979,633 987,649
+            C969,641 956,652 940,648 C925,644 911,653 896,649
+            C899,634 903,612 908,592 Z"/>
+    </svg>
+
+    <!-- near ridgeline -->
+    <svg class="jp-layer jp-mtn-near" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" focusable="false">
+        <path fill="#16305c" d="M-60,900 L-60,846
+            C120,824 240,852 360,838 C470,825 540,804 640,813
+            C730,821 800,846 900,840 C1010,834 1080,810 1190,818
+            C1300,826 1400,845 1500,835 L1500,900 Z"/>
+    </svg>
+
+    <!-- 青海波 seigaiha tide -->
+    <svg class="jp-layer jp-waves" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" focusable="false">
+        <defs>
+            <pattern id="jpSeigaiha" x="0" y="0" width="60" height="30" patternUnits="userSpaceOnUse">
+                <g fill="none" stroke="#1b3b6f" stroke-width="1.1">
+                    <circle cx="0"  cy="30" r="28"/><circle cx="0"  cy="30" r="20"/><circle cx="0"  cy="30" r="12"/><circle cx="0"  cy="30" r="4"/>
+                    <circle cx="30" cy="30" r="28"/><circle cx="30" cy="30" r="20"/><circle cx="30" cy="30" r="12"/><circle cx="30" cy="30" r="4"/>
+                    <circle cx="60" cy="30" r="28"/><circle cx="60" cy="30" r="20"/><circle cx="60" cy="30" r="12"/><circle cx="60" cy="30" r="4"/>
+                    <circle cx="15" cy="0"  r="28"/><circle cx="15" cy="0"  r="20"/><circle cx="15" cy="0"  r="12"/><circle cx="15" cy="0"  r="4"/>
+                    <circle cx="45" cy="0"  r="28"/><circle cx="45" cy="0"  r="20"/><circle cx="45" cy="0"  r="12"/><circle cx="45" cy="0"  r="4"/>
+                </g>
+            </pattern>
+            <linearGradient id="jpWaveFade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0"   stop-color="#fff" stop-opacity="0"/>
+                <stop offset=".5"  stop-color="#fff" stop-opacity=".8"/>
+                <stop offset="1"   stop-color="#fff" stop-opacity="1"/>
+            </linearGradient>
+            <mask id="jpWaveMask">
+                <rect x="-160" y="826" width="1760" height="150" fill="url(#jpWaveFade)"/>
+            </mask>
+        </defs>
+        <g mask="url(#jpWaveMask)">
+            <g class="jp-wave-tide">
+                <rect x="-160" y="826" width="1760" height="150" fill="url(#jpSeigaiha)"/>
+            </g>
+        </g>
+    </svg>
+
+    <!-- 麻の葉 asanoha lattice -->
+    <svg class="jp-asanoha" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <defs>
+            <g id="jpAsaCell" fill="none" stroke="#1b3b6f" stroke-width="1">
+                <path d="M0,-11 L9.53,-5.5 L9.53,5.5 L0,11 L-9.53,5.5 L-9.53,-5.5 Z"/>
+                <path d="M0,0 L0,-11 M0,0 L9.53,-5.5 M0,0 L9.53,5.5
+                         M0,0 L0,11  M0,0 L-9.53,5.5 M0,0 L-9.53,-5.5"/>
+            </g>
+            <pattern id="jpAsanoha" width="19.06" height="33" patternUnits="userSpaceOnUse">
+                <use href="#jpAsaCell" x="9.53"  y="0"/>
+                <use href="#jpAsaCell" x="0"     y="16.5"/>
+                <use href="#jpAsaCell" x="19.06" y="16.5"/>
+                <use href="#jpAsaCell" x="9.53"  y="33"/>
+            </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#jpAsanoha)"/>
+    </svg>
+
+    <!-- 桜 falling petals -->
+    <canvas class="jp-petals" id="jpPetals"></canvas>
+
+    <div class="jp-grain"></div>
+    <div class="jp-vignette"></div>
+
+    <span class="jp-tategaki jp-tategaki--right">機械学習　設計</span>
+</div>
+
+
+<div class="container">
+
+    <!-- --------------- HEADER --------------- -->
+    <nav id="header">
+        <a class="nav-logo" href="#home" aria-label="Divij — home">
+            <p class="nav-name">DJ</p>
+            <span class="nav-seal" aria-hidden="true">印</span>
+        </a>
+        <div class="nav-menu" id="myNavMenu">
+            <ul class="nav_menu_list">
+                <li class="nav_list">
+                    <a href="#home" class="nav-link active-link"><span class="jp" aria-hidden="true">家</span>Home</a>
+                </li>
+                <li class="nav_list">
+                    <a href="#about" class="nav-link"><span class="jp" aria-hidden="true">私</span>About</a>
+                </li>
+                <li class="nav_list">
+                    <a href="#projects" class="nav-link"><span class="jp" aria-hidden="true">作品</span>Projects</a>
+                </li>
+                <li class="nav_list">
+                    <a href="#contact" class="nav-link"><span class="jp" aria-hidden="true">連絡</span>Contact</a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-button">
+            <a class="btn" href="resume.pdf" download="Divij_K_P_Resume.pdf">Download CV <i class="uil uil-file-alt"></i></a>
+        </div>
+        <div class="nav-menu-btn">
+            <i class="uil uil-bars" id="navToggle" role="button" tabindex="0" aria-label="Open menu" aria-expanded="false" aria-controls="myNavMenu"></i>
+        </div>
+    </nav>
+
+
+    <!-- -------------- MAIN ---------------- -->
+    <main class="wrapper">
+
+        <!-- -------------- HERO ---------------- -->
+        <section class="featured-box" id="home">
+            <div class="featured-text">
+                <span class="featured-rail" aria-hidden="true">ディヴィジ・ケー・ピー</span>
+
+                <div class="featured-text-card">
+                    <span>DIVIJ K P</span>
+                    <span class="rule" aria-hidden="true"></span>
+                </div>
+                <div class="featured-name">
+                    <p>I build <span class="typedText"></span></p>
+                </div>
+                <p class="featured-sub" aria-hidden="true">機械学習・計算機視覚・バックエンド</p>
+                <div class="featured-text-info">
+                    <p>Computer Science undergraduate at SRM, working in applied machine learning,
+                       computer vision and backend engineering — taking a problem from raw data,
+                       through a model, to something you can actually run.</p>
+                </div>
+                <div class="featured-text-btn">
+                    <a class="btn btn-shu" id="emailMeBtn"
+                       href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;tf=1&amp;to=divij.contact%40gmail.com&amp;su=Hello%20Divij%20-%20from%20your%20portfolio&amp;body=Hi%20Divij%2C%0A%0A"
+                       target="_blank" rel="noopener noreferrer">Email Me <i class="uil uil-envelope"></i></a>
+                    <a class="btn" href="resume.pdf" download="Divij_K_P_Resume.pdf">Download CV <i class="uil uil-file-alt"></i></a>
+                </div>
+                <div class="social_icons">
+                    <a href="https://github.com/nottDJ" target="_blank" rel="noopener" class="icon" aria-label="GitHub"><i class="uil uil-github-alt"></i></a>
+                    <a href="https://www.linkedin.com/in/divij-profile" target="_blank" rel="noopener" class="icon" aria-label="LinkedIn"><i class="uil uil-linkedin-alt"></i></a>
+                    <a href="https://leetcode.com/u/nottDJ" target="_blank" rel="noopener" class="icon" aria-label="LeetCode"><i class="uil uil-brackets-curly"></i></a>
+                    <a href="https://www.instagram.com/nott_dj_/" target="_blank" rel="noopener" class="icon" aria-label="Instagram"><i class="uil uil-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="featured-image">
+                <div class="featured-image-wrap">
+                    <!-- 円相 ensō — the ink ring -->
+                    <svg class="enso" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+                        <circle cx="100" cy="100" r="88" fill="none" stroke="#23201c" stroke-width="3"
+                                stroke-linecap="round" stroke-dasharray="498 55"
+                                transform="rotate(-42 100 100)" opacity=".26"/>
+                    </svg>
+                    <div class="image">
+                        <img src="assets/images/pfp.png" alt="Portrait of Divij K P" width="380" height="380">
+                    </div>
+                </div>
+            </div>
+
+            <a href="#about" class="scroll-btn">
+                <i class="uil uil-angle-double-down" aria-hidden="true"></i>
+                <p>SCROLL</p>
+            </a>
+        </section>
+
+        <!-- -------------- ABOUT ---------------- -->
+        <section class="section" id="about">
+            <div class="top-header">
+                <span class="kanji" aria-hidden="true">私について</span>
+                <h1>About Me</h1>
+                <span>Who I am and what I work with</span>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="about-info">
+                        <h3>My introduction</h3>
+                        <p>I'm a B.Tech Computer Science student at <strong>SRM Institute of Science and
+                           Technology</strong> (2023&ndash;2027), currently holding a <strong>CGPA of 9.4/10</strong>.
+                           My work sits where machine learning meets real engineering — geometric
+                           processing, computer vision, time-series forecasting, and the backends
+                           that carry them.</p>
+                        <p>I've shipped production software professionally: a Flask and MySQL
+                           inspection-checklist system that replaced a paper QA process for around 15
+                           engineering staff at <strong>Shimi Designs</strong>, and a member-based community
+                           platform delivered with a three-person team at <strong>STRCO India</strong>.</p>
+                        <div class="about-stats">
+                            <div><b>9.4</b><small>CGPA / 10</small></div>
+                            <div><b>2</b><small>Internships</small></div>
+                            <div><b>136</b><small>LeetCode solved</small></div>
+                            <div><b>2nd</b><small>Runner-up, TechHacks</small></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col skills-col">
+                    <div class="skills-box">
+                        <div class="skills-header">
+                            <h3>Languages</h3><span class="jp" aria-hidden="true">言語</span>
+                        </div>
+                        <div class="skills-list">
+                            <span>Python</span><span>SQL</span><span>JavaScript</span>
+                            <span>Java</span><span>C++</span>
+                        </div>
+                    </div>
+                    <div class="skills-box">
+                        <div class="skills-header">
+                            <h3>ML &amp; Data Science</h3><span class="jp" aria-hidden="true">機械学習</span>
+                        </div>
+                        <div class="skills-list">
+                            <span>scikit-learn</span><span>TensorFlow</span><span>XGBoost</span>
+                            <span>pandas</span><span>NumPy</span><span>OpenCV</span>
+                            <span>Time-series modelling</span>
+                        </div>
+                    </div>
+                    <div class="skills-box">
+                        <div class="skills-header">
+                            <h3>Data &amp; Backend</h3><span class="jp" aria-hidden="true">基盤</span>
+                        </div>
+                        <div class="skills-list">
+                            <span>PostgreSQL</span><span>PostGIS</span><span>MySQL</span>
+                            <span>Flask</span><span>FastAPI</span><span>Node / Express</span>
+                            <span>REST APIs</span>
+                        </div>
+                    </div>
+                    <div class="skills-box">
+                        <div class="skills-header">
+                            <h3>AI Engineering &amp; Tools</h3><span class="jp" aria-hidden="true">道具</span>
+                        </div>
+                        <div class="skills-list">
+                            <span>LLM APIs</span><span>Prompt engineering</span><span>React</span>
+                            <span>Next.js</span><span>Three.js</span><span>Docker</span>
+                            <span>Git</span><span>Linux</span><span>Blender API</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- -------------- PROJECTS ---------------- -->
+        <section class="section" id="projects">
+            <div class="top-header">
+                <span class="kanji" aria-hidden="true">作品集</span>
+                <h1>Projects</h1>
+                <span>Things I have built, and how they actually work</span>
+            </div>
+
+            <div class="project-container">
+                <!-- ======================= 1. ArchX3D ======================= -->
+                <article class="project-box">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="An isometric floor plan whose walls rise into solid form beneath a floating kawara-tiled roof">
+                            <defs>
+                                <clipPath id="a3dBuilt">
+                                    <rect class="a3d-mask" x="60" y="204" width="290" height="240"/>
+                                </clipPath>
+                                <pattern id="a3dNami" width="26" height="13" patternUnits="userSpaceOnUse">
+                                    <g fill="none" stroke="#1b3b6f" stroke-width="1">
+                                        <circle cx="0"   cy="13" r="12"/><circle cx="0"   cy="13" r="8"/><circle cx="0"   cy="13" r="4"/>
+                                        <circle cx="13"  cy="13" r="12"/><circle cx="13"  cy="13" r="8"/><circle cx="13"  cy="13" r="4"/>
+                                        <circle cx="26"  cy="13" r="12"/><circle cx="26"  cy="13" r="8"/><circle cx="26"  cy="13" r="4"/>
+                                        <circle cx="6.5" cy="0"  r="12"/><circle cx="6.5" cy="0"  r="8"/><circle cx="6.5" cy="0"  r="4"/>
+                                        <circle cx="19.5" cy="0" r="12"/><circle cx="19.5" cy="0" r="8"/><circle cx="19.5" cy="0" r="4"/>
+                                    </g>
+                                </pattern>
+                                <radialGradient id="a3dGlow">
+                                    <stop offset="0" stop-color="#c9a227" stop-opacity=".5"/>
+                                    <stop offset="1" stop-color="#c9a227" stop-opacity="0"/>
+                                </radialGradient>
+                            </defs>
+
+                            <!-- 青海波 ground band -->
+                            <g class="a3d-nami" opacity=".15">
+                                <rect x="-26" y="222" width="452" height="40" fill="url(#a3dNami)"/>
+                            </g>
+
+                            <!-- roof shadow on the plan -->
+                            <ellipse class="a3d-shadow" cx="200" cy="196" rx="66" ry="15" fill="#23201c" opacity=".14"/>
+
+                            <!-- 図面 the DXF floor plan -->
+                            <polygon points="100,200 200,156 300,200 200,244" fill="#ece2cf" stroke="#23201c" stroke-width="1.8"/>
+                            <g stroke="#1b3b6f" stroke-width="1.2" fill="none" opacity=".85">
+                                <path d="M150,178 L200,200"/>
+                                <path d="M216,208 L250,190"/>
+                                <path d="M200,200 L200,222"/>
+                            </g>
+                            <g stroke="#23201c" stroke-width="1" opacity=".45">
+                                <path d="M108,208 L104,210 M133,220 L129,222 M158,232 L154,234 M183,244 L179,246"/>
+                            </g>
+
+                            <!-- lamp glow inside -->
+                            <ellipse class="a3d-lamp" cx="236" cy="192" rx="28" ry="12" fill="url(#a3dGlow)"/>
+
+                            <!-- 線画 wireframe ghost: what is not built yet -->
+                            <g stroke="#3a6ea5" stroke-width=".9" fill="none" opacity=".75">
+                                <polygon points="100,156 200,112 300,156 200,200"/>
+                                <path d="M100,200 L100,156 M200,156 L200,112 M300,200 L300,156 M200,244 L200,200"/>
+                            </g>
+
+                            <!-- 壁 solid walls, revealed bottom-up by the cutting plane -->
+                            <g clip-path="url(#a3dBuilt)">
+                                <polygon points="100,200 200,156 200,112 100,156" fill="#dfe4ec" stroke="#23201c" stroke-width="1.6"/>
+                                <polygon points="200,156 300,200 300,156 200,112" fill="#c6cfdd" stroke="#23201c" stroke-width="1.6"/>
+                                <!-- furniture the solver placed -->
+                                <g stroke="#23201c" stroke-width=".9">
+                                    <polygon points="150,196 166,188 182,196 166,204" fill="#6b7d5a"/>
+                                    <polygon points="150,196 166,204 166,212 150,204" fill="#55654a"/>
+                                    <polygon points="166,204 182,196 182,204 166,212" fill="#48583e"/>
+                                    <polygon points="222,204 236,197 250,204 236,211" fill="#1b3b6f"/>
+                                    <polygon points="222,204 236,211 236,218 222,211" fill="#152f59"/>
+                                    <polygon points="236,211 250,204 250,211 236,218" fill="#10254a"/>
+                                </g>
+                                <!-- vermillion first-person view cone -->
+                                <polygon class="a3d-cone" points="252,206 214,195 219,215" fill="#d94f3d" opacity=".38"/>
+                                <!-- near knee-walls, so furniture sits inside the box -->
+                                <polygon points="100,200 200,244 200,232 100,188" fill="#eae7de" stroke="#23201c" stroke-width="1.4"/>
+                                <polygon points="200,244 300,200 300,188 200,232" fill="#ded9cd" stroke="#23201c" stroke-width="1.4"/>
+                            </g>
+
+                            <!-- 金 the rising cutting plane -->
+                            <polygon class="a3d-plane" points="100,200 200,156 300,200 200,244"
+                                     fill="#c9a227" fill-opacity=".06" stroke="#c9a227" stroke-width="1.4"/>
+
+                            <!-- 瓦屋根 hovering kawara roof -->
+                            <g class="a3d-roof">
+                                <polygon points="104,64 200,106 248,59 152,17" fill="#28517f"/>
+                                <polygon points="200,106 296,64 248,59" fill="#1b3b6f"/>
+                                <!-- tile courses run down-slope, parallel to each other -->
+                                <g stroke="#23201c" stroke-width=".8" opacity=".45" fill="none">
+                                    <path d="M176,27.5 L128,74.5"/>
+                                    <path d="M200,38 L152,85"/>
+                                    <path d="M224,48.5 L176,95.5"/>
+                                    <path d="M248,59 L248,85"/>
+                                </g>
+                                <g fill="none" stroke="#23201c" stroke-width="2"
+                                   stroke-linejoin="round" stroke-linecap="round">
+                                    <path d="M104,64 Q146,92 200,106"/>
+                                    <path d="M200,106 Q254,92 296,64"/>
+                                    <path d="M104,64 L152,17"/>
+                                    <path d="M296,64 L248,59"/>
+                                    <path d="M200,106 L248,59"/>
+                                </g>
+                                <!-- 棟 ridge cap, with an 鬼瓦 at each end -->
+                                <path d="M152,17 L248,59" stroke="#c9a227" stroke-width="2.6"
+                                      fill="none" stroke-linecap="round"/>
+                                <circle cx="152" cy="17" r="3.4" fill="#c9a227" stroke="#23201c" stroke-width=".8"/>
+                                <circle cx="248" cy="59" r="3.4" fill="#c9a227" stroke="#23201c" stroke-width=".8"/>
+                            </g>
+
+                            <!-- 落款 completion seal -->
+                            <g class="a3d-seal">
+                                <rect x="344" y="192" width="40" height="40" rx="4" fill="#d94f3d" transform="rotate(-4 364 212)"/>
+                                <text x="364" y="220" font-size="23" text-anchor="middle" fill="#f6f1e6"
+                                      font-family="'Shippori Mincho',serif" transform="rotate(-4 364 212)">築</text>
+                            </g>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">立体化</span>
+                        <span class="plate-no" aria-hidden="true">壱</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>ArchX3D</h3>
+                        <p class="project-jp" aria-hidden="true">二次元図面　→　三次元建築</p>
+                        <p>A Python pipeline that turns 2D DXF floor plans into furnished, textured 3D
+                           buildings you can walk through in the browser. It drives headless Blender for
+                           extrusion and lighting, and places furniture with a candidate-scoring solver
+                           that ranks poses on wall affinity, door-swing clearance and walkable space.</p>
+                        <div class="project-tags">
+                            <span>Python</span><span>Blender</span><span>FastAPI</span>
+                            <span>Three.js</span><span>Next.js</span><span>Gemini API</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/nottDJ/ArchX3D" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ================= 2. Face Recognition ================= -->
+                <article class="project-box">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="A face framed in a camera viewfinder, and a vermillion hanko seal stamping a row in an attendance register">
+                            <defs>
+                                <clipPath id="frLens"><rect x="16" y="44" width="176" height="172" rx="3"/></clipPath>
+                            </defs>
+
+                            <!-- 認識 viewfinder -->
+                            <rect x="16" y="44" width="176" height="172" rx="3" fill="#fbf7ee" stroke="#23201c" stroke-width="2"/>
+                            <g clip-path="url(#frLens)">
+                                <!-- sumi-e face -->
+                                <ellipse cx="104" cy="128" rx="30" ry="38" fill="#f6f1e6" stroke="#23201c" stroke-width="2"/>
+                                <path d="M77,120 A29,34 0 0 1 131,120" fill="none" stroke="#23201c"
+                                      stroke-width="15" stroke-linecap="round"/>
+                                <g stroke="#23201c" stroke-width="2.2" stroke-linecap="round">
+                                    <path d="M89,126 L99,126"/><path d="M109,126 L119,126"/>
+                                </g>
+                                <path d="M104,130 L104,140" stroke="#23201c" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"/>
+                                <path d="M98,150 Q104,155 110,150" stroke="#d94f3d" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                                <path d="M66,216 Q104,168 142,216" stroke="#23201c" stroke-width="2" fill="none"/>
+                                <!-- scan line -->
+                                <rect class="fr-scan" x="16" y="46" width="176" height="2" fill="#1b3b6f" opacity=".45"/>
+                            </g>
+                            <!-- corner brackets -->
+                            <g stroke="#1b3b6f" stroke-width="2" fill="none">
+                                <path d="M26,58 L26,48 L36,48"/><path d="M172,48 L182,48 L182,58"/>
+                                <path d="M182,202 L182,212 L172,212"/><path d="M36,212 L26,212 L26,202"/>
+                            </g>
+                            <circle class="fr-rec" cx="176" cy="56" r="3.6" fill="#d94f3d"/>
+
+                            <!-- lock-on box + name plate -->
+                            <rect class="fr-box" x="70" y="82" width="68" height="92" fill="none" stroke="#1b3b6f" stroke-width="2"/>
+                            <g class="fr-plate">
+                                <rect x="70" y="178" width="68" height="17" fill="#d94f3d"/>
+                                <text x="104" y="190.5" font-size="10.5" text-anchor="middle" fill="#f6f1e6" letter-spacing="1.6">REN</text>
+                            </g>
+
+                            <!-- 出席簿 attendance register -->
+                            <rect x="206" y="44" width="178" height="172" rx="3" fill="#fbf7ee" stroke="#23201c" stroke-width="2"/>
+                            <rect x="206" y="44" width="178" height="22" fill="#1b3b6f"/>
+                            <text x="215" y="59.5" font-size="11" fill="#f6f1e6" font-family="'Shippori Mincho',serif" letter-spacing="1.5">出席簿</text>
+                            <text x="375" y="59.5" font-size="9" fill="#f6f1e6" text-anchor="end" opacity=".85">09—14</text>
+                            <g stroke="#23201c" opacity=".3" stroke-width="1">
+                                <path d="M206,90 H384 M206,114 H384 M206,138 H384 M206,162 H384 M206,186 H384"/>
+                                <path d="M238,66 V216"/>
+                            </g>
+                            <g font-size="9.5" fill="#23201c" opacity=".7" text-anchor="middle">
+                                <text x="222" y="81">9</text><text x="222" y="105">10</text><text x="222" y="129">11</text>
+                                <text x="222" y="153">12</text><text x="222" y="177">13</text><text x="222" y="201">14</text>
+                            </g>
+
+                            <!-- rows already logged -->
+                            <g>
+                                <g transform="translate(0,78)">
+                                    <rect x="246" y="-7" width="14" height="14" rx="1.5" fill="#d94f3d" fill-opacity=".12" stroke="#d94f3d" stroke-width="1.4"/>
+                                    <text x="253" y="4" font-size="9.5" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">出</text>
+                                    <path d="M268,0 H322" stroke="#23201c" stroke-width="1.6" stroke-linecap="round"/>
+                                    <circle cx="334" cy="0" r="2" fill="#c9a227"/>
+                                </g>
+                                <g transform="translate(0,102)">
+                                    <rect x="246" y="-7" width="14" height="14" rx="1.5" fill="#d94f3d" fill-opacity=".12" stroke="#d94f3d" stroke-width="1.4"/>
+                                    <text x="253" y="4" font-size="9.5" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">出</text>
+                                    <path d="M268,0 H314" stroke="#23201c" stroke-width="1.6" stroke-linecap="round"/>
+                                    <circle cx="334" cy="0" r="2" fill="#c9a227"/>
+                                </g>
+                                <g transform="translate(0,126)">
+                                    <rect x="246" y="-7" width="14" height="14" rx="1.5" fill="#d94f3d" fill-opacity=".12" stroke="#d94f3d" stroke-width="1.4"/>
+                                    <text x="253" y="4" font-size="9.5" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">出</text>
+                                    <path d="M268,0 H326" stroke="#23201c" stroke-width="1.6" stroke-linecap="round"/>
+                                    <circle cx="334" cy="0" r="2" fill="#c9a227"/>
+                                </g>
+                            </g>
+
+                            <!-- flight guide -->
+                            <path d="M104,196 C150,214 200,182 250,152" fill="none" stroke="#c9a227"
+                                  stroke-width="1" stroke-dasharray="1 5" opacity=".3"/>
+
+                            <!-- the duplicate that gets refused -->
+                            <g transform="translate(0,150)">
+                                <g class="fr-ghost">
+                                    <rect x="246" y="-7" width="14" height="14" rx="1.5" fill="none" stroke="#d94f3d" stroke-width="1.4"/>
+                                    <text x="253" y="4" font-size="9.5" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">出</text>
+                                </g>
+                            </g>
+
+                            <!-- the stamp that lands -->
+                            <g transform="translate(0,150)">
+                                <g class="fr-stamp">
+                                    <rect x="246" y="-7" width="14" height="14" rx="1.5" fill="#d94f3d" fill-opacity=".12" stroke="#d94f3d" stroke-width="1.4"/>
+                                    <text x="253" y="4" font-size="9.5" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">出</text>
+                                </g>
+                                <path class="fr-name" d="M268,0 H318" stroke="#23201c" stroke-width="1.6" stroke-linecap="round"
+                                      stroke-dasharray="50" stroke-dashoffset="50"/>
+                                <circle class="fr-tick" cx="334" cy="0" r="2" fill="#c9a227" opacity="0"/>
+                            </g>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">出席印</span>
+                        <span class="plate-no" aria-hidden="true">弐</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>Face Recognition Attendance</h3>
+                        <p class="project-jp" aria-hidden="true">顔認証　出席記録</p>
+                        <p>A desktop attendance system that identifies students from a live camera feed
+                           and logs each one exactly once per lecture hour — a repeat sighting inside the
+                           same hour is recognised and refused. Includes webcam enrolment for new students
+                           and writes a dated record out to CSV.</p>
+                        <div class="project-tags">
+                            <span>Python</span><span>face_recognition</span><span>OpenCV</span>
+                            <span>Tkinter</span><span>CSV export</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/nottDJ/Face-Recognition" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ================= 3. Fake News Detection ================= -->
+                <article class="project-box">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="Text, image and audio inputs merging into one ink stroke that reaches a verdict ring, which either closes into an enso or fans out to three evidence tablets">
+                            <defs>
+                                <g id="fnEma">
+                                    <path d="M0,14 L28,0 L56,14 L56,44 L0,44 Z" fill="#e4e9f1" stroke="#23201c" stroke-width="2"/>
+                                    <path d="M0,20 H56" stroke="#23201c" stroke-width="1" opacity=".3"/>
+                                    <path d="M28,0 L28,-9" stroke="#23201c" stroke-width="1.4"/>
+                                </g>
+                                <pattern id="fnNami" width="26" height="13" patternUnits="userSpaceOnUse">
+                                    <g fill="none" stroke="#1b3b6f" stroke-width="1">
+                                        <circle cx="0"    cy="13" r="12"/><circle cx="0"    cy="13" r="8"/><circle cx="0"    cy="13" r="4"/>
+                                        <circle cx="13"   cy="13" r="12"/><circle cx="13"   cy="13" r="8"/><circle cx="13"   cy="13" r="4"/>
+                                        <circle cx="26"   cy="13" r="12"/><circle cx="26"   cy="13" r="8"/><circle cx="26"   cy="13" r="4"/>
+                                        <circle cx="6.5"  cy="0"  r="12"/><circle cx="6.5"  cy="0"  r="8"/><circle cx="6.5"  cy="0"  r="4"/>
+                                        <circle cx="19.5" cy="0"  r="12"/><circle cx="19.5" cy="0"  r="8"/><circle cx="19.5" cy="0"  r="4"/>
+                                    </g>
+                                </pattern>
+                            </defs>
+
+                            <g class="fn-nami" opacity=".14">
+                                <rect x="-26" y="228" width="452" height="34" fill="url(#fnNami)"/>
+                            </g>
+
+                            <!-- 入力 the three inputs -->
+                            <g stroke="#23201c" stroke-width="2" fill="none">
+                                <rect x="10" y="70" width="38" height="32" rx="3" fill="#fbf7ee"/>
+                                <rect x="10" y="112" width="38" height="32" rx="3" fill="#fbf7ee"/>
+                                <rect x="10" y="154" width="38" height="32" rx="3" fill="#fbf7ee"/>
+                            </g>
+                            <g stroke="#1b3b6f" stroke-width="1.4" opacity=".8" stroke-linecap="round">
+                                <path d="M17,82 H41"/><path d="M17,91 H34"/>
+                            </g>
+                            <polygon points="17,137 29,123 41,137" fill="#1b3b6f" opacity=".9"/>
+                            <circle cx="38" cy="122" r="3" fill="#d94f3d"/>
+                            <g stroke="#1b3b6f" stroke-width="1.8" stroke-linecap="round">
+                                <path d="M17,168 V174"/><path d="M23,162 V180"/><path d="M29,166 V176"/>
+                                <path d="M35,159 V183"/><path d="M41,167 V175"/>
+                            </g>
+
+                            <!-- converge into one stream -->
+                            <g class="fn-feed" fill="none" stroke="#23201c" stroke-width="1.7" opacity=".75">
+                                <path d="M46,86 C72,90 84,110 104,127"/>
+                                <path d="M46,128 C70,129 84,129 104,130"/>
+                                <path d="M46,170 C72,166 84,148 104,133"/>
+                            </g>
+
+                            <!-- normalised text: one tapered brushstroke -->
+                            <path d="M104,127 C126,124.6 152,126.4 178,128.6 L178,134 C152,136.2 126,137 104,134.4 Z" fill="#23201c"/>
+                            <g fill="#1b3b6f" opacity=".6">
+                                <rect x="112" y="118" width="8" height="2" rx="1"/>
+                                <rect x="126" y="118" width="8" height="2" rx="1"/>
+                                <rect x="140" y="118" width="8" height="2" rx="1"/>
+                                <rect x="154" y="118" width="8" height="2" rx="1"/>
+                            </g>
+
+                            <!-- 円相 the verdict ring -->
+                            <circle class="fn-ring-true"  cx="206" cy="130" r="25" fill="none" stroke="#6b7d5a" stroke-width="4"
+                                    stroke-linecap="round" stroke-dasharray="140 17" transform="rotate(-40 206 130)"/>
+                            <circle class="fn-ring-false" cx="206" cy="130" r="25" fill="none" stroke="#d94f3d" stroke-width="4"
+                                    stroke-linecap="round" stroke-dasharray="140 17" transform="rotate(-40 206 130)"/>
+                            <text class="fn-kanji-true"  x="206" y="138" font-size="21" text-anchor="middle" fill="#6b7d5a" font-family="'Shippori Mincho',serif">真</text>
+                            <text class="fn-kanji-false" x="206" y="138" font-size="21" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">偽</text>
+
+                                <g class="fn-tablets">
+                                    <use href="#fnEma" x="314" y="38"/>
+                                    <use href="#fnEma" x="314" y="106"/>
+                                    <use href="#fnEma" x="314" y="174"/>
+                                    <g font-size="19" text-anchor="middle" fill="#1b3b6f" font-family="'Shippori Mincho',serif">
+                                        <text x="342" y="72">百</text>
+                                        <text x="342" y="140">報</text>
+                                        <text x="342" y="208">索</text>
+                                    </g>
+                                </g>
+
+                            <!-- 真 — certainty leaves in a straight line and closes itself -->
+                            <g class="fn-true">
+                                <path d="M233,128 C250,127.4 264,128 278,129.4 L278,133 C264,134.2 250,134.6 233,134 Z" fill="#6b7d5a"/>
+                                <path class="fn-enso" d="M316,132 A13,13 0 1 1 304.6,119.4" fill="none" stroke="#6b7d5a"
+                                      stroke-width="3" stroke-linecap="round" stroke-dasharray="82" stroke-dashoffset="82"/>
+                            </g>
+
+                            <!-- 偽 — doubt explodes into a search tree -->
+                            <g class="fn-false">
+                                <g class="fn-rays" fill="none" stroke="#1b3b6f" stroke-width="1.4" opacity=".75">
+                                    <path d="M233,130 L270,94"  stroke-dasharray="52" stroke-dashoffset="52"/>
+                                    <path d="M233,130 L270,108" stroke-dasharray="45" stroke-dashoffset="45"/>
+                                    <path d="M233,130 L270,120" stroke-dasharray="39" stroke-dashoffset="39"/>
+                                    <path d="M233,130 L270,140" stroke-dasharray="39" stroke-dashoffset="39"/>
+                                    <path d="M233,130 L270,152" stroke-dasharray="45" stroke-dashoffset="45"/>
+                                    <path d="M233,130 L270,166" stroke-dasharray="52" stroke-dashoffset="52"/>
+                                </g>
+                                <g class="fn-trunks" fill="none" stroke="#d94f3d" stroke-width="2.2">
+                                    <path d="M270,108 Q294,88 314,66"  stroke-dasharray="58" stroke-dashoffset="58"/>
+                                    <path d="M270,130 L314,132"        stroke-dasharray="45" stroke-dashoffset="45"/>
+                                    <path d="M270,152 Q294,176 314,196" stroke-dasharray="58" stroke-dashoffset="58"/>
+                                </g>
+                                <!-- retrieval appended under the verdict, not fed back in -->
+                                <g class="fn-appendix" stroke="#c9a227" stroke-width="2" stroke-linecap="round">
+                                    <path d="M190,164 H222" stroke-dasharray="32" stroke-dashoffset="32"/>
+                                    <path d="M190,172 H222" stroke-dasharray="32" stroke-dashoffset="32"/>
+                                    <path d="M190,180 H222" stroke-dasharray="32" stroke-dashoffset="32"/>
+                                </g>
+                            </g>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">真偽</span>
+                        <span class="plate-no" aria-hidden="true">参</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>Fake News Detection System</h3>
+                        <p class="project-jp" aria-hidden="true">多様入力　事実確認</p>
+                        <p>A multimodal fact-checker that accepts an article as text, image or audio —
+                           pulling the words out with OCR or speech-to-text — then asks an LLM for a verdict.
+                           Certainty short-circuits; doubt escalates, fanning generated queries out to
+                           Wikipedia, news and web sources and appending what comes back.</p>
+                        <div class="project-tags">
+                            <span>Python</span><span>Flask</span><span>OpenAI API</span>
+                            <span>Tesseract OCR</span><span>OpenCV</span><span>SpeechRecognition</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/nottDJ/Fake-News-Detection-System" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ================= 4. Smart Sluice ================= -->
+                <article class="project-box">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="A cross-section of an irrigation lake with a sluice gate, showing the measured lakebed, the derived target bed, and the silt wedge between them being measured">
+                            <defs>
+                                <pattern id="ssNami" width="26" height="13" patternUnits="userSpaceOnUse">
+                                    <g fill="none" stroke="#1b3b6f" stroke-width=".9">
+                                        <circle cx="0"    cy="13" r="12"/><circle cx="0"    cy="13" r="8"/><circle cx="0"    cy="13" r="4"/>
+                                        <circle cx="13"   cy="13" r="12"/><circle cx="13"   cy="13" r="8"/><circle cx="13"   cy="13" r="4"/>
+                                        <circle cx="26"   cy="13" r="12"/><circle cx="26"   cy="13" r="8"/><circle cx="26"   cy="13" r="4"/>
+                                        <circle cx="6.5"  cy="0"  r="12"/><circle cx="6.5"  cy="0"  r="8"/><circle cx="6.5"  cy="0"  r="4"/>
+                                        <circle cx="19.5" cy="0"  r="12"/><circle cx="19.5" cy="0"  r="8"/><circle cx="19.5" cy="0"  r="4"/>
+                                    </g>
+                                </pattern>
+                                <g id="ssAsaCell" fill="none" stroke="#d94f3d" stroke-width=".8">
+                                    <path d="M0,-10 L8.66,-5 L8.66,5 L0,10 L-8.66,5 L-8.66,-5 Z"/>
+                                    <path d="M0,0 L0,-10 M0,0 L8.66,-5 M0,0 L8.66,5 M0,0 L0,10 M0,0 L-8.66,5 M0,0 L-8.66,-5"/>
+                                </g>
+                                <pattern id="ssAsanoha" width="17.32" height="30" patternUnits="userSpaceOnUse">
+                                    <use href="#ssAsaCell" x="8.66" y="0"/>
+                                    <use href="#ssAsaCell" x="0"     y="15"/>
+                                    <use href="#ssAsaCell" x="17.32" y="15"/>
+                                    <use href="#ssAsaCell" x="8.66"  y="30"/>
+                                </pattern>
+                                <clipPath id="ssWater">
+                                    <path d="M64,122 H336 C304,168 264,186 200,186 C136,186 96,168 64,122 Z"/>
+                                </clipPath>
+                            </defs>
+
+                            <!-- 雲 -->
+                            <g class="ss-kumo" fill="none" stroke="#1b3b6f" stroke-width="1.6" opacity=".2">
+                                <path d="M118,44 q8,-13 20,-8 q9,-11 21,-3 q12,1 10,11"/>
+                                <path d="M232,30 q7,-11 17,-7 q8,-9 18,-2 q10,1 9,9"/>
+                            </g>
+
+                            <!-- banks -->
+                            <g stroke="#23201c" stroke-width="2.4" fill="none" stroke-linecap="round">
+                                <path d="M4,100 H56 L64,122"/>
+                                <path d="M396,98 H344 L336,122"/>
+                            </g>
+                            <g stroke="#6b7d5a" stroke-width="1.3" stroke-linecap="round">
+                                <path d="M16,100 V94 M20,100 V96 M24,100 V93"/>
+                                <path d="M362,98 V92 M366,98 V94 M370,98 V91"/>
+                            </g>
+
+                            <!-- 水 the lake -->
+                            <path d="M64,122 H336 C304,168 264,186 200,186 C136,186 96,168 64,122 Z" fill="#1b3b6f" opacity=".10"/>
+                            <g clip-path="url(#ssWater)">
+                                <g class="ss-waves"><rect x="32" y="116" width="352" height="80" fill="url(#ssNami)" opacity=".4"/></g>
+                            </g>
+                            <path d="M64,122 H336" stroke="#1b3b6f" stroke-width="1.8" fill="none"/>
+
+                            <!-- 堆砂 the silt wedge: between measured bed and derived target -->
+                            <g class="ss-gap">
+                                <path class="ss-wedge"
+                                      d="M64,122 C100,196 140,214 200,214 C260,214 300,196 336,122
+                                         C304,168 264,186 200,186 C136,186 96,168 64,122 Z"
+                                      fill="#d94f3d" fill-opacity=".2"/>
+                                <path d="M64,122 C100,196 140,214 200,214 C260,214 300,196 336,122
+                                         C304,168 264,186 200,186 C136,186 96,168 64,122 Z"
+                                      fill="url(#ssAsanoha)" opacity=".5"/>
+                                <path d="M64,122 C100,196 140,214 200,214 C260,214 300,196 336,122"
+                                      fill="none" stroke="#1b3b6f" stroke-width="1.6" stroke-dasharray="7 6"/>
+                            </g>
+
+                            <!-- measured bed, never moves -->
+                            <path d="M64,122 C96,168 136,186 200,186 C264,186 304,168 336,122"
+                                  fill="none" stroke="#23201c" stroke-width="2.4" stroke-linecap="round"/>
+
+                            <!-- 金 the caliper measuring the dredging depth -->
+                            <g class="ss-caliper" stroke="#c9a227" stroke-width="1.5" stroke-linecap="round">
+                                <path d="M252,182 V208"/><path d="M246,182 H258"/><path d="M246,208 H258"/>
+                            </g>
+
+                            <!-- 水門 the sluice gate -->
+                            <g>
+                                <rect x="18" y="52" width="9" height="70" fill="#23201c"/>
+                                <rect x="45" y="52" width="9" height="70" fill="#23201c"/>
+                                <rect x="12" y="42" width="48" height="10" fill="#23201c"/>
+                                <rect class="ss-gate" x="27" y="62" width="18" height="36" fill="#c9a227" stroke="#23201c" stroke-width="1"/>
+                            </g>
+                            <g class="ss-inflow" fill="none" stroke="#1b3b6f" opacity=".7" stroke-dasharray="9 7">
+                                <path d="M30,100 C44,110 52,116 62,121" stroke-width="1.2"/>
+                                <path d="M34,102 C48,112 56,118 64,122.5" stroke-width="2"/>
+                                <path d="M38,104 C51,114 58,119 66,124" stroke-width="1.2"/>
+                            </g>
+                            <!-- gauge -->
+                            <g stroke="#23201c" stroke-width="1" opacity=".5">
+                                <path d="M70,48 V116"/>
+                                <path d="M70,48 H76 M70,65 H76 M70,82 H76 M70,99 H76 M70,116 H76"/>
+                            </g>
+                            <polygon class="ss-mark" points="78,104 68,99 68,109" fill="#c9a227"/>
+
+                            <!-- cost bar: engineering term vs fixed carry-over -->
+                            <text x="52" y="248" font-size="13" fill="#23201c" font-family="Georgia,serif">₹</text>
+                            <rect x="64" y="236" width="180" height="10" fill="#1b3b6f" opacity=".85"/>
+                            <g class="ss-cost">
+                                <rect x="246" y="236" width="58" height="10" fill="#d94f3d"/>
+                            </g>
+
+                            <!-- 落款 the condition seal -->
+                            <g class="ss-hanko">
+                                <rect x="296" y="18" width="44" height="44" rx="3" fill="none" stroke="#d94f3d" stroke-width="2.6"/>
+                                <text x="318" y="39" font-size="16" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">堆</text>
+                                <text x="318" y="57" font-size="16" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">砂</text>
+                            </g>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">水門</span>
+                        <span class="plate-no" aria-hidden="true">肆</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>AI-Driven Smart Sluice Management</h3>
+                        <p class="project-jp" aria-hidden="true">灌漑湖　保守費用推定</p>
+                        <p>A Streamlit tool that classifies an irrigation lake's condition and estimates
+                           its maintenance cost with a Random Forest regressor, giving tendering bodies an
+                           independent baseline to judge bids against. It derives a target bed profile from
+                           survey data — and the README is candid that it is a prototype on synthetic data.</p>
+                        <div class="project-tags">
+                            <span>Python</span><span>scikit-learn</span><span>Pandas</span>
+                            <span>Streamlit</span><span>Random Forest</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/nottDJ/smart-sluice-ai" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                            <a class="live" href="https://nottdj.github.io/smart-sluice-ai/" target="_blank" rel="noopener">
+                                <i class="uil uil-external-link-alt"></i> Live demo</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ================= 5. Programmable Digital Rupee ================= -->
+                <article class="project-box">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="A gold rupee coin rolling through a corridor of vermillion torii gates, cleared by the first three rules and stopped dead by a shutter at the fourth">
+                            <defs>
+                                <g id="drTorii">
+                                    <path d="M-13,-88 L-15,0" stroke="#d94f3d" stroke-width="5" stroke-linecap="round"/>
+                                    <path d="M13,-88 L15,0"   stroke="#d94f3d" stroke-width="5" stroke-linecap="round"/>
+                                    <rect x="-17" y="-80" width="34" height="4.5" fill="#d94f3d"/>
+                                    <rect x="-2" y="-92" width="4" height="13" fill="#d94f3d"/>
+                                    <path d="M-20,-91 Q0,-100 20,-91" fill="none" stroke="#d94f3d" stroke-width="5.5" stroke-linecap="round"/>
+                                    <path d="M-18,-86 H18" stroke="#d94f3d" stroke-width="2"/>
+                                </g>
+                                <pattern id="drNami" width="26" height="13" patternUnits="userSpaceOnUse">
+                                    <g fill="none" stroke="#1b3b6f" stroke-width="1">
+                                        <circle cx="0"    cy="13" r="12"/><circle cx="0"    cy="13" r="8"/><circle cx="0"    cy="13" r="4"/>
+                                        <circle cx="13"   cy="13" r="12"/><circle cx="13"   cy="13" r="8"/><circle cx="13"   cy="13" r="4"/>
+                                        <circle cx="26"   cy="13" r="12"/><circle cx="26"   cy="13" r="8"/><circle cx="26"   cy="13" r="4"/>
+                                        <circle cx="6.5"  cy="0"  r="12"/><circle cx="6.5"  cy="0"  r="8"/><circle cx="6.5"  cy="0"  r="4"/>
+                                        <circle cx="19.5" cy="0"  r="12"/><circle cx="19.5" cy="0"  r="8"/><circle cx="19.5" cy="0"  r="4"/>
+                                    </g>
+                                </pattern>
+                                <clipPath id="drShutter"><rect x="223" y="112" width="26" height="84"/></clipPath>
+                            </defs>
+
+                            <!-- 富士 the unreached destination -->
+                            <polygon points="330,196 352,146 356,151 360,142 365,149 369,145 390,196"
+                                     fill="#1b3b6f" opacity=".45"/>
+                            <polygon points="352,146 356,151 360,142 365,149 369,145 374,157 348,157"
+                                     fill="#f6f1e6" opacity=".7"/>
+
+                            <!-- 御札 the plain-language rule -->
+                            <rect x="14" y="38" width="86" height="40" fill="#fbf7ee" stroke="#23201c" stroke-width="1.2"/>
+                            <g class="dr-rule" stroke="#23201c" stroke-width="2" stroke-linecap="round">
+                                <path d="M22,50 H86" stroke-dasharray="64" stroke-dashoffset="64"/>
+                                <path d="M22,59 H78" stroke-dasharray="56" stroke-dashoffset="56"/>
+                                <path d="M22,68 H62" stroke-dasharray="40" stroke-dashoffset="40"/>
+                            </g>
+                            <rect class="dr-seal" x="84" y="62" width="12" height="12" fill="none" stroke="#d94f3d" stroke-width="1.6"/>
+                            <path d="M40,78 C34,106 28,128 24,152" fill="none" stroke="#23201c"
+                                  stroke-width=".9" stroke-dasharray="3 4" opacity=".35"/>
+
+                            <!-- 千本鳥居 the rule corridor -->
+                            <use href="#drTorii" x="62"  y="196"/>
+                            <use href="#drTorii" x="120" y="196"/>
+                            <use href="#drTorii" x="178" y="196"/>
+                            <use href="#drTorii" x="236" y="196"/>
+                            <g class="dr-unreached"><use href="#drTorii" x="294" y="196"/></g>
+
+                            <!-- rule outcomes, one bead per gate -->
+                            <g class="dr-beads">
+                                <circle class="dr-bead" cx="62"  cy="84" r="4" fill="#6b7d5a"/>
+                                <circle class="dr-bead" cx="120" cy="84" r="4" fill="#6b7d5a"/>
+                                <circle class="dr-bead" cx="178" cy="84" r="4" fill="#6b7d5a"/>
+                                <circle class="dr-bead dr-bead--stop" cx="236" cy="84" r="4.4" fill="#d94f3d"/>
+                            </g>
+                            <circle cx="294" cy="84" r="4" fill="none" stroke="#23201c" stroke-width="1.2" opacity=".3"/>
+
+                            <!-- 決済 the settlement rail, always flowing -->
+                            <path d="M14,196 H344" stroke="#23201c" stroke-width="1.6"/>
+                            <g class="dr-nami" opacity=".3">
+                                <rect x="-26" y="204" width="452" height="40" fill="url(#drNami)"/>
+                            </g>
+
+                            <!-- the coin -->
+                            <g class="dr-coin">
+                                <g class="dr-coin-spin">
+                                    <circle r="10" fill="#c9a227" stroke="#23201c" stroke-width="1.4"/>
+                                    <circle r="6.6" fill="none" stroke="#23201c" stroke-width=".7" opacity=".5"/>
+                                    <text y="4.4" font-size="12" text-anchor="middle" fill="#23201c" font-family="Georgia,serif">₹</text>
+                                </g>
+                            </g>
+
+                            <!-- the barrier comes down -->
+                            <g clip-path="url(#drShutter)">
+                                <g class="dr-shutter">
+                                    <rect x="223" y="112" width="26" height="84" fill="#23201c"/>
+                                    <g stroke="#f6f1e6" stroke-width=".8" opacity=".35">
+                                        <path d="M223,128 H249 M223,142 H249 M223,156 H249 M223,170 H249 M223,184 H249"/>
+                                    </g>
+                                    <rect x="223" y="190" width="26" height="6" fill="#d94f3d"/>
+                                </g>
+                            </g>
+                            <circle class="dr-ripple" cx="236" cy="154" r="4" fill="none" stroke="#d94f3d" stroke-width="2"/>
+
+                            <!-- 止 refused -->
+                            <g transform="translate(236,52) rotate(-7)">
+                                <g class="dr-stop">
+                                    <rect x="-15" y="-15" width="30" height="30" rx="2" fill="#d94f3d" fill-opacity=".08" stroke="#d94f3d" stroke-width="2.6"/>
+                                    <text y="6.5" font-size="18" text-anchor="middle" fill="#d94f3d" font-family="'Shippori Mincho',serif">止</text>
+                                </g>
+                            </g>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">関所</span>
+                        <span class="plate-no" aria-hidden="true">伍</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>Programmable Digital Rupee</h3>
+                        <p class="project-jp" aria-hidden="true">条件付き　送金</p>
+                        <p>A full-stack CBDC prototype where money carries its own rules. A transfer is
+                           written as a plain policy, then checked gate by gate before settlement — and a
+                           payment that fails any condition is stopped at the barrier rather than
+                           reversed after the fact.</p>
+                        <div class="project-tags">
+                            <span>React</span><span>Express</span><span>Node.js</span>
+                            <span>Rule engine</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/nottDJ/Programmable-Digital-Rupee" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <p class="projects-footnote">
+                More on <a href="https://github.com/nottDJ" target="_blank" rel="noopener">github.com/nottDJ</a>.
+            </p>
+        </section>
+
+        <!-- -------------- CONTACT ---------------- -->
+        <section class="section" id="contact">
+            <div class="top-header">
+                <span class="kanji" aria-hidden="true">御連絡</span>
+                <h1>Get in touch</h1>
+                <span>Open to internships and collaboration — say hello</span>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="contact-info">
+                        <h2>Find Me <i class="uil uil-corner-right-down" aria-hidden="true"></i></h2>
+
+                        <a class="contact-line"
+                           href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;tf=1&amp;to=divij.contact%40gmail.com&amp;su=Hello%20Divij%20-%20from%20your%20portfolio&amp;body=Hi%20Divij%2C%0A%0A"
+                           target="_blank" rel="noopener noreferrer">
+                            <i class="uil uil-envelope"></i> divij.contact@gmail.com
+                        </a>
+                        <p><i class="uil uil-phone"></i> +91 93855 94003</p>
+                        <p><i class="uil uil-map-marker"></i> Chennai, India</p>
+
+                        <a class="btn btn-shu contact-cta"
+                           href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;tf=1&amp;to=divij.contact%40gmail.com&amp;su=Hello%20Divij%20-%20from%20your%20portfolio&amp;body=Hi%20Divij%2C%0A%0A"
+                           target="_blank" rel="noopener noreferrer">Email Me <i class="uil uil-envelope"></i></a>
+                        <p class="contact-note">Opens a Gmail compose window with my address filled in.</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <form action="https://formspree.io/f/mjkgaazr" method="POST">
+                        <div class="form-control">
+                            <div class="form-inputs">
+                                <input type="text" name="name" class="input-field" placeholder="Name" required>
+                                <input type="email" name="_replyto" class="input-field" placeholder="Email" required>
+                            </div>
+                            <div class="text-area">
+                                <textarea name="message" placeholder="Message" required></textarea>
+                            </div>
+                            <div class="form-button">
+                                <button type="submit" class="btn">Send <i class="uil uil-message"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- --------------- FOOTER --------------- -->
+    <footer>
+        <div class="top-footer">
+            <p>DIVIJ K P</p>
+            <span class="jp" aria-hidden="true">ありがとう</span>
+        </div>
+        <div class="middle-footer">
+            <ul class="footer-menu">
+                <li class="footer_menu_list"><a href="#home">Home</a></li>
+                <li class="footer_menu_list"><a href="#about">About</a></li>
+                <li class="footer_menu_list"><a href="#projects">Projects</a></li>
+                <li class="footer_menu_list"><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-social-icons">
+            <a href="https://github.com/nottDJ" target="_blank" rel="noopener" class="icon" aria-label="GitHub"><i class="uil uil-github-alt"></i></a>
+            <a href="https://www.linkedin.com/in/divij-profile" target="_blank" rel="noopener" class="icon" aria-label="LinkedIn"><i class="uil uil-linkedin-alt"></i></a>
+            <a href="https://leetcode.com/u/nottDJ" target="_blank" rel="noopener" class="icon" aria-label="LeetCode"><i class="uil uil-brackets-curly"></i></a>
+            <a href="https://www.instagram.com/nott_dj_/" target="_blank" rel="noopener" class="icon" aria-label="Instagram"><i class="uil uil-instagram"></i></a>
+        </div>
+        <div class="bottom-footer">
+            <p>Copyright &copy; <a href="#home" style="text-decoration: none;">DIVIJ</a> — All rights reserved</p>
+        </div>
+    </footer>
+
+</div>
+
+
+<!-- ----- TYPING JS ----- -->
+<script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+
+<!-- ----- SCROLL REVEAL JS ----- -->
+<script src="https://unpkg.com/scrollreveal"></script>
+
+<!-- ----- JAPANESE BACKDROP ----- -->
+<script src="japanese-bg.js"></script>
+
+<!-- ----- MAIN JS ----- -->
+<script src="main.js"></script>
+</body>
 </html>
