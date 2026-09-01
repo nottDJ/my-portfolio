@@ -18,6 +18,32 @@
     <link rel="stylesheet" href="japanese-bg.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="project-art.css">
+    <link rel="stylesheet" href="portrait.css">
+    <link rel="stylesheet" href="night.css">
+    <link rel="stylesheet" href="interactive.css">
+
+    <!-- --------- THEME, RESOLVED BEFORE FIRST PAINT ----------
+         This has to be inline and it has to be here, above the body.
+         Deferred to interactive.js it would run after the first paint
+         and a returning night-mode visitor would get a full frame of
+         the day palette in the face. Saved choice wins; failing that,
+         the operating system decides. -->
+    <script>
+    (function () {
+        var theme = null;
+        try { theme = localStorage.getItem('dj-theme'); } catch (e) {}
+        if (theme !== 'dark' && theme !== 'light') {
+            theme = window.matchMedia &&
+                    window.matchMedia('(prefers-color-scheme: dark)').matches
+                        ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+        if (theme === 'dark') {
+            var m = document.querySelector('meta[name="theme-color"]');
+            if (m) m.setAttribute('content', '#0b0d12');
+        }
+    })();
+    </script>
 
     <!-- --------- FAVICON ---------- -->
     <link rel="shortcut icon" href="assets/images/dj.png" type="image/x-icon">
@@ -25,6 +51,12 @@
     <title>Portfolio | DIVIJ</title>
 </head>
 <body>
+
+<!-- 巻物 — how far down the scroll you are -->
+<div class="reading-rail" id="readingRail" aria-hidden="true"><span></span></div>
+
+<!-- 水紋 — click rings land here -->
+<div class="ripple-layer" id="rippleLayer" aria-hidden="true"></div>
 
 <!-- ============================================================
      和 — JAPANESE SCROLL BACKDROP
@@ -34,6 +66,31 @@
 <div class="jp-bg" aria-hidden="true">
 
     <div class="jp-sky"></div>
+
+    <!-- 星 — the night sky (faded in by night.css) -->
+    <svg class="jp-stars" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <g class="jp-star-a" opacity=".7">
+            <circle cx="469.8" cy="110.9" r="1.16"/><circle cx="112.9" cy="373.5" r="1.0"/><circle cx="92.4" cy="354.1" r="0.82"/><circle cx="625.8" cy="55.6" r="0.85"/><circle cx="612.8" cy="571.9" r="0.87"/><circle cx="327.0" cy="435.9" r="1.32"/>
+            <circle cx="829.5" cy="278.5" r="1.34"/><circle cx="76.1" cy="593.5" r="0.96"/><circle cx="214.8" cy="88.3" r="0.97"/><circle cx="1168.9" cy="131.3" r="1.12"/><circle cx="917.3" cy="262.0" r="1.1"/><circle cx="99.2" cy="48.6" r="0.91"/>
+            <circle cx="976.2" cy="299.6" r="0.97"/><circle cx="841.5" cy="317.1" r="0.96"/><circle cx="1138.0" cy="484.7" r="0.93"/><circle cx="825.7" cy="366.2" r="1.28"/><circle cx="1045.8" cy="204.4" r="1.34"/><circle cx="177.7" cy="293.2" r="1.22"/>
+            <circle cx="225.8" cy="341.5" r="0.82"/><circle cx="958.9" cy="529.4" r="1.12"/><circle cx="1253.2" cy="222.0" r="1.18"/><circle cx="854.0" cy="403.5" r="1.05"/><circle cx="1202.8" cy="652.3" r="1.06"/><circle cx="953.1" cy="49.4" r="1.19"/>
+            <circle cx="928.9" cy="685.3" r="1.25"/><circle cx="414.1" cy="271.1" r="1.17"/><circle cx="42.0" cy="322.9" r="0.89"/><circle cx="176.3" cy="48.2" r="1.22"/><circle cx="193.7" cy="176.9" r="1.02"/><circle cx="1247.4" cy="63.0" r="1.05"/>
+        </g>
+        <g class="jp-star-b" opacity=".7">
+            <circle cx="790.2" cy="495.6" r="1.84"/><circle cx="1236.9" cy="161.7" r="1.6"/><circle cx="519.5" cy="496.1" r="1.92"/><circle cx="224.3" cy="105.3" r="1.49"/><circle cx="341.3" cy="275.7" r="1.7"/><circle cx="383.1" cy="10.3" r="1.6"/>
+            <circle cx="534.3" cy="320.6" r="1.92"/><circle cx="990.5" cy="292.6" r="1.72"/><circle cx="970.2" cy="37.8" r="1.89"/><circle cx="1117.6" cy="490.7" r="1.83"/><circle cx="567.2" cy="228.2" r="1.41"/><circle cx="910.7" cy="42.4" r="1.39"/>
+            <circle cx="306.4" cy="97.6" r="1.55"/><circle cx="84.7" cy="8.1" r="1.44"/><circle cx="154.1" cy="208.7" r="1.37"/><circle cx="1251.6" cy="347.0" r="1.44"/><circle cx="368.2" cy="199.8" r="1.57"/><circle cx="184.4" cy="476.6" r="1.95"/>
+        </g>
+        <g class="jp-star-c" opacity=".7">
+            <circle cx="671.7" cy="212.2" r="2.01"/><circle cx="155.1" cy="152.6" r="2.15"/><circle cx="1187.0" cy="76.1" r="1.97"/><circle cx="1360.4" cy="230.9" r="2.06"/><circle cx="781.3" cy="19.4" r="2.35"/><circle cx="1399.5" cy="372.3" r="2.47"/>
+            <circle cx="380.8" cy="162.7" r="2.08"/><circle cx="1106.2" cy="232.8" r="2.53"/><circle cx="478.1" cy="102.1" r="2.56"/>
+        </g>
+    </svg>
+    <span class="jp-shooting" aria-hidden="true"></span>
+    <span class="jp-shooting jp-shooting--b" aria-hidden="true"></span>
+
+    <!-- 旭光 — daylight rays behind the disc -->
+    <div class="jp-sun-rays" aria-hidden="true"></div>
     <div class="jp-sun"></div>
 
     <!-- 雲 kumo clouds -->
@@ -121,7 +178,88 @@
         <rect width="100%" height="100%" fill="url(#jpAsanoha)"/>
     </svg>
 
-    <!-- 桜 falling petals -->
+    <!-- 千鳥 — plovers crossing. Placement on the outer <g>, motion on
+         the inner one: an SVG element cannot carry an authored
+         transform attribute and an animated CSS transform at once. -->
+    <svg class="jp-chidori" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <g class="jp-flock">
+            <g class="jp-bird" transform="translate(120,150) scale(1)"><path class="jp-wing" d="M-11,0 q5.5,-7.5 11,0 q5.5,-7.5 11,0"/></g>
+            <g class="jp-bird" transform="translate(172,126) scale(.8)"><path class="jp-wing" d="M-11,0 q5.5,-7.5 11,0 q5.5,-7.5 11,0"/></g>
+            <g class="jp-bird" transform="translate(208,170) scale(.7)"><path class="jp-wing" d="M-11,0 q5.5,-7.5 11,0 q5.5,-7.5 11,0"/></g>
+            <g class="jp-bird" transform="translate(74,192)  scale(.62)"><path class="jp-wing" d="M-11,0 q5.5,-7.5 11,0 q5.5,-7.5 11,0"/></g>
+            <g class="jp-bird" transform="translate(248,142) scale(.54)"><path class="jp-wing" d="M-11,0 q5.5,-7.5 11,0 q5.5,-7.5 11,0"/></g>
+        </g>
+        <g class="jp-flock jp-flock--b">
+            <g class="jp-bird" transform="translate(-380,268) scale(.62)"><path class="jp-wing" d="M-11,0 q5.5,-7.5 11,0 q5.5,-7.5 11,0"/></g>
+            <g class="jp-bird" transform="translate(-332,246) scale(.5)"><path class="jp-wing" d="M-11,0 q5.5,-7.5 11,0 q5.5,-7.5 11,0"/></g>
+            <g class="jp-bird" transform="translate(-296,282) scale(.44)"><path class="jp-wing" d="M-11,0 q5.5,-7.5 11,0 q5.5,-7.5 11,0"/></g>
+        </g>
+    </svg>
+
+    <!-- 水紋 — rings opening on the tide band -->
+    <svg class="jp-ripples" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" focusable="false">
+        <g transform="translate(322,856)">
+            <circle cx="0" cy="0" r="54"/><circle cx="0" cy="0" r="54"/><circle cx="0" cy="0" r="54"/>
+        </g>
+        <g transform="translate(1064,872)">
+            <circle cx="0" cy="0" r="42"/><circle cx="0" cy="0" r="42"/><circle cx="0" cy="0" r="42"/>
+        </g>
+    </svg>
+
+    <!-- 提灯 — lanterns let go at the waterline (night only).
+         Three nested groups per lantern: placement, climb, sway. -->
+    <svg class="jp-lanterns" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" focusable="false">
+        <defs>
+            <radialGradient id="jpChochin" cx="38%" cy="34%" r="72%">
+                <stop offset="0"  stop-color="#fff3c9"/>
+                <stop offset=".55" stop-color="#f0b455"/>
+                <stop offset="1"  stop-color="#c9702f"/>
+            </radialGradient>
+            <radialGradient id="jpChochinGlow">
+                <stop offset="0"   stop-color="#ffd88a" stop-opacity=".55"/>
+                <stop offset=".45" stop-color="#ffc46a" stop-opacity=".16"/>
+                <stop offset="1"   stop-color="#ffc46a" stop-opacity="0"/>
+            </radialGradient>
+            <g id="jpLanternBody">
+                <ellipse rx="13" ry="17" fill="url(#jpChochin)"/>
+                <g fill="none" stroke="#b4602a" stroke-width=".7" opacity=".55">
+                    <path d="M-12.4,-6 A 22 22 0 0 0 12.4,-6"/>
+                    <path d="M-13,0 H13"/>
+                    <path d="M-12.4,6 A 22 22 0 0 1 12.4,6"/>
+                </g>
+                <rect x="-6" y="-20" width="12" height="4" rx="1" fill="#4a3524"/>
+                <rect x="-5" y="16"  width="10" height="4" rx="1" fill="#4a3524"/>
+                <path d="M0,20 v7" stroke="#4a3524" stroke-width=".9"/>
+            </g>
+        </defs>
+
+        <g transform="translate(214,838)">
+            <g class="jp-lantern-rise">
+                <g class="jp-lantern-sway">
+                    <circle class="jp-lantern-glow" r="46" fill="url(#jpChochinGlow)"/>
+                    <use href="#jpLanternBody"/>
+                </g>
+            </g>
+        </g>
+        <g transform="translate(676,884) scale(.78)">
+            <g class="jp-lantern-rise jp-lantern-rise--b">
+                <g class="jp-lantern-sway jp-lantern-sway--b">
+                    <circle class="jp-lantern-glow jp-lantern-glow--b" r="46" fill="url(#jpChochinGlow)"/>
+                    <use href="#jpLanternBody"/>
+                </g>
+            </g>
+        </g>
+        <g transform="translate(1188,860) scale(.92)">
+            <g class="jp-lantern-rise jp-lantern-rise--c">
+                <g class="jp-lantern-sway jp-lantern-sway--c">
+                    <circle class="jp-lantern-glow jp-lantern-glow--c" r="46" fill="url(#jpChochinGlow)"/>
+                    <use href="#jpLanternBody"/>
+                </g>
+            </g>
+        </g>
+    </svg>
+
+    <!-- 桜 petals by day, 蛍 fireflies at night -->
     <canvas class="jp-petals" id="jpPetals"></canvas>
 
     <div class="jp-grain"></div>
@@ -155,6 +293,13 @@
                 </li>
             </ul>
         </div>
+        <button class="theme-toggle" id="themeToggle" type="button"
+                aria-pressed="false" aria-label="Switch to night mode">
+            <span class="theme-toggle-face" aria-hidden="true">
+                <span class="tt-sun">日</span>
+                <span class="tt-moon">月</span>
+            </span>
+        </button>
         <div class="nav-button">
             <a class="btn" href="resume.pdf" download="Divij_K_P_Resume.pdf">Download CV <i class="uil uil-file-alt"></i></a>
         </div>
@@ -207,9 +352,36 @@
                                 stroke-linecap="round" stroke-dasharray="498 55"
                                 transform="rotate(-42 100 100)" opacity=".26"/>
                     </svg>
-                    <div class="image">
-                        <img src="assets/images/pfp.png" alt="Portrait of Divij K P" width="380" height="380">
+
+                    <!-- ============================================================
+                         生き写し — A LIVING LIKENESS IN THE ROUND WINDOW
+                         The artwork is already a finished circular scene (its own
+                         sun, sakura, Fuji), so it hangs in the window rather than
+                         being built out of it. Three quiet motions keep it from
+                         reading as a static photo, none of which touch the art
+                         itself: a slow breathing zoom, a light sheen crossing the
+                         glass, and -- for a fine pointer -- a gentle tilt with a
+                         highlight that tracks the cursor, the same treatment the
+                         project plates get.
+                         ============================================================ -->
+                    <div class="image" id="portrait">
+                        <span class="portrait-ground" aria-hidden="true"></span>
+
+                        <div class="portrait-figure" id="portraitFigure">
+                            <img class="portrait-photo" id="portraitPhoto"
+                                 src="assets/images/pfp.webp" alt="Portrait of Divij K P"
+                                 width="760" height="760" fetchpriority="high">
+                            <span class="portrait-sheen" aria-hidden="true"></span>
+                        </div>
+
+                        <span class="portrait-seal" aria-hidden="true">写</span>
                     </div>
+
+                    <!-- おみくじ — the ring is a fortune box. Sits above the
+                         portrait, so the whole disc is the draw target. -->
+                    <button class="enso-draw" id="ensoDraw" type="button"
+                            aria-label="Draw an omikuji fortune"></button>
+                    <span class="enso-hint" aria-hidden="true">おみくじを引く</span>
                 </div>
             </div>
 
@@ -240,8 +412,9 @@
                            engineering staff at <strong>Shimi Designs</strong>, and a member-based community
                            platform delivered with a three-person team at <strong>STRCO India</strong>.</p>
                         <div class="about-stats">
-                            <div><b>9.4</b><small>CGPA / 10</small></div>
-                            <div><b>2</b><small>Internships</small></div>
+                            <div><b data-count="9.4" data-decimals="1">9.4</b><small>CGPA / 10</small></div>
+                            <div><b data-count="2">2</b><small>Internships</small></div>
+                            <div><b data-count="9" data-suffix="+">9+</b><small>Projects shipped</small></div>
                             <div><b>2nd</b><small>Runner-up, TechHacks</small></div>
                         </div>
                     </div>
@@ -298,9 +471,23 @@
                 <span>Things I have built, and how they actually work</span>
             </div>
 
+            <div class="project-filters" role="group" aria-label="Filter projects by field">
+                <button type="button" class="filter-chip is-active" data-filter="all" aria-selected="true">
+                    <span class="jp" aria-hidden="true">全</span>All</button>
+                <button type="button" class="filter-chip" data-filter="ml" aria-selected="false">
+                    <span class="jp" aria-hidden="true">学</span>ML &amp; AI</button>
+                <button type="button" class="filter-chip" data-filter="vision" aria-selected="false">
+                    <span class="jp" aria-hidden="true">眼</span>Vision &amp; 3D</button>
+                <button type="button" class="filter-chip" data-filter="fullstack" aria-selected="false">
+                    <span class="jp" aria-hidden="true">網</span>Full-stack</button>
+                <button type="button" class="filter-chip" data-filter="data" aria-selected="false">
+                    <span class="jp" aria-hidden="true">数</span>Data</button>
+                <span class="filter-count" id="filterCount" aria-live="polite">9 works</span>
+            </div>
+
             <div class="project-container">
                 <!-- ======================= 1. ArchX3D ======================= -->
-                <article class="project-box">
+                <article class="project-box" data-tags="vision fullstack">
                     <div class="project-art">
                         <svg viewBox="0 0 400 260" role="img" focusable="false"
                              aria-label="An isometric floor plan whose walls rise into solid form beneath a floating kawara-tiled roof">
@@ -430,7 +617,7 @@
                 </article>
 
                 <!-- ================= 2. Face Recognition ================= -->
-                <article class="project-box">
+                <article class="project-box" data-tags="vision ml">
                     <div class="project-art">
                         <svg viewBox="0 0 400 260" role="img" focusable="false"
                              aria-label="A face framed in a camera viewfinder, and a vermillion hanko seal stamping a row in an attendance register">
@@ -549,7 +736,7 @@
                 </article>
 
                 <!-- ================= 3. Fake News Detection ================= -->
-                <article class="project-box">
+                <article class="project-box" data-tags="ml data">
                     <div class="project-art">
                         <svg viewBox="0 0 400 260" role="img" focusable="false"
                              aria-label="Text, image and audio inputs merging into one ink stroke that reaches a verdict ring, which either closes into an enso or fans out to three evidence tablets">
@@ -677,7 +864,7 @@
                 </article>
 
                 <!-- ================= 4. Smart Sluice ================= -->
-                <article class="project-box">
+                <article class="project-box" data-tags="ml data">
                     <div class="project-art">
                         <svg viewBox="0 0 400 260" role="img" focusable="false"
                              aria-label="A cross-section of an irrigation lake with a sluice gate, showing the measured lakebed, the derived target bed, and the silt wedge between them being measured">
@@ -808,7 +995,7 @@
                 </article>
 
                 <!-- ================= 5. Programmable Digital Rupee ================= -->
-                <article class="project-box">
+                <article class="project-box" data-tags="fullstack">
                     <div class="project-art">
                         <svg viewBox="0 0 400 260" role="img" focusable="false"
                              aria-label="A gold rupee coin rolling through a corridor of vermillion torii gates, cleared by the first three rules and stopped dead by a shutter at the fourth">
@@ -921,6 +1108,498 @@
                         </div>
                     </div>
                 </article>
+
+                <!-- ============ 6. Predictive Network Traffic ============ -->
+                <article class="project-box" data-tags="ml fullstack data">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="Two candidate network routes between a controller and a destination; a forecast crosses a threshold, congestion is marked on the upper route, and traffic is switched to the lower one">
+                            <defs>
+                                <linearGradient id="ntJam" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0"   stop-color="#d94f3d" stop-opacity=".15"/>
+                                    <stop offset=".45" stop-color="#d94f3d"/>
+                                    <stop offset="1"   stop-color="#d94f3d" stop-opacity=".15"/>
+                                </linearGradient>
+                            </defs>
+
+                            <!-- the two candidate paths through the fabric -->
+                            <g fill="none" stroke="#1b3b6f" stroke-linecap="round" stroke-linejoin="round">
+                                <path class="nt-route-up" d="M46,132 L140,64 L252,60 L356,132"/>
+                                <path class="nt-route-lo" d="M46,132 L140,198 L256,202 L356,132"/>
+                            </g>
+
+                            <!-- 混 the congestion, painted onto the wire it congests -->
+                            <path class="nt-jam" fill="none" stroke="url(#ntJam)" stroke-width="5.5"
+                                  stroke-linecap="round" stroke-linejoin="round" d="M46,132 L140,64 L252,60 L356,132"/>
+
+                            <!-- transit nodes -->
+                            <g fill="#fbf7ee" stroke="#1b3b6f" stroke-width="1.6">
+                                <circle class="nt-node" cx="140" cy="64"  r="8"/>
+                                <circle class="nt-node" cx="252" cy="60"  r="8"/>
+                                <circle class="nt-node" cx="140" cy="198" r="8"/>
+                                <circle class="nt-node" cx="256" cy="202" r="8"/>
+                            </g>
+
+                            <!-- 制 the controller, and 着 the destination -->
+                            <circle cx="46" cy="132" r="13" fill="#fbf7ee" stroke="#1b3b6f" stroke-width="2"/>
+                            <circle cx="46" cy="132" r="5.5" fill="#c9a227"/>
+                            <circle class="nt-ctrl"   cx="46" cy="132" r="18" fill="none" stroke="#c9a227" stroke-width="1.2"/>
+                            <circle class="nt-decide" cx="46" cy="132" r="15" fill="none" stroke="#c9a227" stroke-width="2.2"/>
+                            <text x="46" y="108" font-size="10" text-anchor="middle" fill="#1b3b6f"
+                                  opacity=".55" font-family="'Shippori Mincho',serif">制</text>
+
+                            <circle cx="356" cy="132" r="11" fill="#1b3b6f"/>
+                            <circle cx="356" cy="132" r="4.2" fill="#fbf7ee"/>
+                            <text x="356" y="108" font-size="10" text-anchor="middle" fill="#1b3b6f"
+                                  opacity=".55" font-family="'Shippori Mincho',serif">着</text>
+
+                            <!-- packets in flight. Gate = which route is live,
+                                 run = the traverse. Two clocks, two groups. -->
+                            <g class="nt-packets-up">
+                                <g class="nt-gate-up"><g class="nt-run-up"><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1" fill="#c9a227" stroke="#23201c" stroke-width=".7"/></g></g>
+                                <g class="nt-gate-up"><g class="nt-run-up"><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1" fill="#c9a227" stroke="#23201c" stroke-width=".7"/></g></g>
+                                <g class="nt-gate-up"><g class="nt-run-up"><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1" fill="#c9a227" stroke="#23201c" stroke-width=".7"/></g></g>
+                            </g>
+                            <g class="nt-packets-lo">
+                                <g class="nt-gate-lo"><g class="nt-run-lo"><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1" fill="#c9a227" stroke="#23201c" stroke-width=".7"/></g></g>
+                                <g class="nt-gate-lo"><g class="nt-run-lo"><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1" fill="#c9a227" stroke="#23201c" stroke-width=".7"/></g></g>
+                                <g class="nt-gate-lo"><g class="nt-run-lo"><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1" fill="#c9a227" stroke="#23201c" stroke-width=".7"/></g></g>
+                            </g>
+
+                            <!-- the congestion marker -->
+                            <g class="nt-warn">
+                                <circle cx="196" cy="36" r="11.5" fill="#d94f3d"/>
+                                <text x="196" y="40.5" font-size="12.5" text-anchor="middle"
+                                      fill="#f6f1e6" font-family="'Shippori Mincho',serif">混</text>
+                            </g>
+
+                            <!-- 予測 the forecast panel: history solid, prediction
+                                 dashed, and the threshold it crosses first -->
+                            <g>
+                                <rect x="12" y="192" width="106" height="56" rx="2"
+                                      fill="#fbf7ee" fill-opacity=".72" stroke="#1b3b6f" stroke-opacity=".26"/>
+                                <text x="19" y="205" font-size="8" fill="#1b3b6f" opacity=".6"
+                                      letter-spacing="1" font-family="'Shippori Mincho',serif">予測</text>
+                                <path class="nt-thresh" d="M18,216 H112" fill="none"
+                                      stroke="#d94f3d" stroke-width="1" stroke-dasharray="3 3"/>
+                                <path d="M20,242 L34,238 L48,240 L62,234 L76,236" fill="none"
+                                      stroke="#1b3b6f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path class="nt-pred" d="M76,236 L90,224 L104,208" fill="none"
+                                      stroke="#d94f3d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle class="nt-cross" cx="97" cy="216" r="3.2" fill="#d94f3d"/>
+                            </g>
+
+                            <!-- 落款 -->
+                            <g class="nt-seal">
+                                <rect x="344" y="196" width="40" height="40" rx="4" fill="#d94f3d"
+                                      transform="rotate(-4 364 216)"/>
+                                <text x="364" y="224" font-size="23" text-anchor="middle" fill="#f6f1e6"
+                                      font-family="'Shippori Mincho',serif" transform="rotate(-4 364 216)">経</text>
+                            </g>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">経路</span>
+                        <span class="plate-no" aria-hidden="true">陸</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>Predictive Network Traffic Management</h3>
+                        <p class="project-jp" aria-hidden="true">混雑予測　→　経路切替</p>
+                        <p>An SDN control plane that reroutes <em>before</em> a link saturates rather
+                           than after. Random Forest, XGBoost, LSTM and GRU models forecast per-link
+                           congestion from collected flow statistics; when a forecast crosses the
+                           threshold the controller recomputes a weighted shortest path and moves
+                           the flows. A Next.js dashboard streams the topology and the predictions
+                           over WebSocket.</p>
+                        <div class="project-tags">
+                            <span>FastAPI</span><span>TensorFlow</span><span>XGBoost</span>
+                            <span>Next.js</span><span>PostgreSQL</span><span>Ryu / Mininet</span>
+                            <span>Docker</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://github.com/nottDJ/Predictive-Network-Traffic-Management" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ============ 7. Civic Issue Tracker ============ -->
+                <article class="project-box" data-tags="fullstack data">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="A ward map with reported issue pins beside a priority inbox; the top row collects five tally marks, is stamped resolved, and its pin turns from red to green">
+                            <defs>
+                                <clipPath id="cvMap"><rect x="14" y="44" width="222" height="200" rx="3"/></clipPath>
+                            </defs>
+
+                            <!-- 町割 the ward map -->
+                            <rect x="14" y="44" width="222" height="200" rx="3"
+                                  fill="#fbf7ee" fill-opacity=".7" stroke="#1b3b6f" stroke-opacity=".26"/>
+                            <g clip-path="url(#cvMap)">
+                                <g fill="#6b7d5a" opacity=".13">
+                                    <rect x="66" y="96" width="42" height="42"/>
+                                    <rect x="166" y="146" width="36" height="42"/>
+                                </g>
+                                <g fill="none" stroke="#1b3b6f" stroke-opacity=".17" stroke-width="1">
+                                    <path d="M62,44 V244"/>
+                                <path d="M112,44 V244"/>
+                                <path d="M162,44 V244"/>
+                                <path d="M206,44 V244"/>
+                                <path d="M14,92 H236"/>
+                                <path d="M14,142 H236"/>
+                                <path d="M14,192 H236"/>
+                                </g>
+                                <!-- 川 the river keeps running whatever the ward is doing.
+                                     Drawn as strokes rather than a seigaiha tile: at this
+                                     scale the tile collapses into gravel. -->
+                                <rect x="-16" y="204" width="288" height="30" fill="#1b3b6f" opacity=".07"/>
+                                <g class="cv-river" fill="none" stroke="#1b3b6f" stroke-opacity=".34"
+                                   stroke-width="1.2" stroke-linecap="round">
+                                    <path d="M-52,212 q12,-6 24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 "/>
+                                    <path d="M-76,221 q12,-6 24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 "/>
+                                    <path d="M-40,230 q12,-6 24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 t24,0 "/>
+                                </g>
+                            </g>
+
+                            <!-- 通報 the pins. Placement outside, motion inside. -->
+                            <g transform="translate(86,112)">
+                                <circle class="cv-gps" cx="0" cy="-23" r="21" fill="none"
+                                        stroke="#1b3b6f" stroke-width="1.4"/>
+                                <circle class="cv-resolve-ring" cx="0" cy="0" r="15" fill="none"
+                                        stroke="#6b7d5a" stroke-width="2.2"/>
+                                <g class="cv-pin">
+                                    <g class="cv-open">
+                                        <path d="M0,0 C-9,-12 -13.5,-17 -13.5,-23 A13.5,13.5 0 1 1 13.5,-23 C13.5,-17 9,-12 0,0 Z" fill="#d94f3d" stroke="#23201c" stroke-width=".9"/>
+                                        <circle cx="0" cy="-23" r="5" fill="#fbf7ee"/>
+                                    </g>
+                                    <g class="cv-done">
+                                        <path d="M0,0 C-9,-12 -13.5,-17 -13.5,-23 A13.5,13.5 0 1 1 13.5,-23 C13.5,-17 9,-12 0,0 Z" fill="#6b7d5a" stroke="#23201c" stroke-width=".9"/>
+                                        <circle cx="0" cy="-23" r="5" fill="#fbf7ee"/>
+                                    </g>
+                                </g>
+                            </g>
+                            <g transform="translate(152,170) scale(.82)">
+                                <g class="cv-pin cv-pin--b">
+                                    <path d="M0,0 C-9,-12 -13.5,-17 -13.5,-23 A13.5,13.5 0 1 1 13.5,-23 C13.5,-17 9,-12 0,0 Z" fill="#d94f3d" stroke="#23201c" stroke-width=".9"/>
+                                    <circle cx="0" cy="-23" r="5" fill="#fbf7ee"/>
+                                </g>
+                            </g>
+                            <g transform="translate(198,88) scale(.72)">
+                                <g class="cv-pin cv-pin--c">
+                                    <path d="M0,0 C-9,-12 -13.5,-17 -13.5,-23 A13.5,13.5 0 1 1 13.5,-23 C13.5,-17 9,-12 0,0 Z" fill="#c9a227" stroke="#23201c" stroke-width=".9"/>
+                                    <circle cx="0" cy="-23" r="5" fill="#fbf7ee"/>
+                                </g>
+                            </g>
+
+                            <!-- 優先受付 the priority inbox -->
+                            <rect x="248" y="44" width="140" height="204" rx="3"
+                                  fill="#fbf7ee" fill-opacity=".7" stroke="#1b3b6f" stroke-opacity=".26"/>
+                            <text x="253" y="59" font-size="8.5" fill="#1b3b6f" opacity=".6"
+                                  letter-spacing="1" font-family="'Shippori Mincho',serif">優先受付</text>
+
+                            <!-- row 1 — the one the ward voted up -->
+                            <rect x="252" y="66" width="132" height="54" rx="2"
+                                  fill="#fbf7ee" fill-opacity=".9" stroke="#23201c" stroke-opacity=".14"/>
+                            <path class="cv-row-lead" d="M252,66 h11 l-11,11 Z" fill="#c9a227"/>
+                            <g stroke="#23201c" stroke-linecap="round">
+                                <path d="M266,84 H322" stroke-opacity=".55" stroke-width="2.6"/>
+                                <path d="M266,92 H304" stroke-opacity=".26" stroke-width="1.6"/>
+                            </g>
+                                <g class="cv-tally" transform="translate(262,96) scale(.72)" fill="none" stroke="#1b3b6f" stroke-width="2.4" stroke-linecap="round">
+                                    <path d="M3,3 H17"/>
+                                    <path d="M10,3 V16"/>
+                                    <path d="M5,8 V16"/>
+                                    <path d="M10,9 H15"/>
+                                    <path d="M3,16 H17"/>
+                                </g>
+                            <rect x="260" y="113" width="116" height="3.5" rx="1.75" fill="#1b3b6f" opacity=".14"/>
+                            <rect class="cv-bar" x="260" y="113" width="116" height="3.5" rx="1.75" fill="#d94f3d"/>
+                            <circle class="cv-open" cx="372" cy="84" r="5" fill="#d94f3d"/>
+                            <circle class="cv-done" cx="372" cy="84" r="5" fill="#6b7d5a"/>
+                            <g class="cv-seal">
+                                <rect x="334" y="78" width="30" height="30" rx="3" fill="#6b7d5a"
+                                      transform="rotate(-4 349 93)"/>
+                                <text x="349" y="99" font-size="18" text-anchor="middle" fill="#f6f1e6"
+                                      font-family="'Shippori Mincho',serif" transform="rotate(-4 349 93)">済</text>
+                            </g>
+
+                            <!-- rows 2 and 3 — fewer vouches, still waiting -->
+                            <rect x="252" y="126" width="132" height="54" rx="2"
+                                  fill="#fbf7ee" fill-opacity=".9" stroke="#23201c" stroke-opacity=".14"/>
+                            <g stroke="#23201c" stroke-linecap="round">
+                                <path d="M266,144 H336" stroke-opacity=".45" stroke-width="2.6"/>
+                                <path d="M266,152 H310" stroke-opacity=".22" stroke-width="1.6"/>
+                            </g>
+                                <g transform="translate(262,156) scale(.72)" fill="none" stroke="#1b3b6f" stroke-width="2.4" stroke-linecap="round">
+                                    <path d="M3,3 H17"/>
+                                    <path d="M10,3 V16"/>
+                                </g>
+                            <circle cx="372" cy="144" r="5" fill="#c9a227"/>
+
+                            <rect x="252" y="186" width="132" height="54" rx="2"
+                                  fill="#fbf7ee" fill-opacity=".9" stroke="#23201c" stroke-opacity=".14"/>
+                            <g stroke="#23201c" stroke-linecap="round">
+                                <path d="M266,204 H326" stroke-opacity=".38" stroke-width="2.6"/>
+                                <path d="M266,212 H300" stroke-opacity=".2" stroke-width="1.6"/>
+                            </g>
+                                <g transform="translate(262,216) scale(.72)" fill="none" stroke="#1b3b6f" stroke-width="2.4" stroke-linecap="round">
+                                    <path d="M3,3 H17"/>
+                                </g>
+                            <circle cx="372" cy="204" r="5" fill="#1b3b6f" opacity=".4"/>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">通報</span>
+                        <span class="plate-no" aria-hidden="true">漆</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>Smart City Civic Issue Tracker</h3>
+                        <p class="project-jp" aria-hidden="true">市民通報　→　優先処理</p>
+                        <p>A location-aware reporting platform where citizens log infrastructure
+                           faults straight from a phone camera and its GPS fix, and the city triages
+                           them. Coordinates are stored and queried as real geometry in PostGIS;
+                           community vouches drive the priority ordering an admin actually works
+                           from; and if the browser refuses a location, a Nominatim search drops the
+                           pin by hand instead of failing the report.</p>
+                        <div class="project-tags">
+                            <span>React</span><span>Node / Express</span><span>PostgreSQL</span>
+                            <span>PostGIS</span><span>Leaflet</span><span>JWT / RBAC</span>
+                            <span>Tailwind</span>
+                        </div>
+                        <div class="project-links">
+                            <a class="live" href="https://civicissuereporting.vercel.app/" target="_blank" rel="noopener">
+                                <i class="uil uil-external-link-alt"></i> Live</a>
+                            <a href="https://github.com/nottDJ/Smart-City-Civic-Issue-Tracker" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ============ 8. Auction Price Predictor ============ -->
+                <article class="project-box" data-tags="ml data">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="A used handset beside five attribute sliders; as each is supplied the price band on the right closes inward onto a single estimate, and a wooden price tag drops">
+                            <!-- 端末 the device being valued -->
+                            <g class="ap-phone" fill="none" stroke="#23201c" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="42" y="58" width="70" height="126" rx="9" stroke-width="1.8"/>
+                                <rect x="49" y="67" width="56" height="98"  rx="3" stroke-width="1" stroke="#1b3b6f"/>
+                                <path d="M68,63 H86" stroke-width="1.6"/>
+                                <path d="M77,174 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" stroke-width="1.2"/>
+                            </g>
+
+                            <!-- 電池 measured, not declared -->
+                            <g transform="rotate(-90 77 212)">
+                                <circle cx="77" cy="212" r="14" fill="none" stroke="#1b3b6f"
+                                        stroke-opacity=".18" stroke-width="3.4"/>
+                                <circle class="ap-batt" cx="77" cy="212" r="14" fill="none"
+                                        stroke="#6b7d5a" stroke-width="3.4" stroke-linecap="round"/>
+                            </g>
+                            <text x="77" y="216" font-size="9" text-anchor="middle" fill="#23201c" opacity=".7">83%</text>
+                            <text x="77" y="240" font-size="7.5" text-anchor="middle" fill="#1b3b6f"
+                                  opacity=".55" font-family="'Shippori Mincho',serif">電池</text>
+
+                            <!-- the attributes the seller supplies -->
+                                <text x="128" y="79" font-size="8.5" fill="#1b3b6f" opacity=".6" font-family="'Shippori Mincho',serif">銘柄</text>
+                                <text x="128" y="103" font-size="8.5" fill="#1b3b6f" opacity=".6" font-family="'Shippori Mincho',serif">年数</text>
+                                <text x="128" y="127" font-size="8.5" fill="#1b3b6f" opacity=".6" font-family="'Shippori Mincho',serif">容量</text>
+                                <text x="128" y="151" font-size="8.5" fill="#1b3b6f" opacity=".6" font-family="'Shippori Mincho',serif">状態</text>
+                                <text x="128" y="175" font-size="8.5" fill="#1b3b6f" opacity=".6" font-family="'Shippori Mincho',serif">付属</text>
+                            <g fill="none" stroke="#1b3b6f" stroke-opacity=".16" stroke-width="4.4" stroke-linecap="round">
+                                <path d="M162,76 H268"/>
+                                <path d="M162,100 H268"/>
+                                <path d="M162,124 H268"/>
+                                <path d="M162,148 H268"/>
+                                <path d="M162,172 H268"/>
+                            </g>
+                            <g fill="none" stroke="#1b3b6f" stroke-width="4.4" stroke-linecap="round">
+                                <path class="ap-fill" d="M162,76 H240"/>
+                                <path class="ap-fill" d="M162,100 H214"/>
+                                <path class="ap-fill" d="M162,124 H262"/>
+                                <path class="ap-fill" d="M162,148 H228"/>
+                                <path class="ap-fill" d="M162,172 H196"/>
+                            </g>
+
+                            <!-- 確度 the model stops short of certain -->
+                            <circle cx="196" cy="212" r="15" fill="none" stroke="#1b3b6f"
+                                    stroke-opacity=".18" stroke-width="3.4"/>
+                            <g transform="rotate(-90 196 212)">
+                                <circle class="ap-conf" cx="196" cy="212" r="15" fill="none"
+                                        stroke="#c9a227" stroke-width="3.4" stroke-linecap="round"/>
+                            </g>
+                            <text x="196" y="216" font-size="9" text-anchor="middle" fill="#23201c" opacity=".7">86%</text>
+                            <text x="196" y="240" font-size="7.5" text-anchor="middle" fill="#1b3b6f"
+                                  opacity=".55" font-family="'Shippori Mincho',serif">確度</text>
+
+                            <!-- 値幅 the price band, closing on the estimate -->
+                            <text x="292" y="50" font-size="8" fill="#1b3b6f" opacity=".6"
+                                  font-family="'Shippori Mincho',serif">推定値</text>
+                            <path d="M306,58 V212" fill="none" stroke="#1b3b6f" stroke-opacity=".3"/>
+                            <g fill="none" stroke="#1b3b6f" stroke-opacity=".3">
+                                <path d="M302,74 H310"/><path d="M302,112 H310"/>
+                                <path d="M302,150 H310"/><path d="M302,188 H310"/>
+                            </g>
+                            <rect class="ap-band" x="299" y="126" width="14" height="18" rx="2" fill="#1b3b6f" stroke="#1b3b6f" stroke-width=".8"/>
+                            <rect class="ap-point" x="290" y="133.5" width="32" height="3" rx="1.5" fill="#d94f3d"/>
+
+                            <!-- 木札 the tag, dropped on its cord -->
+                            <g class="ap-tag-drop">
+                                <path d="M314,136 L340,150" fill="none" stroke="#23201c" stroke-width="1"/>
+                                <g class="ap-tag-swing">
+                                    <path d="M340,148 L318,163 L318,200 L362,200 L362,163 Z"
+                                          fill="#e8dcc0" stroke="#23201c" stroke-width="1.2" stroke-linejoin="round"/>
+                                    <circle cx="340" cy="170" r="2.6" fill="none" stroke="#23201c" stroke-width="1"/>
+                                    <text x="340" y="190" font-size="10" text-anchor="middle" fill="#23201c">&#8377;24,800</text>
+                                </g>
+                            </g>
+
+                            <!-- 落款 -->
+                            <g class="ap-seal">
+                                <rect x="344" y="212" width="38" height="38" rx="4" fill="#d94f3d"
+                                      transform="rotate(3 363 231)"/>
+                                <text x="363" y="239" font-size="22" text-anchor="middle" fill="#f6f1e6"
+                                      font-family="'Shippori Mincho',serif" transform="rotate(3 363 231)">値</text>
+                            </g>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">値付け</span>
+                        <span class="plate-no" aria-hidden="true">捌</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>Auction Price Predictor</h3>
+                        <p class="project-jp" aria-hidden="true">中古端末　→　落札価格</p>
+                        <p>A resale-price estimator for used electronics. Brand, age, storage,
+                           physical condition, measured battery health and bundled accessories are
+                           encoded and put through a regression model, which returns a price
+                           together with a confidence score rather than a bare number — and a
+                           plausible range plot, because a point estimate on its own tells a seller
+                           nothing about how much to trust it.</p>
+                        <div class="project-tags">
+                            <span>Python</span><span>scikit-learn</span><span>pandas</span>
+                            <span>Streamlit</span><span>joblib</span><span>Matplotlib</span>
+                        </div>
+                        <div class="project-links">
+                            <a class="live" href="https://auction-price-predictor-avrq3p6cxappwe7l8ixlp5.streamlit.app" target="_blank" rel="noopener">
+                                <i class="uil uil-external-link-alt"></i> Live</a>
+                            <a href="https://github.com/nottDJ/Auction-Price-Predictor" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ============ 9. Student Portal ============ -->
+                <article class="project-box" data-tags="fullstack data">
+                    <div class="project-art">
+                        <svg viewBox="0 0 400 260" role="img" focusable="false"
+                             aria-label="An open ledger: an attendance grid on the left page and a marks chart on the right, with a role switch above that flips from student to faculty before a brush corrects one mark">
+                            <!-- 綴じ本 the bound record -->
+                            <g class="sp-page">
+                                <rect x="26" y="52" width="168" height="178" rx="2"
+                                      fill="#fbf7ee" fill-opacity=".82" stroke="#23201c" stroke-opacity=".16"/>
+                            </g>
+                            <g class="sp-page sp-page--r">
+                                <rect x="206" y="52" width="168" height="178" rx="2"
+                                      fill="#fbf7ee" fill-opacity=".82" stroke="#23201c" stroke-opacity=".16"/>
+                            </g>
+                            <rect x="194" y="52" width="12" height="178" fill="#ded9cd" stroke="#23201c" stroke-opacity=".14"/>
+                            <g stroke="#23201c" stroke-opacity=".3" stroke-width="1.2" stroke-linecap="round">
+                                <path d="M197,74 H203"/><path d="M197,116 H203"/>
+                                <path d="M197,158 H203"/><path d="M197,200 H203"/>
+                            </g>
+
+                            <!-- 学生 / 教員 the role switch, and everything it opens -->
+                            <rect x="148" y="24" width="104" height="20" rx="10"
+                                  fill="#fbf7ee" stroke="#1b3b6f" stroke-opacity=".3"/>
+                            <rect class="sp-knob" x="150" y="26" width="50" height="16" rx="8"
+                                  fill="#c9a227" fill-opacity=".3" stroke="#c9a227"/>
+                            <text class="sp-role-student" x="175" y="38" font-size="10" text-anchor="middle"
+                                  fill="#23201c" font-family="'Shippori Mincho',serif">学生</text>
+                            <text class="sp-role-faculty" x="225" y="38" font-size="10" text-anchor="middle"
+                                  fill="#23201c" font-family="'Shippori Mincho',serif">教員</text>
+
+                            <!-- 出席 the attendance grid -->
+                            <text x="36" y="72" font-size="9" fill="#1b3b6f" opacity=".6"
+                                  letter-spacing="1" font-family="'Shippori Mincho',serif">出席</text>
+                            <path d="M36,78 H184" fill="none" stroke="#23201c" stroke-opacity=".18"/>
+                            <g>
+                                <circle class="sp-mark" style="--i:0" cx="46" cy="96" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:1" cx="70" cy="96" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:2" cx="94" cy="96" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <g class="sp-mark" style="--i:3"><path d="M114,92 l8,8 M122,92 l-8,8" fill="none" stroke="#d94f3d" stroke-width="2" stroke-linecap="round"/></g>
+                                <circle class="sp-mark" style="--i:4" cx="142" cy="96" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:5" cx="166" cy="96" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:6" cx="46" cy="117" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:7" cx="70" cy="117" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:8" cx="94" cy="117" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:9" cx="118" cy="117" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:10" cx="142" cy="117" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:11" cx="166" cy="117" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <g class="sp-fix-old"><path d="M42,134 l8,8 M50,134 l-8,8" fill="none" stroke="#d94f3d" stroke-width="2" stroke-linecap="round"/></g>
+                                <g class="sp-fix-new"><circle cx="46" cy="138" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="2"/></g>
+                                <circle class="sp-mark" style="--i:12" cx="70" cy="138" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:13" cx="94" cy="138" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:14" cx="118" cy="138" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:15" cx="142" cy="138" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:16" cx="166" cy="138" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:17" cx="46" cy="159" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:18" cx="70" cy="159" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:19" cx="94" cy="159" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:20" cx="118" cy="159" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <g class="sp-mark" style="--i:21"><path d="M138,155 l8,8 M146,155 l-8,8" fill="none" stroke="#d94f3d" stroke-width="2" stroke-linecap="round"/></g>
+                                <circle class="sp-mark" style="--i:22" cx="166" cy="159" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:23" cx="46" cy="180" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:24" cx="70" cy="180" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:25" cx="94" cy="180" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:26" cx="118" cy="180" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:27" cx="142" cy="180" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                                <circle class="sp-mark" style="--i:28" cx="166" cy="180" r="5.6" fill="none" stroke="#6b7d5a" stroke-width="1.9"/>
+                            </g>
+                            <!-- 筆 the correcting stroke -->
+                            <path class="sp-brush" d="M40,138 H168" fill="none" stroke="#d94f3d"
+                                  stroke-width="9" stroke-linecap="round" opacity=".8"/>
+
+                            <!-- 成績 the marks -->
+                            <text x="216" y="72" font-size="9" fill="#1b3b6f" opacity=".6"
+                                  letter-spacing="1" font-family="'Shippori Mincho',serif">成績</text>
+                            <path d="M216,78 H364" fill="none" stroke="#23201c" stroke-opacity=".18"/>
+                            <g>
+                                <rect class="sp-bar" x="244" y="144" width="20" height="62" rx="1.5" fill="#1b3b6f" fill-opacity=".72"/>
+                                <rect class="sp-bar" x="270" y="118" width="20" height="88" rx="1.5" fill="#1b3b6f" fill-opacity=".72"/>
+                                <rect class="sp-bar sp-bar--fixed" x="296" y="132" width="20" height="74" rx="1.5" fill="#1b3b6f" fill-opacity=".72"/>
+                                <rect class="sp-bar" x="322" y="110" width="20" height="96" rx="1.5" fill="#1b3b6f" fill-opacity=".72"/>
+                                <rect class="sp-bar" x="348" y="126" width="20" height="80" rx="1.5" fill="#1b3b6f" fill-opacity=".72"/>
+                            </g>
+                            <path d="M240,206 H370" fill="none" stroke="#1b3b6f" stroke-opacity=".35"/>
+                            <path class="sp-avg" d="M240,164 H370" fill="none" stroke="#d94f3d" stroke-width="1.3"/>
+                            <text x="216" y="160" font-size="7.5" fill="#d94f3d" opacity=".8"
+                                  font-family="'Shippori Mincho',serif">平均</text>
+
+                            <!-- 落款 -->
+                            <g class="sp-seal">
+                                <rect x="146" y="194" width="38" height="38" rx="4" fill="#d94f3d"
+                                      transform="rotate(-3 165 213)"/>
+                                <text x="165" y="221" font-size="22" text-anchor="middle" fill="#f6f1e6"
+                                      font-family="'Shippori Mincho',serif" transform="rotate(-3 165 213)">認</text>
+                            </g>
+                        </svg>
+                        <span class="plate-kanji" aria-hidden="true">学籍</span>
+                        <span class="plate-no" aria-hidden="true">玖</span>
+                    </div>
+                    <div class="project-body">
+                        <h3>Student Portal</h3>
+                        <p class="project-jp" aria-hidden="true">出席　成績　一元管理</p>
+                        <p>One academic record, two roles reading it. Students see their own
+                           attendance and marks; faculty get the same record with write access —
+                           registering students, marking attendance, entering marks, and a
+                           department-level view over the aggregate. Login routes each role to its
+                           own dashboard, so neither ever lands on a screen it cannot use.</p>
+                        <div class="project-tags">
+                            <span>TypeScript</span><span>React</span><span>Vite</span>
+                            <span>shadcn/ui</span><span>Tailwind</span><span>React Query</span>
+                        </div>
+                        <div class="project-links">
+                            <a class="live" href="https://college-info-blackboard.vercel.app" target="_blank" rel="noopener">
+                                <i class="uil uil-external-link-alt"></i> Live</a>
+                            <a href="https://github.com/nottDJ/Student-Portal" target="_blank" rel="noopener">
+                                <i class="uil uil-github-alt"></i> Code</a>
+                        </div>
+                    </div>
+                </article>
             </div>
 
             <p class="projects-footnote">
@@ -1004,6 +1683,23 @@
 </div>
 
 
+<!-- 上 — return to top -->
+<button class="to-top" id="toTop" type="button" aria-label="Back to top">
+    <span aria-hidden="true">上</span>
+</button>
+
+<!-- おみくじ — the fortune drawn from the ensō -->
+<div class="omikuji" id="omikuji" role="dialog" aria-modal="true"
+     aria-label="Omikuji fortune" aria-hidden="true">
+    <div class="omikuji-slip">
+        <span class="omikuji-label" aria-hidden="true">おみくじ</span>
+        <strong class="omikuji-rank">吉</strong>
+        <span class="omikuji-rank-en">Blessing</span>
+        <p class="omikuji-text"></p>
+        <button type="button" class="omikuji-close">閉じる &middot; Close</button>
+    </div>
+</div>
+
 <!-- ----- TYPING JS ----- -->
 <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
 
@@ -1015,5 +1711,8 @@
 
 <!-- ----- MAIN JS ----- -->
 <script src="main.js"></script>
+
+<!-- ----- INTERACTIVE ----- -->
+<script src="interactive.js"></script>
 </body>
 </html>

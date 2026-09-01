@@ -4,6 +4,10 @@ A single-page personal portfolio with a hand-drawn Japanese (和) theme: a layer
 ukiyo-e backdrop that parallaxes as you scroll, and a project card for each repo
 with its own hand-authored SVG illustration.
 
+It has a day skin and a night skin (日 / 月), and the backdrop is a different
+scene in each: sunrise, drifting kumo and falling sakura by day; moon, stars,
+rising lanterns and fireflies after dark.
+
 **Live:** https://nottdj.github.io/my-portfolio/
 
 No build step, no framework, no bundler. Plain HTML, CSS and vanilla JavaScript —
@@ -69,15 +73,18 @@ paths, that was a bug in an earlier version.
 
 | File | What it does |
 | --- | --- |
-| `index.html` | All markup, including the backdrop layers and the five project SVGs |
+| `index.html` | All markup, including the backdrop layers and the nine project SVGs |
 | `style.css` | Layout, typography, components, responsive breakpoints |
 | `japanese-bg.css` | The backdrop's layers **and the colour tokens the whole site reads** |
-| `japanese-bg.js` | Scroll parallax + the sakura petal canvas |
+| `japanese-bg.js` | Scroll parallax + the particle canvas (sakura by day, fireflies at night) |
 | `project-art.css` | Every project illustration's animation |
+| `night.css` | The night skin — palette tokens, the surfaces that hard-code a light value, and the night backdrop |
+| `interactive.css` | Theme toggle, reading rail, project filter, card tilt, click ripple, omikuji, return-to-top |
+| `interactive.js` | The behaviour behind all of the above |
 | `main.js` | Nav, typed hero text, scroll reveal, active-section highlighting |
 | `resume.pdf` | Served by both "Download CV" buttons |
-| `assets/images/` | `pfp.png` (portrait), `dj.png` (favicon) |
-| `aether/` | A **separate** experimental React/Vite portfolio. Not part of this site. |
+| `portrait.css` | The hero portrait: the round window, the breathing zoom, the light sheen, the tilt |
+| `assets/images/` | `pfp.webp` (the portrait the page loads), `pfp.png` (same image, alpha PNG fallback for anything off-site), `dj.png` (favicon) |
 
 `japanese-bg.css` must load **before** `style.css` — it defines the `--washi`,
 `--sumi`, `--ai`, `--shu` … custom properties that `style.css` builds on.
@@ -152,6 +159,10 @@ the picture shows the real mechanism rather than a generic icon.
 | 参 | Fake News Detection | 真偽 — ensō + ema tablets | 真 leaves in a straight line and closes itself; 偽 detonates into queries reaching three evidence tablets |
 | 肆 | Smart Sluice | 水門 — seigaiha + asanoha | Inflow rises, the derived target bed sinks away from the measured one, and a gold caliper measures the silt to dredge |
 | 伍 | Programmable Digital Rupee | 関所 — senbon torii | A coin clears three rule gates and the fourth slams shut, stamped 止 |
+| 陸 | Predictive Network Traffic | 経路 — two candidate routes | The forecast crosses its threshold **before** the jam appears and the reroute happens **before** the jam clears — that order is the project's whole claim |
+| 漆 | Civic Issue Tracker | 通報 — ward map + 正 tally | Pins drop on the map, the ward votes in 正 tally strokes, and the row with the most marks is the one stamped 済 — its pin turning green on the map at the same moment |
+| 捌 | Auction Price Predictor | 値付け — balance of evidence | Each attribute supplied closes the price band inward on its own centre, in five visible steps, until a 木札 price tag drops on its cord |
+| 玖 | Student Portal | 学籍 — one bound ledger | The student pages fill themselves in; the role flips to 教員, a brush corrects one mark, and the change lands on both pages at once |
 
 Two rules the SVG animation code follows, both documented in `project-art.css`:
 
@@ -162,13 +173,108 @@ Two rules the SVG animation code follows, both documented in `project-art.css`:
 2. Scaling or rotating an SVG element needs an explicit `transform-box`, or
    `transform-origin` resolves differently across browsers.
 
-The five loops run at **12 / 13 / 14 / 15 s** deliberately, so the cards never fall
+The loops run at **12 / 13 / 14 / 15 s** deliberately, so the cards never fall
 into step and start pulsing as a group.
 
 Every card also has a **hand-authored reduced-motion frame**. Simply stopping the
 animations isn't enough — several elements are authored in their *pre*-animation
 state (zero-length dashes, zero opacity), so the `prefers-reduced-motion` block
 resolves each card to the single still frame that tells the most of its story.
+
+---
+
+## 日 / 月 — the night skin
+
+Everything lives in `night.css`, keyed off `data-theme="dark"` on `<html>`.
+
+The theme is resolved by a **small inline script in `<head>`**, above the body. It
+has to be inline and it has to be there: deferred into `interactive.js` it would run
+after the first paint, and a returning night-mode visitor would get a full frame of
+the day palette in the face. A saved choice wins; failing that, the OS decides. The
+site follows `prefers-color-scheme` only until the visitor picks for themselves —
+after that, their choice outranks it.
+
+Two rules the file follows:
+
+1. **The page furniture inverts. The project plates do not.** They stay warm washi,
+   the way woodblock prints stay paper when you turn the gallery lights down; only
+   the light falling on them drops, and hovering a card turns it back up. Inverting
+   them would throw away every colour relationship the art was drawn with.
+2. **Nothing restyles by element.** Every rule either rewrites a palette token or
+   overrides one of the handful of rules in `style.css` / `japanese-bg.css` that
+   hard-code a light value.
+
+The backdrop is genuinely a different scene, not a filtered one:
+
+| | Day | Night |
+| --- | --- | --- |
+| The disc | 日の丸 sunrise, with 旭光 rays | 月, lit upper-left with the terminator falling away lower-right |
+| Sky | washi paper, warm | deep indigo into near-black |
+| 山 ridgelines | *darker* than the ground | *lighter* than the ground, or they vanish |
+| Particles | 桜 sakura petals, falling | 蛍 fireflies, climbing |
+| Extras | — | starfield, 流れ星, rising 提灯 lanterns |
+| 和紙 grain | `multiply` | `overlay` — multiply over black is a no-op |
+
+A firefly is not a petal with a different colour. A petal is driven by gravity and
+reads as *falling*; a firefly has to read as *deciding* where to go, so its heading
+is a slow random walk with a weak upward bias, and its brightness pulses on its own
+clock. The pulse is squared so it spends most of the cycle dim and flares briefly —
+a plain sine reads as a throbbing bulb.
+
+The crossfade between skins is armed by a `theme-animating` class that
+`interactive.js` removes again after 780 ms. Left on permanently, every hover in the
+document would inherit a 650 ms colour transition and the whole UI would feel like
+syrup.
+
+---
+
+## 生き写し — the hero portrait
+
+The portrait art (`pfp.webp`) is a finished circular illustration — it draws its
+own sun, its own sakura branch, its own Fuji — supplied as a square PNG with the
+four corners outside the circle plain black. `assets/images/` processes that once,
+offline: a 4×-supersampled circular alpha mask trims the corners to transparent
+with a clean anti-aliased edge, and the result is downsized to 760×760 and saved as
+both `pfp.webp` (what the page loads) and `pfp.png` (an alpha fallback for anything
+off-site).
+
+Because the art is a single finished piece rather than a cutout, it hangs in the
+round window as-is — `.portrait-figure` clips it to a circle with a plain
+`border-radius: 50%; overflow: hidden`, no compositing tricks needed. What
+`portrait.css` adds on top is three independent, purely additive motions:
+
+| Motion | What it does |
+| --- | --- |
+| 呼吸 breathe | The photo itself holds a slow ambient zoom — `scale(1)` to `scale(1.045)` over 11s — so a still image reads as alive rather than static |
+| 光 sheen | A soft diagonal light crosses the glass every ~8s, clipped to the circle for free by the figure's own `overflow: hidden` |
+| 傾き tilt | Fine pointers only: the disc tips toward the cursor (capped at 5°, well under the project cards' 7° — a face reads as "wrong" at an angle a flat illustration does not) with a highlight that tracks it, via `interactive.js` writing `--ptx` / `--pty` / `--pmx` / `--pmy` — the same construction as the project-card tilt, aimed at the portrait instead of a plate |
+
+A 写 seal (as in 写真, "a copy of the truth") sits in the corner as a quiet
+signature, fading in once on load rather than choreographed to anything.
+
+**None of this depends on JavaScript to look right.** With the script absent or the
+tilt disabled, the portrait is still a correctly framed, gently breathing photo in
+a round window.
+
+---
+
+## 仕掛け — the interactive parts
+
+All in `interactive.css` + `interactive.js`. No libraries. Every control is a real
+`<button>`, keyboard reachable, and everything collapses politely under
+`prefers-reduced-motion`.
+
+| | What it does |
+| --- | --- |
+| **日 / 月 toggle** | In the nav. One button, two kanji, rotated through on a single axis in 3D. Persists to `localStorage`; **`t`** toggles it from the keyboard (guarded, so it never fires while you are typing in the contact form) |
+| **Reading rail** | Scroll progress across the top, drawn as a brush stroke — opaque at the tail, thinning toward the head |
+| **Project filter** | 全 / ML & AI / Vision & 3D / Full-stack / Data, with a live count. Cards fade out *before* they leave the flow, so the grid never reflows underneath a card still on screen |
+| **Card tilt** | The plate turns under the pointer with a highlight tracking across it, so it reads as a surface catching light. Capped at 7° — past that it stops being a print and becomes a 3D object. Fine pointers only: on a touch screen a tap would set the value and it would stick |
+| **水紋 click ripple** | Two offset rings wherever you click, squashed on Y so they read as rings on water seen at an angle. Suppressed over form fields — a ring blooming out of a text caret reads as an error |
+| **おみくじ** | The ensō ring beside the portrait is a fortune box. Click it, the box shakes, and a slip unrolls with one of ten developer fortunes. Never the same slip twice running — drawing 大吉 twice in a row reads as broken randomness even when it isn't |
+| **Portrait tilt** | The hero portrait tips toward a fine pointer with a highlight tracking across it — the same construction as the card tilt above, capped at 5° instead of 7° since a face reads as "wrong" at an angle a flat illustration does not |
+| **Stat counters** | The About figures count up when they scroll into view, in tabular figures so the number doesn't jitter sideways while it runs |
+| **上 return-to-top** | Appears after one viewport of scroll |
 
 ---
 
@@ -234,8 +340,13 @@ Add an `<article>` to `.project-container` in `index.html`. The grid is
 ```
 
 If the SVG uses `<pattern>`, `<clipPath>` or `<mask>`, **prefix every `id`** with
-something card-specific. All eleven SVGs share one document, so a duplicate id
-silently breaks whichever element references it second.
+something card-specific. Every SVG on the page shares one document, so a duplicate
+id silently breaks whichever element references it second. The existing cards use
+the prefixes `a3d` `fr` `fn` `ss` `dr` `nt` `cv` `ap` `sp`.
+
+Give the card a `data-tags` attribute too, or the project filter will only ever show
+it under **All**. The recognised values are `ml`, `vision`, `fullstack` and `data`;
+a card may carry several, space-separated.
 
 ### Change the hero text
 
@@ -252,6 +363,12 @@ hero headline is `clamp(30px, 4.2vw, 48px)` and long phrases wrap awkwardly.
 - Mobile nav is keyboard operable (Enter/Space to toggle, Escape to close) and
   reports `aria-expanded`.
 - Every `target="_blank"` link carries `rel="noopener"`.
+- The theme toggle is a real `<button>` carrying `aria-pressed` and an `aria-label`
+  that says what pressing it will do, not what state it is in.
+- The filter's result count is `aria-live="polite"`, so a filter change is announced
+  rather than only shown.
+- The omikuji is a `role="dialog"` with `aria-modal`, closes on Escape or a click on
+  the backdrop, and returns focus to the ensō it was opened from.
 - Scroll listeners are all `{ passive: true }`.
 - Left/right scroll reveals are gated to ≥ 901 px. Below that the layout is a single
   stacked column, where ScrollReveal's pre-reveal `translateX` used to push content
@@ -265,19 +382,13 @@ Unicons, `typed.js`, `scrollreveal`. The page degrades sensibly if any fail —
 
 ## Known issues
 
-- **`pfp.png` is 2.1 MB.** It's the single heaviest asset on the page and the first
-  thing worth optimising — resizing to ~800 px and converting to WebP would cut it
-  by well over 90%.
 - **The Fake News live demo is down.** That repo's GitHub *homepage* field points at
   `fake-news-detection-system-zeta.vercel.app`, which currently returns **404**, so
   no "Live demo" link is shown on its card. Either redeploy it or clear the homepage
   field on the repo.
-- **The project list follows the GitHub profile README**, which currently features
-  five projects. The résumé features two more —
-  [Predictive Network Traffic Management](https://github.com/nottDJ/Predictive-Network-Traffic-Management)
-  and [Smart City Civic Issue Tracker](https://github.com/nottDJ/Smart-City-Civic-Issue-Tracker)
-  (live at `civicissuereporting.vercel.app`) — that are not on the site yet.
-- **`server.js` is an empty file.** Safe to delete.
+- **Not every repo is on the site.** `SRM-Bootcamp` and `shimi` are left off
+  deliberately — the first has no README and no code of its own, the second is a
+  single `.zip`. Add them only if that changes.
 
 ---
 

@@ -1,0 +1,186 @@
+/* ============================================================
+   生き写し — THE HERO PORTRAIT AS A LIVING LIKENESS
+   ------------------------------------------------------------
+   The artwork is a finished circular scene — it draws its own
+   sun, its own sakura branch, its own Fuji — so it hangs in the
+   round window rather than being assembled out of it. Nothing
+   here recolours or recomposites the art; it only makes the glass
+   it sits behind feel alive.
+
+   Three motions, layered, none of which depend on each other:
+
+     1. 呼吸 breathe   — the photo itself, a slow ambient zoom
+     2. 光 sheen       — a soft diagonal light crossing the glass
+     3. 傾き tilt       — fine-pointer only: the disc tips toward
+                          the cursor with a highlight that tracks it,
+                          the same treatment the project plates get
+
+   All three are purely additive. With CSS/JS absent or disabled,
+   the portrait is still a portrait: a photo in a round window.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   THE ROUND WINDOW
+   .portrait-ground is a halo a little larger than the disc, sitting
+   behind it — a bleed of light at the rim rather than a visible
+   shape of its own.
+   ------------------------------------------------------------ */
+.portrait-ground{
+    position: absolute;
+    inset: -6%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 30%,
+        rgba(255, 253, 247, .55) 0%,
+        rgba(246, 241, 230, .22) 46%,
+        rgba(246, 241, 230, 0)   72%);
+    filter: blur(2px);
+    pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   THE FIGURE — the clipped window itself. This is also the tilt
+   target: interactive.js writes --ptx/--pty here on pointermove.
+   ------------------------------------------------------------ */
+.portrait-figure{
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid rgba(35, 32, 28, .22);
+    box-shadow: 0 18px 50px -22px rgba(60, 48, 32, .55),
+                inset 0 0 0 5px rgba(255, 253, 247, .5),
+                inset 0 0 0 6px rgba(35, 32, 28, .07);
+    transform: perspective(900px)
+               rotateX(var(--ptx, 0deg))
+               rotateY(var(--pty, 0deg));
+    transition: transform .5s cubic-bezier(.2, .8, .3, 1),
+                box-shadow .35s ease, border-color .35s ease;
+}
+
+.portrait-photo{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* the default state is simply the portrait: everything below is
+       additive polish on top of a plain, correctly framed photo */
+    animation: portraitBreathe 11s ease-in-out infinite;
+    transition: filter .45s ease;
+}
+@keyframes portraitBreathe{
+    0%, 100%{ transform: scale(1); }
+    50%     { transform: scale(1.045); }
+}
+
+/* ------------------------------------------------------------
+   光 — THE SHEEN
+   A soft diagonal bar that crosses the glass every ~8s and then
+   rests. Clipped to the circle for free by .portrait-figure's own
+   overflow: hidden.
+   ------------------------------------------------------------ */
+.portrait-sheen{
+    position: absolute;
+    top: -40%;
+    left: -60%;
+    width: 45%;
+    height: 180%;
+    background: linear-gradient(100deg,
+        rgba(255, 255, 255, 0)    0%,
+        rgba(255, 255, 255, .38) 48%,
+        rgba(255, 255, 255, 0)  100%);
+    mix-blend-mode: overlay;
+    transform: rotate(12deg) translateX(0);
+    pointer-events: none;
+    animation: portraitSheen 8s ease-in-out infinite;
+}
+@keyframes portraitSheen{
+    0%, 14%  { transform: rotate(12deg) translateX(0); }
+    38%, 100%{ transform: rotate(12deg) translateX(260%); }
+}
+
+/* 光 — the pointer-tracked highlight. Same construction as the
+   project plates' hover glow: a radial gradient at a JS-written
+   position, soft-lit rather than blown out. */
+.portrait-figure::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+    background: radial-gradient(circle at var(--pmx, 50%) var(--pmy, 50%),
+        rgba(255, 253, 244, .5) 0%,
+        rgba(255, 253, 244, .16) 30%,
+        rgba(255, 253, 244, 0)  60%);
+    mix-blend-mode: soft-light;
+}
+.image.is-tilting .portrait-figure::after{ opacity: 1; }
+
+/* Tilting lifts the disc a touch and settles the shadow under it,
+   the same "caught in the light" cue the project cards use. */
+.image.is-tilting .portrait-figure{
+    box-shadow: 0 26px 60px -24px rgba(60, 48, 32, .62),
+                inset 0 0 0 5px rgba(255, 253, 247, .5),
+                inset 0 0 0 6px rgba(35, 32, 28, .07);
+    transition: transform .12s ease-out, box-shadow .35s ease;
+}
+
+/* ------------------------------------------------------------
+   落款 — THE SEAL
+   写 — as in 写真, "a copy of the truth". A quiet signature in the
+   corner, present from first paint rather than pressed on a run.
+   ------------------------------------------------------------ */
+.portrait-seal{
+    position: absolute;
+    left: 13%;
+    bottom: 13%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    font-family: var(--font-jp);
+    font-size: 19px;
+    line-height: 1;
+    color: #f6f1e6;
+    background: var(--shu);
+    border-radius: 3px;
+    transform: rotate(-5deg) scale(1);
+    box-shadow: 0 6px 16px -8px rgba(60, 48, 32, .8);
+    pointer-events: none;
+    opacity: 0;
+    animation: sealIn .6s cubic-bezier(.3, 1.6, .45, 1) .5s both;
+    transition: transform .35s ease;
+}
+@keyframes sealIn{
+    from{ opacity: 0; transform: rotate(-5deg) scale(1.8); }
+    to  { opacity: 1; transform: rotate(-5deg) scale(1); }
+}
+@media (hover: hover) and (pointer: fine){
+    .featured-image-wrap:hover .portrait-seal{
+        transform: rotate(-5deg) translateY(-3px) scale(1.06);
+    }
+}
+
+
+/* ============================================================
+   SMALL VIEWPORTS
+   The seal is the first thing to go: below about 300px of disc it
+   stops reading as a seal and becomes a red square.
+   ============================================================ */
+@media (max-width: 560px){
+    .portrait-seal{ display: none; }
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   The photo holds still, the sheen and tilt disengage. The window,
+   the seal and the ensō stay exactly as they are otherwise.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+    .portrait-photo{ animation: none !important; }
+    .portrait-sheen{ animation: none !important; opacity: 0; }
+    .portrait-figure{ transform: none !important; }
+    .portrait-seal{ animation: none !important; opacity: 1; transform: rotate(-5deg); }
+}

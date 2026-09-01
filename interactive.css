@@ -1,0 +1,504 @@
+/* ============================================================
+   INTERACTIVE — 仕掛け
+   ------------------------------------------------------------
+   Everything on this page a visitor can actually operate: the
+   day/night toggle, the reading rail, the project filter, the
+   card tilt, the click ripple, the omikuji, the return-to-top.
+
+   House rules, same as the rest of the site:
+     - no libraries;
+     - every control is a real <button> and keyboard-reachable;
+     - anything decorative is aria-hidden and pointer-events:none;
+     - all of it collapses politely under reduced motion.
+   ============================================================ */
+
+
+/* ============================================================
+   巻物 — READING RAIL
+   A scroll-progress bar drawn as a brush stroke: the gradient is
+   opaque at the tail and thins toward the head, so it reads as
+   ink laid down rather than a loading bar.
+   ============================================================ */
+.reading-rail{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 120;
+    pointer-events: none;
+    background: transparent;
+}
+.reading-rail span{
+    display: block;
+    height: 100%;
+    width: 100%;
+    transform: scaleX(var(--read, 0));
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg,
+                var(--ai)   0%,
+                var(--ai)   42%,
+                var(--shu)  86%,
+                var(--kin) 100%);
+    box-shadow: 0 0 12px -2px var(--shu);
+}
+
+
+/* ============================================================
+   日／月 — THE THEME TOGGLE
+   One button, two kanji, rotated through on a single axis. The
+   face carries the rotation; the glyphs are counter-rotated so
+   they never appear upside down mid-turn.
+   ============================================================ */
+.theme-toggle{
+    position: relative;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    margin-left: 18px;
+    padding: 0;
+    border: 1px solid var(--hairline);
+    border-radius: 50%;
+    background: var(--panel);
+    color: var(--text-color-second);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color .3s ease, background .3s ease, transform .3s ease;
+    /* the face is rotated in 3D, so the button needs the depth */
+    perspective: 320px;
+}
+.theme-toggle:hover{
+    border-color: var(--shu);
+    transform: translateY(-2px);
+}
+.theme-toggle:focus-visible{
+    outline: 2px solid var(--ai);
+    outline-offset: 3px;
+}
+.theme-toggle-face{
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transition: transform .62s cubic-bezier(.62, .04, .3, 1.1);
+}
+html[data-theme="dark"] .theme-toggle-face{ transform: rotateX(180deg); }
+
+.theme-toggle-face span{
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-jp);
+    font-size: 17px;
+    line-height: 1;
+    backface-visibility: hidden;
+}
+.tt-sun{ color: var(--shu); }
+.tt-moon{
+    color: var(--kin);
+    transform: rotateX(180deg);
+}
+
+/* A ring that pulses once each time the theme actually flips. */
+.theme-toggle::after{
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 50%;
+    border: 1px solid var(--shu);
+    opacity: 0;
+    pointer-events: none;
+}
+.theme-toggle.is-flipping::after{
+    animation: ttPulse .62s ease-out;
+}
+@keyframes ttPulse{
+    0%  { opacity: .8; transform: scale(1); }
+    100%{ opacity: 0;  transform: scale(1.75); }
+}
+
+/* Below the nav breakpoint the CV button is hidden and the toggle
+   has to sit beside the hamburger instead of after it. */
+@media only screen and (max-width: 900px){
+    .theme-toggle{ margin-left: auto; margin-right: 14px; }
+}
+
+
+/* ============================================================
+   撰 — PROJECT FILTER
+   ============================================================ */
+.project-filters{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin: -8px 0 34px;
+}
+.filter-chip{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: .02em;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    padding: 7px 15px;
+    cursor: pointer;
+    transition: color .28s ease, border-color .28s ease,
+                background .28s ease, transform .28s ease;
+}
+.filter-chip .jp{
+    font-family: var(--font-jp);
+    font-size: 12px;
+    letter-spacing: .1em;
+    opacity: .7;
+}
+.filter-chip:hover{
+    color: var(--text-color-second);
+    border-color: var(--ai);
+    transform: translateY(-2px);
+}
+.filter-chip:focus-visible{
+    outline: 2px solid var(--ai);
+    outline-offset: 3px;
+}
+.filter-chip.is-active{
+    color: var(--color-white);
+    background: var(--ai);
+    border-color: var(--ai);
+}
+.filter-chip.is-active .jp{ opacity: .85; }
+
+.filter-count{
+    font-family: var(--font-jp);
+    font-size: 12px;
+    letter-spacing: .22em;
+    color: var(--text-muted);
+    opacity: .8;
+    margin-left: 6px;
+}
+
+/* Filtered-out cards leave first, then stop taking up space. JS
+   adds .is-out only once the fade has finished, so the grid never
+   snaps shut underneath a card that is still visible. */
+.project-box{
+    transition: transform .4s ease, box-shadow .4s ease,
+                border-color .4s ease, opacity .34s ease;
+}
+.project-box.is-leaving{
+    opacity: 0;
+    transform: scale(.94) translateY(6px);
+    pointer-events: none;
+}
+.project-box.is-out{ display: none; }
+.project-box.is-entering{ animation: pbEnter .46s cubic-bezier(.2, .8, .3, 1) backwards; }
+@keyframes pbEnter{
+    from{ opacity: 0; transform: scale(.94) translateY(14px); }
+    to  { opacity: 1; transform: none; }
+}
+
+
+/* ============================================================
+   TILT — the plate turns under the pointer
+   JS writes --tx / --ty (degrees) and --mx / --my (percent).
+   Fine pointers only: on a touch screen the values would be set
+   by a tap and then stick.
+   ============================================================ */
+@media (hover: hover) and (pointer: fine){
+    .project-box{
+        transform-style: preserve-3d;
+        will-change: transform;
+    }
+    .project-box.is-tilting{
+        transform: perspective(900px)
+                   rotateX(var(--tx, 0deg))
+                   rotateY(var(--ty, 0deg))
+                   translateY(-6px)
+                   scale(1.012);
+        transition: transform .12s ease-out, box-shadow .4s ease,
+                    border-color .4s ease, opacity .34s ease;
+    }
+
+    /* 光 — a soft highlight that tracks the pointer across the
+       print, so the plate reads as a surface catching light rather
+       than a flat image being rotated. */
+    .project-art::after{
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .35s ease;
+        background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+                    rgba(255, 253, 244, .55) 0%,
+                    rgba(255, 253, 244, .16) 26%,
+                    rgba(255, 253, 244, 0)   58%);
+        mix-blend-mode: soft-light;
+    }
+    .project-box.is-tilting .project-art::after{ opacity: 1; }
+}
+
+
+/* ============================================================
+   水紋 — CLICK RIPPLE
+   A ring dropped wherever the page is clicked. Squashed on Y so
+   it reads as a ring on water seen at an angle, not a bubble.
+   ============================================================ */
+.ripple-layer{
+    position: fixed;
+    inset: 0;
+    z-index: 130;
+    pointer-events: none;
+    overflow: hidden;
+}
+.ripple{
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border: 1.4px solid var(--shu);
+    border-radius: 50%;
+    opacity: .7;
+    animation: rippleOut .78s cubic-bezier(.16, .82, .3, 1) forwards;
+}
+.ripple--b{
+    border-color: var(--ai);
+    animation-duration: 1.05s;
+    animation-delay: .09s;
+}
+@keyframes rippleOut{
+    from{ transform: scale(.2)  scaleY(.55); opacity: .75; }
+    to  { transform: scale(7.5) scaleY(.55); opacity: 0; }
+}
+
+
+/* ============================================================
+   上 — RETURN TO TOP
+   ============================================================ */
+.to-top{
+    position: fixed;
+    right: 26px;
+    bottom: 26px;
+    z-index: 110;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    font-family: var(--font-jp);
+    font-size: 17px;
+    color: var(--ai);
+    background: var(--panel-solid);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity .35s ease, transform .35s ease,
+                background .3s ease, color .3s ease, border-color .3s ease;
+}
+.to-top.is-shown{
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+.to-top:hover{
+    background: var(--ai);
+    color: var(--color-white);
+    border-color: var(--ai);
+}
+.to-top:focus-visible{
+    outline: 2px solid var(--shu);
+    outline-offset: 3px;
+}
+@media (max-width: 700px){
+    .to-top{ right: 16px; bottom: 16px; }
+}
+
+
+/* ============================================================
+   おみくじ — THE FORTUNE SLIP
+   The ensō beside the portrait is a button. Drawing shakes a
+   wooden box, then a paper slip unrolls with a rank and a line.
+   ============================================================ */
+.enso-draw{
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: block;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.enso-draw:focus-visible{
+    outline: 2px solid var(--shu);
+    outline-offset: -6px;
+}
+.enso-hint{
+    position: absolute;
+    left: 50%;
+    bottom: 2%;
+    transform: translateX(-50%);
+    font-family: var(--font-jp);
+    font-size: 11px;
+    letter-spacing: .3em;
+    white-space: nowrap;
+    color: var(--shu);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+}
+.featured-image-wrap:hover .enso-hint,
+.enso-draw:focus-visible + .enso-hint{ opacity: .85; }
+
+/* Shaking the box: a fast, decaying wobble.
+   It goes on the WRAPPER, never on .enso or .image -- both of those
+   already own a long-running transform animation, and replacing the
+   shorthand would restart the 60s ring spin from zero the moment the
+   shake ended, which snaps the ink ring back visibly. */
+.featured-image-wrap.is-shaking{ animation: ensoShake .62s ease-in-out; }
+@keyframes ensoShake{
+    0%,100%{ transform: rotate(0deg)   scale(1); }
+    18%    { transform: rotate(-7deg)  scale(1.03); }
+    38%    { transform: rotate(6deg)   scale(1.02); }
+    58%    { transform: rotate(-4deg)  scale(1.01); }
+    79%    { transform: rotate(2.5deg) scale(1); }
+}
+
+.omikuji{
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(10, 9, 7, .5);
+    -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+}
+.omikuji.is-open{ opacity: 1; pointer-events: auto; }
+
+.omikuji-slip{
+    position: relative;
+    width: min(300px, 88vw);
+    padding: 34px 28px 26px;
+    text-align: center;
+    background: linear-gradient(168deg, #fdfaf1 0%, #f2e9d6 100%);
+    border: 1px solid rgba(35, 32, 28, .2);
+    border-radius: 2px;
+    box-shadow: 0 30px 70px -28px rgba(0, 0, 0, .8);
+    /* the slip is pulled out of the box, so it scales from the top */
+    transform-origin: 50% 0;
+    transform: scaleY(.04) translateY(-24px);
+    opacity: 0;
+    transition: transform .5s cubic-bezier(.22, 1.1, .36, 1), opacity .3s ease;
+}
+.omikuji.is-open .omikuji-slip{
+    transform: none;
+    opacity: 1;
+}
+/* the fold marks a real omikuji is printed with */
+.omikuji-slip::before,
+.omikuji-slip::after{
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 1px;
+    background: rgba(35, 32, 28, .12);
+}
+.omikuji-slip::before{ top: 16px; }
+.omikuji-slip::after { bottom: 16px; }
+
+.omikuji-label{
+    display: block;
+    font-family: var(--font-jp);
+    font-size: 10.5px;
+    letter-spacing: .5em;
+    color: #8d8375;
+    margin-bottom: 12px;
+}
+.omikuji-rank{
+    display: block;
+    font-family: var(--font-jp);
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #b23a2b;
+    margin-bottom: 4px;
+}
+.omikuji-rank-en{
+    display: block;
+    font-size: 11px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: #8d8375;
+    margin-bottom: 18px;
+}
+.omikuji-text{
+    font-size: 14px;
+    line-height: 1.75;
+    color: #3a342c;
+    margin-bottom: 22px;
+}
+.omikuji-close{
+    font-family: var(--font-jp);
+    font-size: 12.5px;
+    letter-spacing: .24em;
+    color: #3a342c;
+    background: transparent;
+    border: 1px solid rgba(35, 32, 28, .28);
+    border-radius: 2px;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: background .25s ease, color .25s ease;
+}
+.omikuji-close:hover{
+    background: #23201c;
+    color: #fdfaf1;
+}
+.omikuji-close:focus-visible{
+    outline: 2px solid #b23a2b;
+    outline-offset: 3px;
+}
+
+
+/* ============================================================
+   数取り — STAT COUNTERS
+   Tabular figures, so the number does not jitter sideways while
+   it counts. Reserving the width is the whole trick.
+   ============================================================ */
+.about-stats b{
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   Controls keep working; the theatre around them stops.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+    .reading-rail span{ box-shadow: none; }
+    .theme-toggle-face{ transition-duration: .001s; }
+    .theme-toggle.is-flipping::after{ animation: none; }
+    .ripple-layer{ display: none; }
+    .project-box.is-entering{ animation: none; }
+    .project-box.is-tilting{ transform: translateY(-6px); }
+    .project-art::after{ display: none; }
+    .featured-image-wrap.is-shaking{ animation: none; }
+    .omikuji-slip{ transform: none; }
+    .to-top{ transition: opacity .2s ease; transform: none; }
+}

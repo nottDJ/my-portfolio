@@ -44,8 +44,15 @@
     var lastPublished = null;
     var scrollVelocity = 0;
 
+    /* ---------- which particle system is running ----------
+       The backdrop swaps its particles with the theme: sakura by
+       day, 蛍 hotaru fireflies at night. Only one array is ever
+       populated, so the per-frame cost does not change. */
+    var nightMode = document.documentElement.getAttribute('data-theme') === 'dark';
+
     /* ---------- petals ---------- */
     var petals = [];
+    var flies = [];
     var PETAL_TINTS = [
         'rgba(238,180,192,',   /* 桜 sakura      */
         'rgba(245,205,213,',   /* pale blossom   */
@@ -75,7 +82,7 @@
         canvas.style.height = vh + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        buildPetals();
+        buildParticles();
     }
 
     /* ------------------------------------------------------------
@@ -206,6 +213,126 @@
     }
 
     /* ------------------------------------------------------------
+       蛍 — FIREFLIES  (night)
+       A firefly is not a petal with a different colour. Petals are
+       driven by gravity and read as falling; a firefly has to read
+       as *deciding* where to go, so its heading is a slow random
+       walk with a weak upward bias, and its brightness pulses on
+       its own clock rather than with its motion.
+       ------------------------------------------------------------ */
+    var FLY_TINTS = [
+        [255, 226, 128],   /* 金 warm lantern gold */
+        [206, 232, 140],   /* the green a real hotaru actually is */
+        [255, 244, 196]
+    ];
+
+    function flyCount() {
+        if (reduced) return 0;
+        var n = Math.round((vw * vh) / 46000);
+        var cap = coarse ? 11 : 26;
+        return Math.max(5, Math.min(cap, n));
+    }
+
+    function makeFly() {
+        var tint = FLY_TINTS[(Math.random() * FLY_TINTS.length) | 0];
+        return {
+            x: Math.random() * vw,
+            y: Math.random() * vh,
+            depth: 0.4 + Math.random() * 0.6,
+            r: 1.1 + Math.random() * 1.7,
+            heading: Math.random() * Math.PI * 2,
+            /* how fast the heading itself wanders -- this is the whole
+               difference between an insect and a floating dot */
+            turn: (Math.random() - 0.5) * 0.05,
+            speed: 0.16 + Math.random() * 0.34,
+            pulse: Math.random() * Math.PI * 2,
+            pulseRate: 0.018 + Math.random() * 0.03,
+            tint: tint
+        };
+    }
+
+    function buildFlies() {
+        var want = flyCount();
+        flies.length = 0;
+        for (var i = 0; i < want; i++) flies.push(makeFly());
+    }
+
+    function stepFlies(dt) {
+        var drag = Math.max(-10, Math.min(10, scrollVelocity * 0.2));
+
+        for (var i = 0; i < flies.length; i++) {
+            var f = flies[i];
+
+            f.turn += (Math.random() - 0.5) * 0.012 * dt;
+            f.turn = Math.max(-0.06, Math.min(0.06, f.turn));
+            f.heading += f.turn * dt;
+            f.pulse += f.pulseRate * dt;
+
+            f.x += Math.cos(f.heading) * f.speed * f.depth * dt;
+            /* the -0.22 is the upward bias: fireflies climb, slowly */
+            f.y += (Math.sin(f.heading) * f.speed - 0.22 * f.speed) * f.depth * dt
+                   - drag * f.depth;
+
+            var pad = 24;
+            if (f.x - pad > vw) f.x = -pad;
+            else if (f.x + pad < 0) f.x = vw + pad;
+            if (f.y - pad > vh) { f.y = -pad; f.x = Math.random() * vw; }
+            else if (f.y + pad < 0) { f.y = vh + pad; f.x = Math.random() * vw; }
+        }
+    }
+
+    function drawFlies() {
+        ctx.clearRect(0, 0, vw, vh);
+        ctx.globalCompositeOperation = 'lighter';
+
+        for (var i = 0; i < flies.length; i++) {
+            var f = flies[i];
+
+            /* squared, so the fly spends most of its cycle dim and
+               flares briefly -- a sine straight through reads as a
+               throbbing bulb instead of a blink */
+            var lit = Math.pow((Math.sin(f.pulse) + 1) * 0.5, 2);
+            var a = (0.12 + lit * 0.78) * f.depth;
+            var r = f.r * f.depth;
+            var c = f.tint;
+
+            /* the halo: a real firefly is mostly the light around it */
+            var halo = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r * 7);
+            halo.addColorStop(0,   'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (a * 0.5).toFixed(3) + ')');
+            halo.addColorStop(0.4, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (a * 0.13).toFixed(3) + ')');
+            halo.addColorStop(1,   'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0)');
+            ctx.fillStyle = halo;
+            ctx.beginPath();
+            ctx.arc(f.x, f.y, r * 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(255,252,236,' + Math.min(1, a * 1.1).toFixed(3) + ')';
+            ctx.beginPath();
+            ctx.arc(f.x, f.y, r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    /* ------------------------------------------------------------
+       PARTICLE DISPATCH
+       One entry point, so measure(), the theme switch and the
+       motion-preference switch cannot disagree about which system
+       is live. The array that is not in use is emptied rather than
+       left populated, so nothing is stepped off screen unseen.
+       ------------------------------------------------------------ */
+    function buildParticles() {
+        if (nightMode) {
+            petals.length = 0;
+            buildFlies();
+        } else {
+            flies.length = 0;
+            buildPetals();
+        }
+    }
+
+    /* ------------------------------------------------------------
        SCROLL PUBLICATION
        One style write per frame, on the background container, so the
        invalidation is scoped to the backdrop subtree and never
@@ -252,9 +379,14 @@
 
         publishScroll();
 
-        if (ctx && petals.length) {
-            stepPetals(dt);
-            drawPetals();
+        if (ctx) {
+            if (nightMode && flies.length) {
+                stepFlies(dt);
+                drawFlies();
+            } else if (!nightMode && petals.length) {
+                stepPetals(dt);
+                drawPetals();
+            }
         }
     }
 
@@ -309,6 +441,7 @@
         if (reduced) {
             stop();
             petals.length = 0;
+            flies.length = 0;
             if (ctx) ctx.clearRect(0, 0, vw, vh);
             root.style.setProperty('--jp-sy', 0);
             root.style.setProperty('--jp-sp', 0);
@@ -324,6 +457,22 @@
     } else if (typeof motionQuery.addListener === 'function') {
         motionQuery.addListener(onMotionChange);   /* Safari < 14 */
     }
+
+    /* ------------------------------------------------------------
+       THEME
+       interactive.js fires this after it has flipped data-theme.
+       The canvas is cleared explicitly: the outgoing system's last
+       frame is still painted, and if the loop happens to be stopped
+       (hidden tab, reduced motion) nothing would ever overwrite it.
+       ------------------------------------------------------------ */
+    window.addEventListener('themechange', function (e) {
+        var next = !!(e.detail && e.detail.theme === 'dark');
+        if (next === nightMode) return;
+        nightMode = next;
+
+        if (ctx) ctx.clearRect(0, 0, vw, vh);
+        buildParticles();
+    });
 
     /* ------------------------------------------------------------
        BOOT

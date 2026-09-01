@@ -1,0 +1,281 @@
+/* ============================================================
+   夜 — NIGHT MODE
+   ------------------------------------------------------------
+   A second skin for the whole site, keyed off [data-theme="dark"]
+   on <html>. Two rules this file follows:
+
+   1. The page furniture inverts (paper -> lacquer, ink -> bone),
+      but the project illustration plates DO NOT. They stay warm
+      washi, the way woodblock prints stay paper when you turn the
+      gallery lights down; only their brightness drops, and hover
+      lifts it back. Inverting them would throw away every colour
+      relationship the art was drawn with.
+
+   2. Nothing here restyles by element. Everything either rewrites
+      a palette token, or overrides one of the handful of rules in
+      style.css / japanese-bg.css that hard-code a light value.
+
+   The theme is applied by interactive.js before first paint, so
+   there is no flash of the day palette.
+   ============================================================ */
+
+html[data-theme="dark"]{
+    /* ----- 和色, after dark ----- */
+    --washi:        #0b0d12;   /* 漆   lacquer ground     */
+    --washi-deep:   #12151d;   /* the fold in the paper   */
+    --sumi:         #e9e4d8;   /* ink and paper swap jobs */
+    --ai:           #7ea6dd;   /* 藍, lit by the moon     */
+    --ai-soft:      #4f79b0;
+    --shu:          #e8674f;   /* 朱 keeps its heat       */
+    --shu-deep:     #c04a37;
+    --kin:          #dcb752;   /* 金 leaf catches light   */
+    --matcha:       #8aa073;
+    --sakura:       #f0b8c6;
+
+    --body-color:        var(--washi);
+    --color-white:       #0b0d12;          /* text that sits ON an accent */
+
+    --text-color-second: #ddd7c9;
+    --text-color-third:  var(--ai);
+    --text-muted:        #968e80;
+
+    --first-color:       var(--ai);
+    --first-color-hover: #9dbdea;
+    --second-color:      var(--shu);
+    --third-color:       var(--kin);
+
+    --first-shadow-color: rgba(0, 0, 0, 0.55);
+
+    --panel:        rgba(20, 24, 33, 0.66);
+    --panel-solid:  rgba(16, 19, 27, 0.94);
+    --hairline:     rgba(233, 228, 216, 0.15);
+    --hairline-soft:rgba(233, 228, 216, 0.075);
+
+    color-scheme: dark;
+}
+
+html[data-theme="dark"] body{ color: var(--text-color-second); }
+
+/* ------------------------------------------------------------
+   SURFACES THAT HARD-CODE A LIGHT VALUE IN style.css
+   ------------------------------------------------------------ */
+html[data-theme="dark"] nav{
+    background: rgba(11, 13, 18, 0.72);
+}
+html[data-theme="dark"] .nav-menu{
+    background: rgba(11, 13, 18, 0.96);
+}
+html[data-theme="dark"] footer{
+    background: rgba(14, 17, 24, 0.82);
+}
+html[data-theme="dark"] .about-info,
+html[data-theme="dark"] .project-box,
+html[data-theme="dark"] .contact-info{
+    box-shadow: 0 14px 40px -20px rgba(0, 0, 0, .8);
+}
+html[data-theme="dark"] .project-box:hover{
+    border-color: rgba(126, 166, 221, .45);
+    box-shadow: 0 26px 54px -24px rgba(0, 0, 0, .9);
+}
+/* The portrait's own halo turns from a paper-warm bleed into a
+   moonlit one, the same swap the sun makes into the moon. It is a
+   glow behind the disc, not a shape of its own, so only its colour
+   needs to change -- the geometry is untouched. */
+html[data-theme="dark"] .portrait-ground{
+    background: radial-gradient(circle at 38% 30%,
+        rgba(126, 166, 221, .28) 0%,
+        rgba(126, 166, 221, .10) 46%,
+        rgba(126, 166, 221, 0)   72%);
+}
+/* The rim is drawn in literal ink, which is invisible on a near-black
+   page -- same reasoning as the ensō below. */
+html[data-theme="dark"] .portrait-figure{
+    border-color: rgba(233, 228, 216, .22);
+    box-shadow: 0 18px 54px -20px rgba(0, 0, 0, .85),
+                inset 0 0 0 5px rgba(20, 24, 33, .55),
+                inset 0 0 0 6px rgba(233, 228, 216, .08);
+}
+/* Same rule as the project plates: the art dims after dark and
+   hovering brings the light back up. */
+html[data-theme="dark"] .portrait-photo{
+    filter: brightness(.84) saturate(.9) contrast(1.02);
+}
+@media (hover: hover) and (pointer: fine){
+    html[data-theme="dark"] .featured-image-wrap:hover .portrait-photo{
+        filter: brightness(1) saturate(1) contrast(1);
+    }
+}
+/* .image.is-tilting .portrait-figure in portrait.css carries a warm,
+   light-mode inset ring at (0,3,0) specificity -- one class higher
+   than the plain dark-mode rule above, so it would win over it while
+   tilting. This repeats the same shadow with dark-mode colour at
+   (0,3,1), which outranks both. */
+html[data-theme="dark"] .image.is-tilting .portrait-figure{
+    box-shadow: 0 26px 60px -24px rgba(0, 0, 0, .9),
+                inset 0 0 0 5px rgba(20, 24, 33, .55),
+                inset 0 0 0 6px rgba(233, 228, 216, .08);
+}
+html[data-theme="dark"] .project-tags span{
+    background: rgba(233, 228, 216, .05);
+}
+html[data-theme="dark"] .input-field::placeholder,
+html[data-theme="dark"] textarea::placeholder{ color: #6f6759; }
+html[data-theme="dark"] ::selection{ background: rgba(232, 103, 79, .32); }
+
+html[data-theme="dark"] ::-webkit-scrollbar-track{ background: #10131a; }
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{
+    background: #333b4a;
+    border-color: #10131a;
+}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{ background: var(--ai-soft); }
+html[data-theme="dark"] *{ scrollbar-color: #333b4a #10131a; }
+
+/* The ensō is drawn in literal sumi ink; at night it has to become
+   the paper colour instead, or it vanishes into the ground. */
+html[data-theme="dark"] .enso circle{ stroke: #cfc8b8; opacity: .3; }
+
+/* ------------------------------------------------------------
+   THE PRINTS ON THE WALL
+   Plates keep their washi ground; only the light falling on them
+   changes, and hovering a card turns that light back up.
+   ------------------------------------------------------------ */
+html[data-theme="dark"] .project-art{
+    background: linear-gradient(160deg, #e7ddca 0%, #d8ccb3 100%);
+    border-bottom-color: rgba(0, 0, 0, .5);
+    filter: brightness(.80) saturate(.92) contrast(1.02);
+    transition: filter .45s ease;
+}
+html[data-theme="dark"] .project-box:hover .project-art,
+html[data-theme="dark"] .project-box:focus-within .project-art{
+    filter: brightness(1) saturate(1) contrast(1);
+}
+
+/* ============================================================
+   THE BACKDROP AFTER DARK
+   ============================================================ */
+
+html[data-theme="dark"] .jp-bg{ background: var(--washi); }
+
+/* 夜空 — the sky loses the sunrise and gains depth at the horizon */
+html[data-theme="dark"] .jp-sky{
+    background:
+        radial-gradient(120% 80% at 78% 12%, rgba(126,166,221,.10) 0%, rgba(126,166,221,0) 55%),
+        radial-gradient(100% 70% at 20% 88%, rgba(232,103,79,.06) 0%, rgba(232,103,79,0) 62%),
+        linear-gradient(178deg,
+            #05070c  0%,
+            #0b0e16 30%,
+            #131a2a 66%,
+            #1b2438 100%);
+}
+
+/* 月 — the disc stops being the sun. The highlight is offset so the
+   lit edge sits upper-left and the terminator falls away to the
+   lower-right; that offset is what makes a flat circle read as a
+   sphere rather than a coin. */
+html[data-theme="dark"] .jp-sun{
+    opacity: .92;
+    background:
+        radial-gradient(circle at 62% 66%, rgba(10,12,18,.42) 0%, rgba(10,12,18,0) 46%),
+        radial-gradient(circle at 34% 30%, #fdfaf2 0%, #e8e2d2 42%, #b9b3a2 100%);
+    box-shadow: 0 0 70px 18px rgba(232, 228, 214, .12);
+}
+html[data-theme="dark"] .jp-sun::before{
+    background: radial-gradient(circle,
+                rgba(236,232,218,.20) 0%,
+                rgba(236,232,218,.07) 44%,
+                rgba(236,232,218,0)   72%);
+}
+html[data-theme="dark"] .jp-sun::after{
+    border-color: rgba(236, 232, 218, .26);
+}
+
+/* 雲 — night cloud is a silhouette, not a tint */
+html[data-theme="dark"] .jp-clouds{ opacity: .5; }
+html[data-theme="dark"] .jp-cloud-a{ fill: #1d2740; }
+html[data-theme="dark"] .jp-cloud-b{ fill: #121a2c; }
+
+/* 山 — the ridges have to be LIGHTER than a near-black sky to read
+   at all, where by day they are darker than the paper. The snow cap
+   is the one thing the moon actually catches. */
+html[data-theme="dark"] .jp-mtn-far{ opacity: .5; }
+html[data-theme="dark"] .jp-mtn-near{ opacity: .62; }
+html[data-theme="dark"] .jp-mtn-far > path:first-child{ fill: #1a2440; }
+html[data-theme="dark"] .jp-mtn-far > path:last-child { fill: #7f8ca6; }
+html[data-theme="dark"] .jp-mtn-near path{ fill: #0e1424; }
+
+/* 青海波 — moonlit water */
+html[data-theme="dark"] .jp-waves{ opacity: .30; }
+html[data-theme="dark"] #jpSeigaiha g{ stroke: #7ea6dd; }
+
+/* 麻の葉 — the lattice has to invert or it disappears. It also has to
+   drop well below its daytime weight: the moon is the brightest
+   surface in the scene, and at .05 the lattice prints straight onto
+   the disc and turns it into a golf ball. */
+html[data-theme="dark"] .jp-asanoha{ opacity: .028; }
+html[data-theme="dark"] #jpAsaCell{ stroke: #9fb4d6; }
+
+/* Multiply over a black ground is a no-op — grain has to ADD light
+   at night rather than subtract it. */
+html[data-theme="dark"] .jp-grain{
+    mix-blend-mode: overlay;
+    opacity: .18;
+}
+html[data-theme="dark"] .jp-vignette{
+    background: radial-gradient(130% 100% at 50% 40%,
+                rgba(0,0,0,0) 42%, rgba(0,0,0,.62) 100%);
+}
+
+html[data-theme="dark"] .jp-tategaki{ color: #8fa8cd; opacity: .16; }
+html[data-theme="dark"] .jp-tategaki--right{ color: #c96a55; opacity: .16; }
+
+html[data-theme="dark"] .jp-chidori{ opacity: .30; }
+html[data-theme="dark"] .jp-chidori path{ stroke: #8ea6c8; }
+html[data-theme="dark"] .jp-ripples circle{ stroke: #7ea6dd; }
+
+/* ----- LAYERS THAT ONLY EXIST AFTER DARK ----- */
+.jp-stars,
+.jp-lanterns,
+.jp-shooting{
+    opacity: 0;
+    transition: opacity 1.1s ease;
+}
+html[data-theme="dark"] .jp-stars,
+html[data-theme="dark"] .jp-lanterns,
+html[data-theme="dark"] .jp-shooting{ opacity: 1; }
+
+/* ----- LAYERS THAT ONLY EXIST BY DAY ----- */
+/* 旭光 — the rays belong to a sun. Left on, they fan out from the
+   moon, which no moon has ever done. */
+html[data-theme="dark"] .jp-sun-rays{ opacity: 0; }
+
+/* ------------------------------------------------------------
+   CROSSFADE
+   The whole page eases between skins, but only while the toggle
+   has armed it. Left on permanently, every hover in the document
+   would inherit a 650ms colour transition and the UI would feel
+   like syrup.
+   ------------------------------------------------------------ */
+html.theme-animating,
+html.theme-animating body,
+html.theme-animating nav,
+html.theme-animating footer,
+html.theme-animating .jp-sky,
+html.theme-animating .jp-sun,
+html.theme-animating .jp-bg,
+html.theme-animating .about-info,
+html.theme-animating .project-box,
+html.theme-animating .project-art,
+html.theme-animating .contact-info,
+html.theme-animating .skills-box,
+html.theme-animating .input-field,
+html.theme-animating textarea{
+    transition: background .65s ease, background-color .65s ease,
+                color .65s ease, border-color .65s ease,
+                fill .65s ease, opacity .65s ease, filter .65s ease,
+                box-shadow .65s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce){
+    html.theme-animating,
+    html.theme-animating *{ transition-duration: .001s !important; }
+}

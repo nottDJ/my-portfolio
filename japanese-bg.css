@@ -283,3 +283,257 @@
 @supports not (contain: strict){
     .jp-bg{ clip-path: inset(0); }
 }
+
+
+/* ============================================================
+   10. 星 — STARFIELD  (night only)
+   The circles are authored in the markup; this only supplies the
+   twinkle. Three groups on offset cycles keep the sky from
+   blinking in unison, which is the thing that gives a CSS
+   starfield away.
+   ============================================================ */
+.jp-stars{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    /* stars sit furthest back, so they barely move */
+    transform: translate3d(0, calc(var(--jp-sy, 0) * -0.018 * 1px), 0);
+}
+.jp-stars circle{ fill: #f2efe4; }
+.jp-star-a{ animation: jpTwinkle 4.6s ease-in-out infinite; }
+.jp-star-b{ animation: jpTwinkle 6.9s ease-in-out infinite -2.3s; }
+.jp-star-c{ animation: jpTwinkle 9.4s ease-in-out infinite -5.1s; }
+@keyframes jpTwinkle{
+    0%,100%{ opacity: .85; }
+    50%    { opacity: .28; }
+}
+
+/* 流れ星 — one streak, rarely. The long hold at the end of the
+   cycle is the whole effect: a shooting star that arrives on a
+   schedule you can feel is not a shooting star. */
+.jp-shooting{
+    position: absolute;
+    top: 16vh;
+    right: 8vw;
+    width: 130px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: linear-gradient(270deg,
+                rgba(255,255,255,.95) 0%,
+                rgba(255,255,255,.35) 34%,
+                rgba(255,255,255,0)   100%);
+    transform: rotate(24deg) translate3d(0, 0, 0);
+    animation: jpShoot 17s ease-in infinite;
+}
+.jp-shooting--b{
+    top: 34vh;
+    right: 46vw;
+    width: 92px;
+    animation-duration: 26s;
+    animation-delay: -11s;
+}
+@keyframes jpShoot{
+    0%      { opacity: 0; transform: rotate(24deg) translate(0, 0) scaleX(.2); }
+    1.4%    { opacity: 1; }
+    7%      { opacity: 0; transform: rotate(24deg) translate(-52vw, 30vh) scaleX(1); }
+    100%    { opacity: 0; transform: rotate(24deg) translate(-52vw, 30vh) scaleX(1); }
+}
+
+
+/* ============================================================
+   11. 千鳥 — A FLOCK CROSSING THE SKY
+   Two nested groups per bird, because the flock's crossing and the
+   bird's own bob are different motions and an SVG element cannot
+   carry two CSS transforms.
+   ============================================================ */
+.jp-chidori{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: .26;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * -0.042 * 1px), 0);
+}
+.jp-chidori path{
+    fill: none;
+    stroke: #1b3b6f;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+}
+/* the crossing: off one edge, across, off the other */
+.jp-flock{ animation: jpCross 74s linear infinite; }
+.jp-flock--b{ animation: jpCross 108s linear infinite -46s; }
+@keyframes jpCross{
+    from{ transform: translateX(-320px); }
+    to  { transform: translateX(1760px); }
+}
+/* the wingbeat. Squashing about the bird's own centre is what makes
+   an arc read as a wing rather than a shrinking line. */
+.jp-wing{
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: jpFlap 1.15s ease-in-out infinite;
+}
+/* Each bird carries its own placement <g>, so the stagger is keyed
+   off the bird rather than the wing -- the wing is an only child. */
+.jp-bird:nth-child(2) .jp-wing{ animation-duration: 1.42s; animation-delay: -.30s; }
+.jp-bird:nth-child(3) .jp-wing{ animation-duration:  .96s; animation-delay: -.70s; }
+.jp-bird:nth-child(4) .jp-wing{ animation-duration: 1.28s; animation-delay: -.15s; }
+.jp-bird:nth-child(5) .jp-wing{ animation-duration: 1.06s; animation-delay: -.55s; }
+@keyframes jpFlap{
+    0%,100%{ transform: scaleY(1); }
+    50%    { transform: scaleY(.34); }
+}
+
+
+/* ============================================================
+   12. 水紋 — RINGS ON THE WATER
+   Three rings on the same 11s cycle, a third of a cycle apart, so
+   there is always one opening and one dying.
+   ============================================================ */
+.jp-ripples{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: .5;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * -0.185 * 1px), 0);
+}
+.jp-ripples circle{
+    fill: none;
+    stroke: #1b3b6f;
+    stroke-width: 1.2;
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: jpRipple 11s cubic-bezier(.2, .7, .35, 1) infinite;
+}
+.jp-ripples circle:nth-child(2){ animation-delay: -3.7s; }
+.jp-ripples circle:nth-child(3){ animation-delay: -7.4s; }
+@keyframes jpRipple{
+    0%  { transform: scale(.12) scaleY(.34); opacity: 0; }
+    12% { opacity: .55; }
+    100%{ transform: scale(1)   scaleY(.34); opacity: 0; }
+}
+
+
+/* ============================================================
+   13. 提灯 — LANTERNS RISING  (night only)
+   Each lantern is three animations stacked on three nested groups:
+   the climb, the sway, and the flame flicker inside the paper.
+   ============================================================ */
+.jp-lanterns{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.jp-lantern-rise{ animation: jpRise 46s linear infinite; }
+.jp-lantern-rise--b{ animation-duration: 62s; animation-delay: -24s; }
+.jp-lantern-rise--c{ animation-duration: 53s; animation-delay: -39s; }
+@keyframes jpRise{
+    0%  { transform: translateY(240px);  opacity: 0; }
+    9%  { opacity: 1; }
+    82% { opacity: 1; }
+    100%{ transform: translateY(-900px); opacity: 0; }
+}
+.jp-lantern-sway{ animation: jpSway 9.5s ease-in-out infinite alternate; }
+.jp-lantern-sway--b{ animation-duration: 13s; animation-delay: -4s; }
+.jp-lantern-sway--c{ animation-duration: 11s; animation-delay: -7s; }
+@keyframes jpSway{
+    from{ transform: translateX(-16px) rotate(-3deg); }
+    to  { transform: translateX( 16px) rotate( 3deg); }
+}
+.jp-lantern-glow{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: jpFlicker 3.1s ease-in-out infinite;
+}
+.jp-lantern-glow--b{ animation-duration: 2.3s; animation-delay: -1.1s; }
+.jp-lantern-glow--c{ animation-duration: 4.4s; animation-delay: -2.6s; }
+@keyframes jpFlicker{
+    0%,100%{ opacity: .78; transform: scale(1); }
+    28%    { opacity: .95; transform: scale(1.05); }
+    61%    { opacity: .64; transform: scale(.97); }
+}
+
+
+/* ============================================================
+   14. 旭光 — SUNRAYS  (day only; night.css fades them out)
+   A slow rotation about the disc. Kept under 5% opacity: the
+   moment you can see individual rays it stops being light and
+   starts being a pinwheel.
+   ============================================================ */
+.jp-sun-rays{
+    position: absolute;
+    top: 9vh;
+    right: 14vw;
+    width:  clamp(104px, 17vmin, 236px);
+    aspect-ratio: 1;
+    pointer-events: none;
+    opacity: .5;
+    transition: opacity 1.1s ease;
+    transform: translate3d(0, calc(var(--jp-sy, 0) * var(--p-sun) * 1px), 0);
+}
+.jp-sun-rays::before{
+    content: "";
+    position: absolute;
+    inset: -190%;
+    border-radius: 50%;
+    background: repeating-conic-gradient(
+        from 0deg,
+        rgba(217,79,61,.075) 0deg 7deg,
+        rgba(217,79,61,0)    7deg 22deg);
+    -webkit-mask-image: radial-gradient(circle, #000 12%, transparent 62%);
+            mask-image: radial-gradient(circle, #000 12%, transparent 62%);
+    animation: jpRays 190s linear infinite;
+}
+@keyframes jpRays{
+    from{ transform: rotate(0deg); }
+    to  { transform: rotate(360deg); }
+}
+
+
+/* ------------------------------------------------------------
+   NEW LAYERS — SMALL VIEWPORTS
+   The flock and the lanterns are the two that read as clutter
+   once the sky is only a few hundred pixels wide.
+   ------------------------------------------------------------ */
+@media (max-width: 700px){
+    .jp-chidori{ opacity: .18; }
+    .jp-flock--b{ display: none; }
+    .jp-lantern-rise--c{ display: none; }
+    .jp-sun-rays{ display: none; }
+    .jp-shooting--b{ display: none; }
+}
+
+/* ------------------------------------------------------------
+   NEW LAYERS — REDUCED MOTION
+   Everything added above is motion-first: a still starfield is
+   worth keeping, a still flock frozen mid-sky is not.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce){
+    .jp-star-a,
+    .jp-star-b,
+    .jp-star-c,
+    .jp-sun-rays::before,
+    .jp-lantern-glow{
+        animation: none !important;
+    }
+    .jp-stars,
+    .jp-chidori,
+    .jp-ripples,
+    .jp-sun-rays{
+        transform: none !important;
+    }
+    .jp-chidori,
+    .jp-ripples,
+    .jp-lanterns,
+    .jp-shooting{
+        display: none !important;
+    }
+}

@@ -502,3 +502,605 @@
     .dr-ripple{ opacity: 0; }
     .dr-unreached{ opacity: .3; }
 }
+
+
+/* ============================================================
+   6. Predictive Network Traffic — 経路
+   The forecast crosses the threshold BEFORE the jam appears, and
+   the reroute happens before the jam clears. That order is the
+   whole claim of the project: the controller moves on the
+   prediction, not on the congestion.
+   14s cycle.
+   ============================================================ */
+
+/* the two candidate routes: exactly one is carrying traffic */
+.nt-route-up{ animation: ntUpLive 14s ease-in-out infinite; }
+@keyframes ntUpLive{
+    0%, 44%  { opacity: 1;   stroke-width: 2.4; }
+    54%, 96% { opacity: .28; stroke-width: 1.6; }
+    100%     { opacity: 1;   stroke-width: 2.4; }
+}
+.nt-route-lo{ animation: ntLoLive 14s ease-in-out infinite; }
+@keyframes ntLoLive{
+    0%, 44%  { opacity: .28; stroke-width: 1.6; }
+    54%, 96% { opacity: 1;   stroke-width: 2.4; }
+    100%     { opacity: .28; stroke-width: 1.6; }
+}
+
+/* the packets. Two nested groups per packet, because the traverse
+   and the on/off gate are different clocks: the run is a short
+   loop, the gate is the story. */
+.nt-run-up{ animation: ntRunUp 2.6s linear infinite; }
+@keyframes ntRunUp{
+    0%  { transform: translate( 46px, 132px); }
+    33% { transform: translate(140px,  64px); }
+    64% { transform: translate(252px,  60px); }
+    100%{ transform: translate(356px, 132px); }
+}
+.nt-run-lo{ animation: ntRunLo 2.6s linear infinite; }
+@keyframes ntRunLo{
+    0%    { transform: translate( 46px, 132px); }
+    32.8% { transform: translate(140px, 198px); }
+    65.6% { transform: translate(256px, 202px); }
+    100%  { transform: translate(356px, 132px); }
+}
+.nt-gate-up{ animation: ntGateUp 14s steps(1, end) infinite; }
+@keyframes ntGateUp{
+    0%, 41%  { opacity: 1; }
+    42%,100% { opacity: 0; }
+}
+.nt-gate-lo{ animation: ntGateLo 14s steps(1, end) infinite; }
+@keyframes ntGateLo{
+    0%, 52%  { opacity: 0; }
+    53%, 96% { opacity: 1; }
+    97%,100% { opacity: 0; }
+}
+/* stagger sits on the traverse, so the packets are spaced along the
+   wire rather than blinking on at different times */
+.nt-packets-up > g:nth-child(2) .nt-run-up{ animation-delay: -.87s; }
+.nt-packets-up > g:nth-child(3) .nt-run-up{ animation-delay: -1.73s; }
+.nt-packets-lo > g:nth-child(2) .nt-run-lo{ animation-delay: -.87s; }
+.nt-packets-lo > g:nth-child(3) .nt-run-lo{ animation-delay: -1.73s; }
+
+/* 予測 — history is already drawn; the dashed forecast is what
+   arrives, and it arrives above the threshold */
+.nt-pred{
+    stroke-dasharray: 4 3;
+    stroke-dashoffset: 46;
+    animation: ntPredict 14s ease-out infinite;
+}
+@keyframes ntPredict{
+    0%, 14% { stroke-dashoffset: 46; opacity: 0; }
+    16%     { opacity: 1; }
+    30%,92% { stroke-dashoffset: 0;  opacity: 1; }
+    100%    { stroke-dashoffset: 46; opacity: 0; }
+}
+.nt-cross{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: ntCross 14s ease-out infinite;
+}
+@keyframes ntCross{
+    0%, 26% { opacity: 0; transform: scale(.2); }
+    31%     { opacity: 1; transform: scale(1.6); }
+    36%,92% { opacity: 1; transform: scale(1); }
+    100%    { opacity: 0; transform: scale(.2); }
+}
+.nt-thresh{ animation: ntThresh 14s ease-in-out infinite; }
+@keyframes ntThresh{
+    0%, 26% { opacity: .4; }
+    32%     { opacity: 1; }
+    46%,100%{ opacity: .4; }
+}
+
+/* 混 — the jam, drawn onto the wire it congests */
+.nt-jam{
+    stroke-dasharray: 360;
+    stroke-dashoffset: 360;
+    animation: ntJam 14s ease-in-out infinite;
+}
+@keyframes ntJam{
+    0%, 30% { stroke-dashoffset: 360; opacity: 0; }
+    32%     { opacity: 1; }
+    46%     { stroke-dashoffset: 0;   opacity: 1; }
+    58%     { stroke-dashoffset: 0;   opacity: 0; }
+    100%    { stroke-dashoffset: 360; opacity: 0; }
+}
+.nt-warn{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: ntWarn 14s ease-in-out infinite;
+}
+@keyframes ntWarn{
+    0%, 33% { opacity: 0; transform: scale(.5); }
+    38%     { opacity: 1; transform: scale(1.12); }
+    42%     { transform: scale(1); }
+    54%     { opacity: 1; }
+    60%,100%{ opacity: 0; transform: scale(.5); }
+}
+
+/* 制 — the controller commits to the other route */
+.nt-decide{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: ntDecide 14s ease-out infinite;
+}
+@keyframes ntDecide{
+    0%, 46% { opacity: 0;  transform: scale(.35); }
+    50%     { opacity: .9; }
+    60%,100%{ opacity: 0;  transform: scale(2.4); }
+}
+.nt-ctrl{ animation: ntCtrl 14s ease-in-out infinite; }
+@keyframes ntCtrl{
+    0%,44%,62%,100%{ opacity: .35; }
+    50%, 56%       { opacity: 1; }
+}
+
+.nt-node{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: ntNode 3.4s ease-in-out infinite;
+}
+.nt-node:nth-child(2){ animation-delay: -.9s; }
+.nt-node:nth-child(3){ animation-delay: -1.8s; }
+.nt-node:nth-child(4){ animation-delay: -2.5s; }
+@keyframes ntNode{
+    0%,100%{ opacity: .9; }
+    50%    { opacity: .55; }
+}
+
+.nt-seal{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: ntSeal 14s cubic-bezier(.3, 1.5, .5, 1) infinite;
+}
+@keyframes ntSeal{
+    0%, 62% { opacity: 0; transform: scale(1.5) rotate(-9deg); }
+    68%,94% { opacity: 1; transform: scale(1)   rotate(0deg); }
+    100%    { opacity: 0; transform: scale(1.5) rotate(-9deg); }
+}
+
+
+/* ============================================================
+   7. Smart City Civic Issue Tracker — 通報
+   Pins land on the ward map, the city votes with 正 tally marks,
+   and the row with the most marks is the one that gets stamped
+   resolved. Priority is earned in the inbox and spent on the map.
+   15s cycle.
+   ============================================================ */
+
+/* the pins drop, and land — the overshoot is what sells the drop */
+.cv-pin{
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: cvDrop 15s cubic-bezier(.3, 1.6, .5, 1) infinite;
+}
+.cv-pin--b{ animation-delay: .7s; }
+.cv-pin--c{ animation-delay: 1.4s; }
+@keyframes cvDrop{
+    0%     { opacity: 0; transform: translateY(-64px) scale(.7); }
+    3%     { opacity: 1; }
+    9%     { transform: translateY(0) scale(1); }
+    11%    { transform: translateY(0) scale(1.14, .88); }   /* squash on impact */
+    14%,94%{ transform: translateY(0) scale(1); opacity: 1; }
+    100%   { opacity: 0; transform: translateY(-64px) scale(.7); }
+}
+
+/* 位置 — the GPS lock closing on the first pin */
+.cv-gps{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: cvLock 15s ease-out infinite;
+}
+@keyframes cvLock{
+    0%, 6% { opacity: 0;  transform: scale(2.6); }
+    9%     { opacity: .9; }
+    20%    { opacity: 0;  transform: scale(1); }
+    100%   { opacity: 0;  transform: scale(1); }
+}
+
+/* 正 — the tally. Five strokes, drawn in stroke order, which is
+   the only way a tally reads as counting rather than as a glyph
+   fading in. */
+.cv-tally path{
+    stroke-dasharray: 22;
+    stroke-dashoffset: 22;
+    animation: cvStroke 15s ease-out infinite;
+}
+.cv-tally path:nth-child(1){ animation-delay: 0s; }
+.cv-tally path:nth-child(2){ animation-delay: .42s; }
+.cv-tally path:nth-child(3){ animation-delay: .84s; }
+.cv-tally path:nth-child(4){ animation-delay: 1.26s; }
+.cv-tally path:nth-child(5){ animation-delay: 1.68s; }
+@keyframes cvStroke{
+    0%, 22% { stroke-dashoffset: 22; }
+    30%, 93%{ stroke-dashoffset: 0; }
+    100%    { stroke-dashoffset: 22; }
+}
+
+/* the priority bar on the row that is winning the vote */
+.cv-bar{
+    transform-box: fill-box;
+    transform-origin: 0 50%;
+    animation: cvBar 15s cubic-bezier(.3, .9, .3, 1) infinite;
+}
+@keyframes cvBar{
+    0%, 24% { transform: scaleX(.08); }
+    48%,93% { transform: scaleX(1); }
+    100%    { transform: scaleX(.08); }
+}
+.cv-row-lead{ animation: cvLead 15s ease-in-out infinite; }
+@keyframes cvLead{
+    0%, 26%  { opacity: 0; }
+    40%, 93% { opacity: 1; }
+    100%     { opacity: 0; }
+}
+
+/* 済 — the stamp. Pressed, not faded: it arrives oversized and
+   rotated and settles, the way a hanko meets paper. */
+.cv-seal{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: cvStamp 15s cubic-bezier(.3, 1.7, .45, 1) infinite;
+}
+@keyframes cvStamp{
+    0%, 58% { opacity: 0; transform: scale(1.9) rotate(-12deg); }
+    64%     { opacity: 1; transform: scale(1)   rotate(-4deg); }
+    93%     { opacity: 1; transform: scale(1)   rotate(-4deg); }
+    100%    { opacity: 0; transform: scale(1.9) rotate(-12deg); }
+}
+
+/* the state change, on the map and in the inbox at the same time */
+.cv-open { animation: cvOpen  15s steps(1, end) infinite; }
+.cv-done { animation: cvDone  15s steps(1, end) infinite; }
+@keyframes cvOpen{
+    0%, 67%  { opacity: 1; }
+    68%,100% { opacity: 0; }
+}
+@keyframes cvDone{
+    0%, 67%  { opacity: 0; }
+    68%, 96% { opacity: 1; }
+    97%,100% { opacity: 0; }
+}
+.cv-resolve-ring{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: cvResolve 15s cubic-bezier(.2, .8, .3, 1) infinite;
+}
+@keyframes cvResolve{
+    0%, 67% { opacity: 0; transform: scale(.2) scaleY(.42); }
+    70%     { opacity: .8; }
+    84%,100%{ opacity: 0; transform: scale(3.4) scaleY(.42); }
+}
+
+/* 川 — the river never stops, whatever the ward is doing */
+.cv-river{ animation: cvFlow 26s linear infinite; }
+@keyframes cvFlow{
+    from{ transform: translateX(0); }
+    to  { transform: translateX(-48px); }   /* exactly one wave period */
+}
+
+
+/* ============================================================
+   8. Auction Price Predictor — 値付け
+   Each attribute the seller supplies narrows the price band. The
+   band is scaled about its own centre, so both ends close inward
+   on the estimate instead of the whole range sliding down.
+   13s cycle.
+   ============================================================ */
+
+/* 420 clears the longest outline on the plate -- the body rect's
+   392-unit perimeter. A dasharray shorter than the path it hides
+   leaves a stub of the shape visible at offset. */
+.ap-phone path,
+.ap-phone rect{
+    stroke-dasharray: 420;
+    stroke-dashoffset: 420;
+    animation: apDraw 13s ease-out infinite;
+}
+@keyframes apDraw{
+    0%      { stroke-dashoffset: 420; }
+    12%, 95%{ stroke-dashoffset: 0; }
+    100%    { stroke-dashoffset: 420; }
+}
+
+/* 電池 — battery health, the one attribute that is measured
+   rather than chosen */
+.ap-batt{
+    stroke-dasharray: 88;
+    stroke-dashoffset: 88;
+    animation: apBatt 13s ease-out infinite;
+}
+@keyframes apBatt{
+    0%, 8%  { stroke-dashoffset: 88; }
+    24%, 95%{ stroke-dashoffset: 15; }   /* stops at 83%, not full */
+    100%    { stroke-dashoffset: 88; }
+}
+
+.ap-fill{
+    transform-box: fill-box;
+    transform-origin: 0 50%;
+    animation: apFill 13s cubic-bezier(.3, .9, .3, 1) infinite;
+}
+.ap-fill:nth-of-type(1){ animation-delay: .00s; }
+.ap-fill:nth-of-type(2){ animation-delay: .55s; }
+.ap-fill:nth-of-type(3){ animation-delay: 1.10s; }
+.ap-fill:nth-of-type(4){ animation-delay: 1.65s; }
+.ap-fill:nth-of-type(5){ animation-delay: 2.20s; }
+@keyframes apFill{
+    0%, 8%  { transform: scaleX(0); }
+    22%, 90%{ transform: scaleX(1); }
+    100%    { transform: scaleX(0); }
+}
+
+/* the band closes in five visible steps, one per attribute, so the
+   narrowing is legibly caused rather than merely animated */
+.ap-band{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: apNarrow 13s cubic-bezier(.35, .05, .2, 1) infinite;
+}
+@keyframes apNarrow{
+    0%, 8%  { transform: scaleY(7.2); opacity: .30; }
+    16%     { transform: scaleY(5.4); }
+    24%     { transform: scaleY(4.0); }
+    32%     { transform: scaleY(2.8); }
+    40%     { transform: scaleY(1.7); }
+    48%, 92%{ transform: scaleY(1);   opacity: .62; }
+    100%    { transform: scaleY(7.2); opacity: .30; }
+}
+.ap-point{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: apPoint 13s ease-out infinite;
+}
+@keyframes apPoint{
+    0%, 44% { opacity: 0; transform: scaleX(.2); }
+    50%, 92%{ opacity: 1; transform: scaleX(1); }
+    100%    { opacity: 0; transform: scaleX(.2); }
+}
+
+/* 木札 — the price tag drops on its cord, then swings down. The
+   swing decays; a tag that keeps swinging reads as a pendulum. */
+.ap-tag-drop{ animation: apDrop 13s cubic-bezier(.35, 1.4, .5, 1) infinite; }
+@keyframes apDrop{
+    0%, 50% { opacity: 0; transform: translateY(-86px); }
+    54%     { opacity: 1; }
+    62%,92% { opacity: 1; transform: translateY(0); }
+    100%    { opacity: 0; transform: translateY(-86px); }
+}
+.ap-tag-swing{
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    animation: apSwing 13s ease-out infinite;
+}
+@keyframes apSwing{
+    0%, 58%{ transform: rotate(0deg); }
+    63%    { transform: rotate(7deg); }
+    68%    { transform: rotate(-4.5deg); }
+    73%    { transform: rotate(2.4deg); }
+    78%    { transform: rotate(-1.1deg); }
+    83%,100%{ transform: rotate(0deg); }
+}
+
+/* 確度 — the confidence ring. It stops short of full, because the
+   model does too. */
+.ap-conf{
+    stroke-dasharray: 94.25;
+    stroke-dashoffset: 94.25;
+    animation: apConf 13s ease-out infinite;
+}
+@keyframes apConf{
+    0%, 64% { stroke-dashoffset: 94.25; }
+    80%, 94%{ stroke-dashoffset: 13.2; }   /* 86% of the ring */
+    100%    { stroke-dashoffset: 94.25; }
+}
+.ap-seal{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: apSeal 13s cubic-bezier(.3, 1.6, .5, 1) infinite;
+}
+@keyframes apSeal{
+    0%, 80% { opacity: 0; transform: scale(1.8) rotate(9deg); }
+    86%,94% { opacity: 1; transform: scale(1)   rotate(3deg); }
+    100%    { opacity: 0; transform: scale(1.8) rotate(9deg); }
+}
+
+
+/* ============================================================
+   9. Student Portal — 学籍
+   One ledger, two roles. The student page fills itself in; then
+   the role flips, a brush corrects a single mark, and the change
+   lands on both pages at once — which is the actual point of a
+   shared record.
+   14s cycle.
+   ============================================================ */
+
+/* The grid stagger is carried by --i on each mark rather than by
+   thirty nth-child rules. It phases each mark's whole 14s cycle,
+   so the stagger is capped at .05s a step: any larger and the last
+   mark would still be arriving as the seal came down. */
+.sp-mark{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: spStamp 14s cubic-bezier(.3, 1.6, .5, 1) infinite;
+    animation-delay: calc(var(--i, 0) * .05s);
+}
+@keyframes spStamp{
+    0%, 6% { opacity: 0; transform: scale(1.8); }
+    12%    { opacity: 1; transform: scale(1); }
+    92%    { opacity: 1; transform: scale(1); }
+    100%   { opacity: 0; transform: scale(1.8); }
+}
+
+.sp-bar{
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: spGrow 14s cubic-bezier(.25, .9, .3, 1) infinite;
+}
+.sp-bar:nth-of-type(2){ animation-delay: .16s; }
+.sp-bar:nth-of-type(3){ animation-delay: .32s; }
+.sp-bar:nth-of-type(4){ animation-delay: .48s; }
+.sp-bar:nth-of-type(5){ animation-delay: .64s; }
+@keyframes spGrow{
+    0%, 14% { transform: scaleY(0); }
+    36%, 92%{ transform: scaleY(1); }
+    100%    { transform: scaleY(0); }
+}
+/* the bar the correction touches keeps growing after the rest stop */
+.sp-bar--fixed{ animation-name: spGrowFixed; }
+@keyframes spGrowFixed{
+    0%, 14% { transform: scaleY(0); }
+    36%, 64%{ transform: scaleY(.72); }
+    72%, 92%{ transform: scaleY(1); }
+    100%    { transform: scaleY(0); }
+}
+
+.sp-avg{
+    stroke-dasharray: 150;
+    stroke-dashoffset: 150;
+    animation: spAvg 14s ease-out infinite;
+}
+@keyframes spAvg{
+    0%, 40% { stroke-dashoffset: 150; opacity: 0; }
+    44%     { opacity: 1; }
+    52%, 92%{ stroke-dashoffset: 0;   opacity: 1; }
+    100%    { stroke-dashoffset: 150; opacity: 0; }
+}
+
+/* 学生 → 教員 — the role switch, and everything it unlocks */
+.sp-knob{ animation: spRole 14s cubic-bezier(.5, 0, .2, 1) infinite; }
+@keyframes spRole{
+    0%, 52% { transform: translateX(0); }
+    58%, 92%{ transform: translateX(50px); }
+    100%    { transform: translateX(0); }
+}
+.sp-role-student{ animation: spRoleA 14s steps(1, end) infinite; }
+.sp-role-faculty{ animation: spRoleB 14s steps(1, end) infinite; }
+@keyframes spRoleA{
+    0%, 55% { opacity: 1; }
+    56%,100%{ opacity: .38; }
+}
+@keyframes spRoleB{
+    0%, 55% { opacity: .38; }
+    56%,100%{ opacity: 1; }
+}
+
+/* 筆 — the correcting brush stroke */
+.sp-brush{
+    stroke-dasharray: 130;
+    stroke-dashoffset: 130;
+    animation: spBrush 14s ease-in-out infinite;
+}
+@keyframes spBrush{
+    0%, 60% { stroke-dashoffset: 130; opacity: 0; }
+    62%     { opacity: .8; }
+    70%     { stroke-dashoffset: 0;   opacity: .8; }
+    78%,100%{ stroke-dashoffset: 0;   opacity: 0; }
+}
+/* the single mark the brush corrects: absent -> present */
+.sp-fix-old{ animation: spFixOld 14s steps(1, end) infinite; }
+.sp-fix-new{ animation: spFixNew 14s steps(1, end) infinite; }
+@keyframes spFixOld{
+    0%, 69% { opacity: 1; }
+    70%,100%{ opacity: 0; }
+}
+@keyframes spFixNew{
+    0%, 69% { opacity: 0; }
+    70%, 94%{ opacity: 1; }
+    95%,100%{ opacity: 0; }
+}
+
+.sp-seal{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: spSeal 14s cubic-bezier(.3, 1.6, .5, 1) infinite;
+}
+@keyframes spSeal{
+    0%, 76% { opacity: 0; transform: scale(1.7) rotate(-10deg); }
+    82%,94% { opacity: 1; transform: scale(1)   rotate(-3deg); }
+    100%    { opacity: 0; transform: scale(1.7) rotate(-10deg); }
+}
+
+/* the pages breathe, so the spread reads as paper rather than a
+   diagram of a book */
+.sp-page{ animation: spBreathe 11s ease-in-out infinite alternate; }
+.sp-page--r{ animation-delay: -5.5s; }
+@keyframes spBreathe{
+    from{ transform: translateY(0); }
+    to  { transform: translateY(-1.6px); }
+}
+
+
+/* ============================================================
+   REDUCED MOTION — 6 to 9
+   Same contract as the block above: stop every loop, then resolve
+   each plate to the single frame that carries the most of what the
+   project actually does. A frozen mid-animation frame explains
+   nothing, so each one is posed deliberately.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+
+    .nt-route-up, .nt-route-lo, .nt-run-up, .nt-run-lo,
+    .nt-gate-up, .nt-gate-lo, .nt-pred, .nt-cross, .nt-thresh,
+    .nt-jam, .nt-warn, .nt-decide, .nt-ctrl, .nt-node, .nt-seal,
+    .cv-pin, .cv-gps, .cv-tally path, .cv-bar, .cv-row-lead,
+    .cv-seal, .cv-open, .cv-done, .cv-resolve-ring, .cv-river,
+    .ap-phone path, .ap-phone rect, .ap-batt, .ap-fill, .ap-band,
+    .ap-point, .ap-tag-drop, .ap-tag-swing, .ap-conf, .ap-seal,
+    .sp-mark, .sp-bar, .sp-avg, .sp-knob, .sp-role-student,
+    .sp-role-faculty, .sp-brush, .sp-fix-old, .sp-fix-new,
+    .sp-seal, .sp-page{
+        animation: none !important;
+    }
+
+    /* 6 — the moment after the reroute: forecast drawn, jam marked
+       on the abandoned route, traffic already on the other one */
+    .nt-pred{ stroke-dashoffset: 0; opacity: 1; }
+    .nt-cross{ opacity: 1; }
+    .nt-jam{ stroke-dashoffset: 0; opacity: 1; }
+    .nt-warn{ opacity: 1; }
+    .nt-route-up{ opacity: .28; stroke-width: 1.6; }
+    .nt-route-lo{ opacity: 1;   stroke-width: 2.4; }
+    .nt-gate-up{ opacity: 0; }
+    .nt-gate-lo{ opacity: 1; }
+    .nt-run-lo{ transform: translate(256px, 202px); }
+    .nt-packets-lo > g:nth-child(2) .nt-run-lo{ transform: translate(140px, 198px); }
+    .nt-packets-lo > g:nth-child(3) .nt-run-lo{ transform: translate(330px, 155px); }
+    .nt-decide{ opacity: 0; }
+    .nt-ctrl{ opacity: 1; }
+    .nt-seal{ opacity: 1; transform: none; }
+
+    /* 7 — pins placed, five vouches counted, top row resolved */
+    .cv-pin{ opacity: 1; transform: none; }
+    .cv-gps{ opacity: 0; }
+    .cv-tally path{ stroke-dashoffset: 0; }
+    .cv-bar{ transform: scaleX(1); }
+    .cv-row-lead{ opacity: 1; }
+    .cv-seal{ opacity: 1; transform: rotate(-4deg); }
+    .cv-open{ opacity: 0; }
+    .cv-done{ opacity: 1; }
+    .cv-resolve-ring{ opacity: 0; }
+
+    /* 8 — every attribute supplied, band closed, price named */
+    .ap-phone path, .ap-phone rect{ stroke-dashoffset: 0; }
+    .ap-batt{ stroke-dashoffset: 15; }
+    .ap-fill{ transform: scaleX(1); }
+    .ap-band{ transform: scaleY(1); opacity: .62; }
+    .ap-point{ opacity: 1; transform: none; }
+    .ap-tag-drop{ opacity: 1; transform: none; }
+    .ap-conf{ stroke-dashoffset: 13.2; }
+    .ap-seal{ opacity: 1; transform: rotate(3deg); }
+
+    /* 9 — the faculty view, after the correction has been signed */
+    .sp-mark{ opacity: 1; transform: none; }
+    .sp-bar{ transform: scaleY(1); }
+    .sp-avg{ stroke-dashoffset: 0; opacity: 1; }
+    .sp-knob{ transform: translateX(50px); }
+    .sp-role-student{ opacity: .38; }
+    .sp-role-faculty{ opacity: 1; }
+    .sp-brush{ opacity: 0; }
+    .sp-fix-old{ opacity: 0; }
+    .sp-fix-new{ opacity: 1; }
+    .sp-seal{ opacity: 1; transform: rotate(-3deg); }
+}
