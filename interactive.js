@@ -47,11 +47,9 @@
     var THEME_KEY = 'dj-theme';
     var themeBtn = $('#themeToggle');
 
-    function storedTheme() {
-        try { return window.localStorage.getItem(THEME_KEY); }
-        catch (e) { return null; }          /* private mode / blocked storage */
-    }
-
+    /* Only the setter lives here. Reading the saved theme is the inline
+       resolver's job in <head> -- it has to happen before first paint,
+       which is well before this file runs. */
     function storeTheme(value) {
         try { window.localStorage.setItem(THEME_KEY, value); } catch (e) {}
     }
@@ -63,11 +61,12 @@
     function syncThemeButton() {
         if (!themeBtn) return;
         var dark = currentTheme() === 'dark';
+        var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
         themeBtn.setAttribute('aria-pressed', dark ? 'true' : 'false');
-        themeBtn.setAttribute(
-            'aria-label',
-            dark ? 'Switch to day mode' : 'Switch to night mode'
-        );
+        themeBtn.setAttribute('aria-label', label);
+        /* the markup ships a tooltip too; leaving it stale would have it
+           contradict the label the moment the theme flips */
+        themeBtn.setAttribute('title', label);
     }
 
     function applyTheme(next, animate) {
@@ -112,18 +111,11 @@
         themeBtn.addEventListener('click', toggleTheme);
     }
 
-    /* Follow the OS only while the visitor has never chosen for
-       themselves. Once they have, their choice outranks it. */
-    var schemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    function onSchemeChange() {
-        if (storedTheme()) return;
-        applyTheme(schemeQuery.matches ? 'dark' : 'light', true);
-    }
-    if (typeof schemeQuery.addEventListener === 'function') {
-        schemeQuery.addEventListener('change', onSchemeChange);
-    } else if (typeof schemeQuery.addListener === 'function') {
-        schemeQuery.addListener(onSchemeChange);
-    }
+    /* No prefers-color-scheme listener here, deliberately.
+       The inline resolver in <head> does not consult the OS -- this is a
+       light-mode site and dark is opt-in. A listener that flipped an
+       unchosen visitor to dark mid-session would contradict the very
+       thing that resolver decided one paint earlier. */
 
     /* Keyboard shortcut, guarded so it never fires while the
        visitor is typing in the contact form. */
@@ -173,8 +165,12 @@
     var countEl = $('#filterCount');
     var LEAVE_MS = 340;
 
-    function countLabel(n) {
-        return n + (n === 1 ? ' work' : ' works');
+    /* Matches the wording the markup ships with, so the line does not
+       change shape the first time a chip is clicked. */
+    function countLabel(n, filter) {
+        if (n === 0) return 'No projects in this category';
+        if (filter === 'all') return 'Showing all ' + n + ' projects';
+        return 'Showing ' + n + (n === 1 ? ' project' : ' projects');
     }
 
     function matches(card, filter) {
@@ -212,7 +208,7 @@
             }
         });
 
-        if (countEl) countEl.textContent = countLabel(shown);
+        if (countEl) countEl.textContent = countLabel(shown, filter);
     }
 
     if (chips.length && cards.length) {
@@ -221,13 +217,16 @@
                 chips.forEach(function (c) {
                     var on = c === chip;
                     c.classList.toggle('is-active', on);
-                    c.setAttribute('aria-selected', on ? 'true' : 'false');
+                    /* aria-pressed, not aria-selected: these are toggle
+                       buttons, and aria-selected is only meaningful inside
+                       a listbox/tablist/grid, which this is not. */
+                    c.setAttribute('aria-pressed', on ? 'true' : 'false');
                 });
                 applyFilter(chip.getAttribute('data-filter') || 'all');
             });
         });
 
-        if (countEl) countEl.textContent = countLabel(cards.length);
+        if (countEl) countEl.textContent = countLabel(cards.length, 'all');
     }
 
 
@@ -339,16 +338,16 @@
        7. おみくじ — THE FORTUNE SLIP
        ======================================================== */
     var FORTUNES = [
-        { rank: '大吉', en: 'Great blessing',  text: 'The build is green, the logs are quiet, and the bug you were dreading was a typo. Ship it.' },
-        { rank: '大吉', en: 'Great blessing',  text: 'Your model generalises. Not because you got lucky — because you held out a proper test set.' },
-        { rank: '中吉', en: 'Middle blessing', text: 'A stubborn bug yields today, to the person who reads the stack trace all the way to the bottom.' },
-        { rank: '中吉', en: 'Middle blessing', text: 'Someone opens your repository and finds a README that actually explains it. Fortune favours you both.' },
-        { rank: '小吉', en: 'Small blessing',  text: 'Merge conflicts ahead, but small ones. Commit early, and often, and the mountain stays a hill.' },
-        { rank: '吉',   en: 'Blessing',        text: 'The feature works on the first run. Be suspicious, then write the test anyway.' },
-        { rank: '吉',   en: 'Blessing',        text: 'Today is a good day to delete code. What you remove, you never have to maintain.' },
-        { rank: '末吉', en: 'Future blessing', text: 'Progress is slow this week. It is not stalled — it is compiling. Keep going.' },
-        { rank: '半吉', en: 'Half blessing',   text: 'Your accuracy is high and your recall is not. Look again at what you are actually optimising.' },
-        { rank: '凶',   en: 'Misfortune',      text: 'You are about to debug production on a Friday. The stars advise: revert first, understand after.' }
+        { rank: 'Excellent', text: 'The build is green, the logs are quiet, and the bug you were dreading was a typo. Ship it.' },
+        { rank: 'Excellent', text: 'Your model generalises. Not because you got lucky — because you held out a proper test set.' },
+        { rank: 'Very good', text: 'A stubborn bug yields today, to the person who reads the stack trace all the way to the bottom.' },
+        { rank: 'Very good', text: 'Someone opens your repository and finds a README that actually explains it. Fortune favours you both.' },
+        { rank: 'Good',      text: 'Merge conflicts ahead, but small ones. Commit early, and often, and the mountain stays a hill.' },
+        { rank: 'Good',      text: 'The feature works on the first run. Be suspicious, then write the test anyway.' },
+        { rank: 'Good',      text: 'Today is a good day to delete code. What you remove, you never have to maintain.' },
+        { rank: 'Promising', text: 'Progress is slow this week. It is not stalled — it is compiling. Keep going.' },
+        { rank: 'Mixed',     text: 'Your accuracy is high and your recall is not. Look again at what you are actually optimising.' },
+        { rank: 'Unlucky',   text: 'You are about to debug production on a Friday. The stars advise: revert first, understand after.' }
     ];
 
     var ensoBtn = $('#ensoDraw');
@@ -356,7 +355,6 @@
 
     if (ensoBtn && slipWrap) {
         var slipRank = $('.omikuji-rank', slipWrap);
-        var slipRankEn = $('.omikuji-rank-en', slipWrap);
         var slipText = $('.omikuji-text', slipWrap);
         var slipClose = $('.omikuji-close', slipWrap);
         var imageWrap = ensoBtn.parentNode;
@@ -377,7 +375,6 @@
         function openSlip() {
             var f = pickFortune();
             if (slipRank) slipRank.textContent = f.rank;
-            if (slipRankEn) slipRankEn.textContent = f.en;
             if (slipText) slipText.textContent = f.text;
 
             returnFocus = document.activeElement;

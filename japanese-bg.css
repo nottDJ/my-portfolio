@@ -212,9 +212,12 @@
     top: 14vh;
     left: 2.2vw;
     writing-mode: vertical-rl;
-    font-family: "Shippori Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
-    font-size: clamp(13px, 1.15vw, 19px);
-    letter-spacing: .42em;
+    font-size: clamp(11px, .9vw, 14px);
+    font-weight: 500;
+    /* .42em was tuned for kanji; Latin needs about a third of that
+       before the column stops reading as a word */
+    letter-spacing: .26em;
+    text-transform: uppercase;
     color: var(--ai);
     opacity: .13;
     white-space: nowrap;

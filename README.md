@@ -1,12 +1,19 @@
 # Portfolio — Divij K P
 
-A single-page personal portfolio with a hand-drawn Japanese (和) theme: a layered
-ukiyo-e backdrop that parallaxes as you scroll, and a project card for each repo
-with its own hand-authored SVG illustration.
+A single-page personal portfolio: a layered ukiyo-e backdrop that parallaxes as you
+scroll, and a project card for each repo with its own hand-authored SVG
+illustration.
 
-It has a day skin and a night skin (日 / 月), and the backdrop is a different
-scene in each: sunrise, drifting kumo and falling sakura by day; moon, stars,
-rising lanterns and fireflies after dark.
+The *aesthetic* is Japanese — the woodblock backdrop, the seals, the ink rules —
+but the *lettering is not*. All visible copy is English; the Japanese naming
+survives only in the source comments and CSS class names, where it still describes
+what the art actually is. If you are adding to the page, keep visible text in
+English and match the surrounding letter-spacing: the values in this codebase were
+originally tuned for kanji, and Latin at the same tracking falls apart.
+
+It has a light skin and a dark skin, and the backdrop is a different scene in each:
+sunrise, drifting kumo and falling sakura by day; moon, stars, rising lanterns and
+fireflies after dark.
 
 **Live:** https://nottdj.github.io/my-portfolio/
 
@@ -189,10 +196,12 @@ Everything lives in `night.css`, keyed off `data-theme="dark"` on `<html>`.
 
 The theme is resolved by a **small inline script in `<head>`**, above the body. It
 has to be inline and it has to be there: deferred into `interactive.js` it would run
-after the first paint, and a returning night-mode visitor would get a full frame of
-the day palette in the face. A saved choice wins; failing that, the OS decides. The
-site follows `prefers-color-scheme` only until the visitor picks for themselves —
-after that, their choice outranks it.
+after the first paint, and a returning dark-mode visitor would get a full frame of
+the light palette in the face.
+
+**This is a light-mode site.** `prefers-color-scheme` is deliberately not consulted
+anywhere — not in the resolver, and not by a listener afterwards. Everyone lands on
+light, and only a choice made here and saved to `localStorage` produces dark.
 
 Two rules the file follows:
 
@@ -266,12 +275,12 @@ All in `interactive.css` + `interactive.js`. No libraries. Every control is a re
 
 | | What it does |
 | --- | --- |
-| **日 / 月 toggle** | In the nav. One button, two kanji, rotated through on a single axis in 3D. Persists to `localStorage`; **`t`** toggles it from the keyboard (guarded, so it never fires while you are typing in the contact form) |
+| **Theme toggle** | In the nav. One button, a sun and a moon icon rotated through on a single axis in 3D. Persists to `localStorage`; **`t`** toggles it from the keyboard (guarded, so it never fires while you are typing in the contact form) |
 | **Reading rail** | Scroll progress across the top, drawn as a brush stroke — opaque at the tail, thinning toward the head |
-| **Project filter** | 全 / ML & AI / Vision & 3D / Full-stack / Data, with a live count. Cards fade out *before* they leave the flow, so the grid never reflows underneath a card still on screen |
+| **Project filter** | All / AI & ML / Computer Vision / Data / Backend / Full Stack / 3D, with a live count. Cards fade out *before* they leave the flow, so the grid never reflows underneath a card still on screen |
 | **Card tilt** | The plate turns under the pointer with a highlight tracking across it, so it reads as a surface catching light. Capped at 7° — past that it stops being a print and becomes a 3D object. Fine pointers only: on a touch screen a tap would set the value and it would stick |
 | **水紋 click ripple** | Two offset rings wherever you click, squashed on Y so they read as rings on water seen at an angle. Suppressed over form fields — a ring blooming out of a text caret reads as an error |
-| **おみくじ** | The ensō ring beside the portrait is a fortune box. Click it, the box shakes, and a slip unrolls with one of ten developer fortunes. Never the same slip twice running — drawing 大吉 twice in a row reads as broken randomness even when it isn't |
+| **Fortune slip** | The ink ring beside the portrait is a fortune box. Click it, the box shakes, and a slip unrolls with one of ten developer fortunes. Never the same slip twice running — drawing "Excellent" twice in a row reads as broken randomness even when it isn't |
 | **Portrait tilt** | The hero portrait tips toward a fine pointer with a highlight tracking across it — the same construction as the card tilt above, capped at 5° instead of 7° since a face reads as "wrong" at an angle a flat illustration does not |
 | **Stat counters** | The About figures count up when they scroll into view, in tabular figures so the number doesn't jitter sideways while it runs |
 | **上 return-to-top** | Appears after one viewport of scroll |
@@ -321,12 +330,12 @@ Add an `<article>` to `.project-container` in `index.html`. The grid is
 <article class="project-box">
   <div class="project-art">
     <svg viewBox="0 0 400 260" role="img" aria-label="…" focusable="false">…</svg>
-    <span class="plate-kanji" aria-hidden="true">漢字</span>
-    <span class="plate-no" aria-hidden="true">陸</span>
+    <span class="plate-label">Field &middot; Field</span>
+    <span class="plate-no" aria-hidden="true">10</span>
   </div>
   <div class="project-body">
     <h3>Project name</h3>
-    <p class="project-jp" aria-hidden="true">日本語の副題</p>
+    <p class="project-tagline">Input &rarr; what comes out the other end</p>
     <p>What it does and how it actually works.</p>
     <div class="project-tags"><span>Python</span></div>
     <div class="project-links">
@@ -345,13 +354,16 @@ id silently breaks whichever element references it second. The existing cards us
 the prefixes `a3d` `fr` `fn` `ss` `dr` `nt` `cv` `ap` `sp`.
 
 Give the card a `data-tags` attribute too, or the project filter will only ever show
-it under **All**. The recognised values are `ml`, `vision`, `fullstack` and `data`;
-a card may carry several, space-separated.
+it under **All**. The recognised values are `ml`, `cv`, `data`, `backend`,
+`fullstack` and `3d` — they have to match the `data-filter` on the chips in
+`.project-filters`. A card may carry several, space-separated.
 
 ### Change the hero text
 
 The rotating phrases are the `strings` array in `main.js`. Keep them short — the
-hero headline is `clamp(30px, 4.2vw, 48px)` and long phrases wrap awkwardly.
+line they land in (`.featured-name`) is `clamp(22px, 2.7vw, 32px)` and long phrases
+wrap awkwardly. The name above it is the `h1` (`.featured-title`); the typed line
+sits a level below it deliberately, so the two do not compete.
 
 ---
 

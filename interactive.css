@@ -153,12 +153,6 @@ html[data-theme="dark"] .theme-toggle-face{ transform: rotateX(180deg); }
     transition: color .28s ease, border-color .28s ease,
                 background .28s ease, transform .28s ease;
 }
-.filter-chip .jp{
-    font-family: var(--font-jp);
-    font-size: 12px;
-    letter-spacing: .1em;
-    opacity: .7;
-}
 .filter-chip:hover{
     color: var(--text-color-second);
     border-color: var(--ai);
@@ -173,15 +167,16 @@ html[data-theme="dark"] .theme-toggle-face{ transform: rotateX(180deg); }
     background: var(--ai);
     border-color: var(--ai);
 }
-.filter-chip.is-active .jp{ opacity: .85; }
-
+/* The count is its own line under the chips now, not a flex item
+   sitting at the end of the row. */
 .filter-count{
-    font-family: var(--font-jp);
-    font-size: 12px;
-    letter-spacing: .22em;
+    width: 100%;
+    text-align: center;
+    font-size: 12.5px;
+    letter-spacing: .04em;
     color: var(--text-muted);
-    opacity: .8;
-    margin-left: 6px;
+    opacity: .85;
+    margin: -22px 0 32px;
 }
 
 /* Filtered-out cards leave first, then stop taking up space. JS
@@ -291,8 +286,8 @@ html[data-theme="dark"] .theme-toggle-face{ transform: rotateX(180deg); }
     width: 46px;
     height: 46px;
     padding: 0;
-    font-family: var(--font-jp);
-    font-size: 17px;
+    font-size: 22px;
+    line-height: 1;
     color: var(--ai);
     background: var(--panel-solid);
     border: 1px solid var(--hairline);
@@ -424,27 +419,23 @@ html[data-theme="dark"] .theme-toggle-face{ transform: rotateX(180deg); }
 
 .omikuji-label{
     display: block;
-    font-family: var(--font-jp);
     font-size: 10.5px;
-    letter-spacing: .5em;
+    font-weight: 600;
+    letter-spacing: .22em;
+    text-transform: uppercase;
     color: #8d8375;
     margin-bottom: 12px;
 }
+/* The rank is a word now rather than one or two kanji, so it cannot
+   carry 46px — and it absorbs the bottom margin the removed English
+   gloss used to provide. */
 .omikuji-rank{
     display: block;
     font-family: var(--font-jp);
-    font-size: 46px;
+    font-size: 30px;
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.15;
     color: #b23a2b;
-    margin-bottom: 4px;
-}
-.omikuji-rank-en{
-    display: block;
-    font-size: 11px;
-    letter-spacing: .28em;
-    text-transform: uppercase;
-    color: #8d8375;
     margin-bottom: 18px;
 }
 .omikuji-text{

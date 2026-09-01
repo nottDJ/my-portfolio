@@ -11,6 +11,11 @@
     /* ----- NAVIGATION BAR ----- */
     var navMenu = document.getElementById('myNavMenu');
     var navToggle = document.getElementById('navToggle');
+    /* The toggle is a <button> now and the glyph is a separate <i>
+       inside it. The icon class has to be swapped on that child --
+       writing it onto the button would wipe .nav-menu-btn and take
+       the button's own layout with it. */
+    var navToggleIcon = document.getElementById('navToggleIcon');
 
     function setMenu(open) {
         if (!navMenu) return;
@@ -18,7 +23,9 @@
         if (navToggle) {
             navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
             navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-            navToggle.className = open ? 'uil uil-times' : 'uil uil-bars';
+        }
+        if (navToggleIcon) {
+            navToggleIcon.className = open ? 'uil uil-times' : 'uil uil-bars';
         }
     }
 
@@ -29,15 +36,10 @@
     /* kept global: the markup has historically called this inline */
     window.myMenuFunction = toggleMenu;
 
-    if (navToggle) {
-        navToggle.addEventListener('click', toggleMenu);
-        navToggle.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggleMenu();
-            }
-        });
-    }
+    /* No keydown handler: this is a real <button>, so Enter and Space
+       already produce a click. Handling them again would mean either a
+       double toggle or a preventDefault dance to suppress the native one. */
+    if (navToggle) navToggle.addEventListener('click', toggleMenu);
 
     /* Tapping a link on mobile should close the overlay, otherwise it
        covers the section that was just jumped to. */

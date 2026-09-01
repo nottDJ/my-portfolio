@@ -137,10 +137,13 @@
     z-index: 2;
     display: grid;
     place-items: center;
-    width: 34px;
-    height: 34px;
-    font-family: var(--font-jp);
-    font-size: 19px;
+    /* a monogram, not a single glyph: it needs width to sit in, and a
+       fixed 34px square clipped the outer letters */
+    height: 26px;
+    padding-inline: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
     line-height: 1;
     color: #f6f1e6;
     background: var(--shu);

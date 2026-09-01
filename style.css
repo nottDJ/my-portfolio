@@ -76,6 +76,32 @@ body{
     background: rgba(217, 79, 61, .22);
 }
 
+/* ----- SKIP LINK -----
+   Off-screen rather than display:none, so it stays in the tab order
+   and is announced; it flies in only once it actually has focus. */
+.skip-link{
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 200;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-white);
+    background: var(--ai);
+    border-radius: 3px;
+    box-shadow: 0 10px 26px -12px rgba(0, 0, 0, .5);
+    transform: translateY(-160%);
+    transition: transform .25s ease;
+}
+.skip-link:focus-visible{
+    transform: translateY(0);
+    outline: 2px solid var(--shu);
+    outline-offset: 2px;
+}
+
+
 /* ---##-- REUSABLE --##--- */
 
 /* ----- BUTTONS ----- */
@@ -164,10 +190,11 @@ nav{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
-    font-family: var(--font-jp);
-    font-size: 14px;
+    height: 22px;
+    padding-inline: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
     line-height: 1;
     color: var(--color-white);
     background: var(--shu);
@@ -196,28 +223,40 @@ nav{
     transition: color .3s ease;
 }
 /* the kanji gloss above each label */
-.nav-link .jp{
-    font-family: var(--font-jp);
+.nav-link .nav-index{
     font-size: 10px;
-    letter-spacing: .22em;
+    font-weight: 600;
+    letter-spacing: .16em;
+    font-variant-numeric: tabular-nums;
     color: var(--text-muted);
-    opacity: .75;
+    opacity: .7;
     transition: color .3s ease, opacity .3s ease;
 }
 .nav-link:hover{ color: var(--ai); }
-.nav-link:hover .jp{ color: var(--shu); opacity: 1; }
-.nav-menu-btn{ display: none; }
-.nav-menu-btn i{
-    font-size: 28px;
+.nav-link:hover .nav-index{ color: var(--shu); opacity: 1; }
+/* now a real <button>, so it needs the button chrome stripped */
+.nav-menu-btn{
+    display: none;
+    padding: 0;
+    background: transparent;
+    border: 0;
     cursor: pointer;
     color: var(--text-color-second);
+}
+.nav-menu-btn i{
+    font-size: 28px;
+    line-height: 1;
+}
+.nav-menu-btn:focus-visible{
+    outline: 2px solid var(--ai);
+    outline-offset: 4px;
 }
 .active-link{
     position: relative;
     color: var(--ai);
     font-weight: 600;
 }
-.active-link .jp{ color: var(--shu); opacity: 1; }
+.active-link .nav-index{ color: var(--shu); opacity: 1; }
 .active-link::after{
     content: '';
     position: absolute;
@@ -260,11 +299,14 @@ nav{
     top: 50%;
     transform: translateY(-50%);
     writing-mode: vertical-rl;
-    font-family: var(--font-jp);
-    font-size: 13px;
-    letter-spacing: .5em;
+    font-size: 11px;
+    font-weight: 500;
+    /* .5em was set for kanji, which are square and carry that much air.
+       Latin at the same tracking reads as a column of loose letters. */
+    letter-spacing: .28em;
+    text-transform: uppercase;
     color: var(--ai);
-    opacity: .38;
+    opacity: .34;
     white-space: nowrap;
 }
 .featured-text-card{
@@ -273,14 +315,15 @@ nav{
     gap: 12px;
     margin-bottom: 6px;
 }
-.featured-text-card span{
-    font-family: var(--font-jp);
+.featured-text-card .badge{
     background: transparent;
     color: var(--shu);
     border: 1px solid rgba(217, 79, 61, .45);
-    padding: 5px 14px;
-    font-size: 12px;
-    letter-spacing: .3em;
+    padding: 5px 13px;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
     border-radius: 2px;
 }
 .featured-text-card .rule{
@@ -289,13 +332,31 @@ nav{
     max-width: 90px;
     background: linear-gradient(90deg, var(--hairline), transparent);
 }
+/* The name is the h1 and owns the top of the hierarchy. */
+.featured-title{
+    font-family: var(--font-jp);
+    font-size: clamp(38px, 5.2vw, 62px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -.005em;
+    color: var(--text-color-second);
+    margin-block: 14px 6px;
+}
+.featured-role{
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text-muted);
+    margin-bottom: 22px;
+}
+/* "I build <typed>" now sits UNDER the name, so it steps down a level.
+   At the old 48px it competed with the h1 for the same job. */
 .featured-name{
     font-family: var(--font-jp);
-    font-size: clamp(30px, 4.2vw, 48px);
+    font-size: clamp(22px, 2.7vw, 32px);
     font-weight: 600;
-    line-height: 1.25;
+    line-height: 1.3;
     color: var(--text-color-second);
-    margin-block: 18px 6px;
+    margin-bottom: 6px;
 }
 .typedText{
     text-transform: capitalize;
@@ -303,12 +364,13 @@ nav{
     border-bottom: 2px solid rgba(217, 79, 61, .5);
 }
 .featured-sub{
-    font-family: var(--font-jp);
-    font-size: 14px;
-    letter-spacing: .34em;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .13em;
+    text-transform: uppercase;
     color: var(--text-muted);
-    opacity: .8;
-    margin-bottom: 18px;
+    opacity: .85;
+    margin-bottom: 20px;
 }
 .featured-text-info{
     font-size: 15.5px;
@@ -446,16 +508,17 @@ nav{
     text-align: center;
     margin-bottom: 4em;
 }
-.top-header .kanji{
+.top-header .eyebrow{
     display: block;
-    font-family: var(--font-jp);
-    font-size: 13px;
-    letter-spacing: .55em;
-    text-indent: .55em;          /* re-centre against the trailing space */
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .22em;
+    text-indent: .22em;          /* re-centre against the trailing space */
+    text-transform: uppercase;
     color: var(--shu);
     margin-bottom: 10px;
 }
-.top-header h1{
+.top-header h2{
     position: relative;
     display: inline-block;
     font-family: var(--font-jp);
@@ -466,7 +529,7 @@ nav{
     padding-bottom: 16px;
     margin-bottom: 12px;
 }
-.top-header h1::after{
+.top-header h2::after{
     content: '';
     position: absolute;
     left: 50%;
@@ -577,11 +640,12 @@ h3{
     margin-bottom: 14px;
 }
 .skills-header h3{ margin-bottom: 0; }
-.skills-header .jp{
-    font-family: var(--font-jp);
-    font-size: 11px;
-    letter-spacing: .28em;
-    color: var(--shu);
+/* the kanji that used to close this row is now a hairline that runs
+   out to the edge of the panel instead */
+.skills-header .skills-rule{
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--hairline), transparent);
 }
 .skills-list{
     display: flex;
@@ -602,6 +666,146 @@ h3{
     color: var(--color-white);
     border-color: var(--ai);
 }
+
+/* ============================================================
+   EXPERIENCE — the timeline
+   ------------------------------------------------------------
+   An <ol> read as a hanging scroll: one ink line down the left,
+   a node per role. The line is drawn on the list rather than per
+   item, so it stays unbroken through the gaps.
+   ============================================================ */
+.timeline{
+    position: relative;
+    list-style: none;
+    /* capped and centred: at the full wrapper width the bullets run to
+       about 130 characters a line, well past a comfortable measure */
+    max-width: 880px;
+    margin-inline: auto;
+    padding: 0 0 0 30px;
+}
+.timeline::before{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: linear-gradient(180deg,
+        transparent, var(--hairline) 8%, var(--hairline) 92%, transparent);
+}
+.timeline-item{
+    position: relative;
+    padding-bottom: 40px;
+}
+.timeline-item:last-child{ padding-bottom: 0; }
+
+/* the node. Ringed rather than solid, so it reads as a station on
+   the line instead of a bullet sitting on top of it. */
+.timeline-item::before{
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: 6px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--body-color);
+    border: 2px solid var(--shu);
+    box-shadow: 0 0 0 3px var(--body-color);
+}
+
+.timeline-head{ margin-bottom: 14px; }
+.timeline-head h3{
+    font-size: 18.5px;
+    margin-bottom: 4px;
+}
+.timeline-org{
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ai);
+    margin-bottom: 6px;
+}
+.timeline-meta{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+/* a hairline tick between the place and the dates */
+.timeline-meta span + span{ position: relative; }
+.timeline-meta span + span::before{
+    content: '';
+    position: absolute;
+    left: -9px;
+    top: 50%;
+    width: 1px;
+    height: 11px;
+    transform: translateY(-50%);
+    background: var(--hairline);
+}
+
+.timeline-points{
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+}
+.timeline-points li{
+    position: relative;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--text-muted);
+    padding-left: 18px;
+    margin-bottom: 10px;
+}
+.timeline-points li::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: .68em;
+    width: 6px;
+    height: 1px;
+    background: var(--shu);
+    opacity: .8;
+}
+.timeline-points li:last-child{ margin-bottom: 0; }
+
+/* ----- COMPETITIONS ----- */
+.awards{
+    max-width: 880px;
+    margin: 46px auto 0;
+    padding-top: 30px;
+    border-top: 1px dashed var(--hairline);
+}
+.awards h3{ margin-bottom: 18px; }
+.awards-list{
+    list-style: none;
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+}
+.awards-list li{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 16px;
+    border-left: 2px solid var(--kin);
+}
+.awards-list strong{
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-color-second);
+}
+.awards-list span{
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text-muted);
+}
+
 
 /* ----- PROJECTS ----- */
 .project-container{
@@ -640,16 +844,17 @@ h3{
     width: 100%;
     height: 100%;
 }
-/* the project's kanji, stamped into the top-left of the plate */
-.project-art .plate-kanji{
+/* the project's field, stamped into the top-left of the plate */
+.project-art .plate-label{
     position: absolute;
     top: 12px;
     left: 14px;
-    font-family: var(--font-jp);
-    font-size: 15px;
-    letter-spacing: .28em;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
     color: var(--ai);
-    opacity: .5;
+    opacity: .6;
     pointer-events: none;
 }
 /* index numeral, stamped into the top-right */
@@ -657,9 +862,10 @@ h3{
     position: absolute;
     top: 12px;
     right: 14px;
-    font-family: var(--font-jp);
-    font-size: 12px;
-    letter-spacing: .16em;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    font-variant-numeric: tabular-nums;
     color: var(--shu);
     opacity: .75;
     pointer-events: none;
@@ -675,10 +881,10 @@ h3{
     font-size: 18px;
     margin-bottom: 4px;
 }
-.project-box .project-jp{
-    font-family: var(--font-jp);
-    font-size: 11.5px;
-    letter-spacing: .28em;
+.project-box .project-tagline{
+    font-size: 12.5px;
+    line-height: 1.5;
+    letter-spacing: .01em;
     color: var(--shu);
     margin-bottom: 12px;
 }
@@ -796,6 +1002,16 @@ h3{
     opacity: .8;
 }
 
+.contact-heading{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 21px;
+    margin-bottom: 22px;
+}
+.contact-heading i{ font-size: 19px; color: var(--shu); }
+
+
 /* ----- CONTACT FORM ----- */
 .form-control{
     display: flex;
@@ -808,8 +1024,26 @@ h3{
     gap: 12px;
     width: 100%;
 }
+/* Each control now sits in a .field with its own <label>, so the
+   halving happens on the wrapper and the input fills it. */
+.field{
+    flex: 1 1 0;
+    min-width: 0;
+}
+.field-label{
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+}
+.form-control .field + .field{ margin-top: 16px; }
+.form-inputs .field + .field{ margin-top: 0; }
+
 .input-field{
-    width: 50%;
+    width: 100%;
     height: 54px;
     font-size: 15px;
     color: var(--text-color-second);
@@ -874,13 +1108,13 @@ footer{
     letter-spacing: .1em;
     color: var(--ai);
 }
-.top-footer .jp{
+.top-footer .footer-tag{
     display: block;
-    font-size: 11px;
-    letter-spacing: .5em;
-    text-indent: .5em;
+    font-size: 12px;
+    letter-spacing: .06em;
     color: var(--shu);
-    margin-top: 6px;
+    opacity: .9;
+    margin-top: 8px;
 }
 .middle-footer .footer-menu{
     display: flex;
@@ -944,7 +1178,7 @@ footer{
     }
     .nav_menu_list{ flex-direction: column; gap: 30px; }
     .nav-link{ font-size: 18px; }
-    .nav-link .jp{ font-size: 11px; }
+    .nav-link .nav-index{ font-size: 11px; }
     .nav-menu-btn{
         display: flex;
         align-items: center;
