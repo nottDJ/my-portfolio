@@ -88,7 +88,8 @@ paths, that was a bug in an earlier version.
 | `night.css` | The night skin — palette tokens, the surfaces that hard-code a light value, and the night backdrop |
 | `interactive.css` | Theme toggle, reading rail, project filter, card tilt, click ripple, omikuji, return-to-top |
 | `interactive.js` | The behaviour behind all of the above |
-| `main.js` | Nav, typed hero text, scroll reveal, active-section highlighting |
+| `main.js` | Nav, typed hero text, active-section highlighting |
+| `reveal.css` | The scroll reveal: the hidden pre-state, the rise, the hero's staggered order |
 | `resume.pdf` | Served by both "Download CV" buttons |
 | `portrait.css` | The hero portrait: the round window, the breathing zoom, the light sheen, the tilt |
 | `assets/images/` | `pfp.webp` (the portrait the page loads), `pfp.png` (same image, alpha PNG fallback for anything off-site), `dj.png` (favicon) |
@@ -382,13 +383,19 @@ sits a level below it deliberately, so the two do not compete.
 - The omikuji is a `role="dialog"` with `aria-modal`, closes on Escape or a click on
   the backdrop, and returns focus to the ensō it was opened from.
 - Scroll listeners are all `{ passive: true }`.
-- Left/right scroll reveals are gated to ≥ 901 px. Below that the layout is a single
-  stacked column, where ScrollReveal's pre-reveal `translateX` used to push content
-  60 px past the viewport edge.
+- The scroll reveal is inert under `prefers-reduced-motion`: the whole of
+  `reveal.css` sits inside a `no-preference` query, so nothing is ever hidden in
+  the first place rather than being hidden and then instantly shown.
 
 External dependencies, all from CDNs: Google Fonts (Poppins + Shippori Mincho),
-Unicons, `typed.js`, `scrollreveal`. The page degrades sensibly if any fail —
-`main.js` feature-checks both libraries before using them.
+Unicons, `typed.js`. The page degrades sensibly if any fail — `main.js`
+feature-checks the library before using it.
+
+`scrollreveal` used to be on that list. It is gone: the reveal is now
+`reveal.css` plus one IntersectionObserver in `interactive.js`, which animates
+only compositor-friendly properties, cannot be delayed by a network round trip,
+and reveals each element once instead of re-hiding it on the way back up. See
+the header of `reveal.css` for the full reasoning.
 
 ---
 

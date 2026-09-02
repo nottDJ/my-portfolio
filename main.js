@@ -5,9 +5,6 @@
 (function () {
     'use strict';
 
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-
     /* ----- NAVIGATION BAR ----- */
     var navMenu = document.getElementById('myNavMenu');
     var navToggle = document.getElementById('navToggle');
@@ -87,55 +84,10 @@
     }
 
 
-    /* ----- SCROLL REVEAL ----- */
-    if (typeof ScrollReveal !== 'undefined' && !reduced) {
-        var sr = ScrollReveal({
-            origin: 'top',
-            distance: '60px',
-            duration: 1400,
-            easing: 'cubic-bezier(.2, .7, .3, 1)',
-            reset: true
-        });
-
-        /* -- HOME -- */
-        sr.reveal('.featured-text-card', {});
-        sr.reveal('.featured-name',      { delay: 90 });
-        sr.reveal('.featured-sub',       { delay: 140 });
-        sr.reveal('.featured-text-info', { delay: 180 });
-        sr.reveal('.featured-text-btn',  { delay: 220 });
-        sr.reveal('.social_icons',       { delay: 260 });
-        sr.reveal('.featured-image',     { delay: 300 });
-
-        /* -- PROJECTS -- */
-        sr.reveal('.project-box',        { interval: 90 });
-        sr.reveal('.projects-footnote',  { delay: 120 });
-
-        /* -- HEADINGS -- */
-        sr.reveal('.top-header', {});
-
-        /* Left/right reveals only make sense while the two columns sit
-           side by side. Once the layout stacks, ScrollReveal's pre-reveal
-           translateX pushes the right-hand column 60px past the viewport
-           edge, so below the breakpoint everything reveals from the top. */
-        if (window.matchMedia('(min-width: 901px)').matches) {
-            var srLeft = ScrollReveal({
-                origin: 'left', distance: '60px', duration: 1400, reset: true
-            });
-            srLeft.reveal('.about-info',   { delay: 100 });
-            srLeft.reveal('.contact-info', { delay: 100 });
-
-            var srRight = ScrollReveal({
-                origin: 'right', distance: '60px', duration: 1400, reset: true
-            });
-            srRight.reveal('.skills-box',   { interval: 80 });
-            srRight.reveal('.form-control', { delay: 100 });
-        } else {
-            sr.reveal('.about-info',   { delay: 100 });
-            sr.reveal('.contact-info', { delay: 100 });
-            sr.reveal('.skills-box',   { interval: 80 });
-            sr.reveal('.form-control', { delay: 100 });
-        }
-    }
+    /* Scroll reveal used to live here, driving the ScrollReveal
+       library. It is now reveal.css plus one IntersectionObserver in
+       interactive.js — the flourish behaviours all sit in that file,
+       and this one stays the page's core mechanics. */
 
 
     /* ----- HIGHLIGHT THE SECTION YOU ARE IN ----- */

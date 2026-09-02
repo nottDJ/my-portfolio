@@ -14,6 +14,7 @@
      7. omikuji      the fortune-slip easter egg
      8. counters     the About figures counting up
      9. portrait     tilt + highlight on the hero portrait, pointer-tracked
+    10. reveal       content rising into place as it is scrolled to
 
    Everything here is defensive about its own markup: if an
    element is missing the block simply does not install, so the
@@ -515,6 +516,63 @@
             portraitFigure.style.removeProperty('--pmx');
             portraitFigure.style.removeProperty('--pmy');
         });
+    }
+
+
+    /* ========================================================
+       10. SCROLL REVEAL
+       All of the animation is in reveal.css. This only decides
+       WHEN, and the answer is once: an element that has been
+       revealed is unobserved and never hidden again. The old
+       library re-hid on the way back up, and a fast scroll could
+       outrun that, which is how content ended up appearing with
+       no transition at all.
+
+       Elements already on screen at load are handled by the same
+       path — IntersectionObserver reports them as intersecting on
+       its first run, so the hero reveals immediately without
+       needing a separate case.
+       ======================================================== */
+    var REVEAL_SELECTOR = [
+        '.featured-text-card', '.featured-title', '.featured-role',
+        '.featured-name', '.featured-sub', '.featured-text-info',
+        '.featured-text-btn', '.social_icons', '.featured-image',
+        '.top-header', '.about-info', '.skills-box', '.timeline-item',
+        '.awards-list li', '.contact-info', '.form-control',
+        '.projects-footnote', '.project-container'
+    ].join(',');
+
+    var revealTargets = $$(REVEAL_SELECTOR);
+
+    if (revealTargets.length) {
+        if (reduced || !('IntersectionObserver' in window)) {
+            /* Nothing to observe, but the class still goes on. Under
+               reduced motion reveal.css is inert either way; on an old
+               engine this is what keeps the content from being stranded
+               invisible. */
+            revealTargets.forEach(function (el) { el.classList.add('is-revealed'); });
+        } else {
+            var revealIO = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('is-revealed');
+                    revealIO.unobserve(entry.target);
+                });
+            }, {
+                /* A little of the element has to be showing, and the
+                   bottom edge is pulled up so things start moving just
+                   before they reach the very bottom of the screen
+                   rather than exactly at it. */
+                threshold: 0.1,
+                rootMargin: '0px 0px -6% 0px'
+            });
+
+            revealTargets.forEach(function (el) { revealIO.observe(el); });
+        }
+
+        /* Tells the failsafe in <head> that the reveal is live, so it
+           does not strip the hidden state out from under us. */
+        docEl.setAttribute('data-reveal-armed', '');
     }
 
 

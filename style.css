@@ -1198,6 +1198,27 @@ footer{
     }
     .featured-text-info{ max-width: none; }
     .social_icons{ margin-top: 2.2em; }
+
+    /* On desktop this floats free in the empty space below the two
+       columns, absolutely pinned to the hero's bottom edge. On a
+       stacked mobile layout there is no guaranteed empty space there —
+       the hero's height is a min-height, so on a short viewport with
+       enough copy the in-flow content runs right through where the
+       pinned button sits, landing on top of the social icons. Dropping
+       it into normal flow as the last item makes it follow whatever
+       came before it instead of floating over it. */
+    .scroll-btn{
+        position: static;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        order: 3;
+        margin-top: 36px;
+        padding: 9px 18px;
+    }
+    .scroll-btn i{ font-size: 16px; }
+    .scroll-btn p{ font-size: 10px; }
+
     .featured-image{
         order: 1;
         justify-content: center;

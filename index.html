@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="project-art.css">
     <link rel="stylesheet" href="portrait.css">
     <link rel="stylesheet" href="night.css">
+    <link rel="stylesheet" href="reveal.css">
     <link rel="stylesheet" href="interactive.css">
 
     <!-- --------- THEME, RESOLVED BEFORE FIRST PAINT ----------
@@ -42,6 +43,34 @@
             var m = document.querySelector('meta[name="theme-color"]');
             if (m) m.setAttribute('content', '#0b0d12');
         }
+
+        /* Arms the scroll reveal, and has to happen here for the same
+           reason the theme does: reveal.css keeps every element it
+           animates invisible until it has been scrolled to, and that
+           hidden state must be in place for the FIRST paint. Set from
+           a script that loads later and the page paints fully built,
+           then blanks itself a moment afterwards.
+
+           No prefers-reduced-motion check: reveal.css is wrapped in a
+           no-preference query, so under reduced motion this class
+           already means nothing. */
+        document.documentElement.classList.add('reveal-ready');
+
+        /* Failsafe. Arming the reveal here means the page is now
+           relying on interactive.js to un-hide it again. If that file
+           404s, is blocked, or throws before it installs the observer,
+           the visitor is left staring at a blank page — the one
+           failure mode of this approach that is worse than having no
+           animation at all. interactive.js sets data-reveal-armed as
+           soon as the observer is live; if that has not happened by
+           the time this fires, the hidden state is dropped and
+           everything simply renders. */
+        window.setTimeout(function () {
+            var el = document.documentElement;
+            if (!el.hasAttribute('data-reveal-armed')) {
+                el.classList.remove('reveal-ready');
+            }
+        }, 2500);
     })();
     </script>
 
@@ -1793,8 +1822,9 @@
 <!-- ----- TYPING JS ----- -->
 <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
 
-<!-- ----- SCROLL REVEAL JS ----- -->
-<script src="https://unpkg.com/scrollreveal"></script>
+<!-- Scroll reveal is no longer a library. It is reveal.css plus one
+     IntersectionObserver in interactive.js — see the header of
+     reveal.css for why it stopped being worth a network round trip. -->
 
 <!-- ----- JAPANESE BACKDROP ----- -->
 <script src="japanese-bg.js"></script>

@@ -1,0 +1,132 @@
+/* ============================================================
+   SCROLL REVEAL — content rising into place
+   ------------------------------------------------------------
+   This replaces the third-party ScrollReveal library. What is
+   here is the whole animation; interactive.js only adds one
+   class (.is-revealed) from a single IntersectionObserver.
+
+   Why it was worth replacing:
+
+   1. SMOOTHNESS. Only opacity and transform are animated, both
+      of which the compositor can handle without touching layout
+      or paint. The old library drove inline styles off a scroll
+      listener, which is where the stutter came from.
+
+   2. NO FLASH. The hidden pre-state is gated on `.reveal-ready`,
+      which the inline script in <head> stamps on <html> before
+      the body is parsed. That means the first paint already has
+      the hidden state. A library that loads over the network
+      cannot promise that: the page paints built and visible,
+      then the script arrives and yanks everything to invisible,
+      which is what made things "appear from nowhere".
+
+   3. ONE SHOT. An element reveals once and stays revealed. The
+      old config used reset:true, so scrolling back up re-hid
+      everything and a fast scroll could outrun the animation and
+      leave content popping in with no transition at all.
+
+   Nothing here is required for the page to work. Without JS the
+   `.reveal-ready` class is never set and every rule below is
+   inert, so the content simply renders in place — which is also
+   exactly what happens under reduced motion, since the whole
+   file sits inside a `no-preference` query.
+
+   NOTE ON .project-box: the project cards are deliberately NOT
+   revealed individually. The filter in interactive.js already
+   owns opacity and transform on those cards through
+   .is-leaving / .is-entering, and a second system writing the
+   same two properties on the same element would mean the two
+   fighting over specificity. The grid reveals as one block via
+   .project-container instead, which nothing else touches.
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference){
+
+    /* ----- THE PRE-STATE -----
+       Held below its resting place and transparent. */
+    html.reveal-ready .featured-text-card,
+    html.reveal-ready .featured-title,
+    html.reveal-ready .featured-role,
+    html.reveal-ready .featured-name,
+    html.reveal-ready .featured-sub,
+    html.reveal-ready .featured-text-info,
+    html.reveal-ready .featured-text-btn,
+    html.reveal-ready .social_icons,
+    html.reveal-ready .featured-image,
+    html.reveal-ready .top-header,
+    html.reveal-ready .about-info,
+    html.reveal-ready .skills-box,
+    html.reveal-ready .timeline-item,
+    html.reveal-ready .awards-list li,
+    html.reveal-ready .contact-info,
+    html.reveal-ready .form-control,
+    html.reveal-ready .projects-footnote,
+    html.reveal-ready .project-container{
+        opacity: 0;
+        transform: translateY(32px);
+        transition: opacity .7s cubic-bezier(.2, .7, .3, 1),
+                    transform .7s cubic-bezier(.2, .7, .3, 1);
+    }
+
+    /* ----- THE REVEAL -----
+       Gated on .reveal-ready as well, and not by accident: the
+       pre-state above carries that ancestor, so a bare
+       `.x.is-revealed` would sit a notch BELOW it on specificity
+       and lose — the element would stay invisible forever. Both
+       halves have to be scoped the same way. */
+    html.reveal-ready .featured-text-card.is-revealed,
+    html.reveal-ready .featured-title.is-revealed,
+    html.reveal-ready .featured-role.is-revealed,
+    html.reveal-ready .featured-name.is-revealed,
+    html.reveal-ready .featured-sub.is-revealed,
+    html.reveal-ready .featured-text-info.is-revealed,
+    html.reveal-ready .featured-text-btn.is-revealed,
+    html.reveal-ready .social_icons.is-revealed,
+    html.reveal-ready .featured-image.is-revealed,
+    html.reveal-ready .top-header.is-revealed,
+    html.reveal-ready .about-info.is-revealed,
+    html.reveal-ready .skills-box.is-revealed,
+    html.reveal-ready .timeline-item.is-revealed,
+    html.reveal-ready .awards-list li.is-revealed,
+    html.reveal-ready .contact-info.is-revealed,
+    html.reveal-ready .form-control.is-revealed,
+    html.reveal-ready .projects-footnote.is-revealed,
+    html.reveal-ready .project-container.is-revealed{
+        opacity: 1;
+        transform: none;
+    }
+
+    /* ----- THE HERO SEQUENCE -----
+       These all sit in the first viewport, so the observer fires
+       for the whole group at once and they would otherwise arrive
+       in a single burst. The delays turn that burst into a read:
+       badge, name, role, the line that types, and so on down.
+
+       The portrait comes in early rather than last. It is the
+       largest thing on the screen and the slowest to read, so
+       starting it behind the badge lets it settle while the text
+       is still arriving. */
+    html.reveal-ready .featured-text-card{ transition-delay:  40ms; }
+    html.reveal-ready .featured-image    { transition-delay: 110ms; }
+    html.reveal-ready .featured-title    { transition-delay: 140ms; }
+    html.reveal-ready .featured-role     { transition-delay: 200ms; }
+    html.reveal-ready .featured-name     { transition-delay: 260ms; }
+    html.reveal-ready .featured-sub      { transition-delay: 310ms; }
+    html.reveal-ready .featured-text-info{ transition-delay: 360ms; }
+    html.reveal-ready .featured-text-btn { transition-delay: 410ms; }
+    html.reveal-ready .social_icons      { transition-delay: 460ms; }
+
+    /* ----- GROUPED CONTENT -----
+       A light cascade across small, known sets of siblings. Kept
+       short on purpose: past about four steps a stagger stops
+       reading as one movement and starts reading as a queue. */
+    html.reveal-ready .skills-box:nth-child(2){ transition-delay:  80ms; }
+    html.reveal-ready .skills-box:nth-child(3){ transition-delay: 160ms; }
+    html.reveal-ready .skills-box:nth-child(4){ transition-delay: 240ms; }
+
+    html.reveal-ready .timeline-item:nth-child(2){ transition-delay: 130ms; }
+
+    html.reveal-ready .awards-list li:nth-child(2){ transition-delay:  90ms; }
+    html.reveal-ready .awards-list li:nth-child(3){ transition-delay: 180ms; }
+    html.reveal-ready .awards-list li:nth-child(4){ transition-delay: 270ms; }
+}
