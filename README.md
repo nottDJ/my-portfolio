@@ -86,7 +86,7 @@ paths, that was a bug in an earlier version.
 | `japanese-bg.js` | Scroll parallax + the particle canvas (sakura by day, fireflies at night) |
 | `project-art.css` | Every project illustration's animation |
 | `night.css` | The night skin — palette tokens, the surfaces that hard-code a light value, and the night backdrop |
-| `interactive.css` | Theme toggle, reading rail, project filter, card tilt, click ripple, omikuji, return-to-top |
+| `interactive.css` | Theme toggle, reading rail, project filter, card tilt, click ripple, return-to-top |
 | `interactive.js` | The behaviour behind all of the above |
 | `main.js` | Nav, typed hero text, active-section highlighting |
 | `reveal.css` | The scroll reveal: the hidden pre-state, the rise, the hero's staggered order |
@@ -281,7 +281,6 @@ All in `interactive.css` + `interactive.js`. No libraries. Every control is a re
 | **Project filter** | All / AI & ML / Computer Vision / Data / Backend / Full Stack / 3D, with a live count. Cards fade out *before* they leave the flow, so the grid never reflows underneath a card still on screen |
 | **Card tilt** | The plate turns under the pointer with a highlight tracking across it, so it reads as a surface catching light. Capped at 7° — past that it stops being a print and becomes a 3D object. Fine pointers only: on a touch screen a tap would set the value and it would stick |
 | **水紋 click ripple** | Two offset rings wherever you click, squashed on Y so they read as rings on water seen at an angle. Suppressed over form fields — a ring blooming out of a text caret reads as an error |
-| **Fortune slip** | The ink ring beside the portrait is a fortune box. Click it, the box shakes, and a slip unrolls with one of ten developer fortunes. Never the same slip twice running — drawing "Excellent" twice in a row reads as broken randomness even when it isn't |
 | **Portrait tilt** | The hero portrait tips toward a fine pointer with a highlight tracking across it — the same construction as the card tilt above, capped at 5° instead of 7° since a face reads as "wrong" at an angle a flat illustration does not |
 | **Stat counters** | The About figures count up when they scroll into view, in tabular figures so the number doesn't jitter sideways while it runs |
 | **上 return-to-top** | Appears after one viewport of scroll |
@@ -380,9 +379,10 @@ sits a level below it deliberately, so the two do not compete.
   that says what pressing it will do, not what state it is in.
 - The filter's result count is `aria-live="polite"`, so a filter change is announced
   rather than only shown.
-- The omikuji is a `role="dialog"` with `aria-modal`, closes on Escape or a click on
-  the backdrop, and returns focus to the ensō it was opened from.
 - Scroll listeners are all `{ passive: true }`.
+- Off-screen project cards have their SVG animation paused (an IntersectionObserver
+  toggling `animation-play-state`), so nine loops' worth of continuous paint work
+  isn't spent on cards nobody can currently see.
 - The scroll reveal is inert under `prefers-reduced-motion`: the whole of
   `reveal.css` sits inside a `no-preference` query, so nothing is ever hidden in
   the first place rather than being hidden and then instantly shown.

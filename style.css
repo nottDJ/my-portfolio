@@ -185,22 +185,6 @@ nav{
     letter-spacing: .06em;
     color: var(--ai);
 }
-/* the hanko — a vermillion seal beside the initials */
-.nav-seal{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 22px;
-    padding-inline: 7px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .08em;
-    line-height: 1;
-    color: var(--color-white);
-    background: var(--shu);
-    border-radius: 3px;
-    transform: translateY(-2px);
-}
 .nav-menu, .nav_menu_list{
     display: flex;
     align-items: center;
@@ -448,44 +432,6 @@ nav{
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.scroll-btn{
-   position: absolute;
-   bottom: 26px;
-   left: 50%;
-   transform: translateX(-50%);
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   gap: 2px;
-   padding: 12px 22px;
-   text-decoration: none;
-   color: var(--text-color-second);
-   background: var(--panel);
-   -webkit-backdrop-filter: blur(8px);
-   backdrop-filter: blur(8px);
-   border: 1px solid var(--hairline);
-   border-radius: 3px;
-   transition: .35s ease;
-}
-.scroll-btn:hover{
-    color: var(--color-white);
-    background: var(--ai);
-    border-color: var(--ai);
-}
-.scroll-btn i{
-    font-size: 20px;
-    animation: scrollNudge 2.4s ease-in-out infinite;
-}
-.scroll-btn p{
-    font-size: 11px;
-    letter-spacing: .2em;
-}
-@keyframes scrollNudge{
-    0%,100%{ transform: translateY(0);   opacity: 1;  }
-    50%    { transform: translateY(5px); opacity: .5; }
 }
 
 /* ----- SECTIONS ----- */
@@ -1086,35 +1032,46 @@ textarea:focus{
 }
 .form-button i{ font-size: 18px; rotate: -45deg; }
 
-/* ----- FOOTER ----- */
+/* ----- FOOTER -----
+   Fully opaque, and that is the point. Every other surface on the
+   page is translucent so the fixed ukiyo-e backdrop drifts behind
+   it while you scroll, which is the effect -- but the footer is
+   where the scroll STOPS. Letting the parallax carry on sliding
+   underneath the last block reads as the page still having
+   somewhere to go. A solid ground closes it: the backdrop travels
+   the whole document and then comes to rest behind the footer.
+
+   Solid also lets the blur go. backdrop-filter forces the whole
+   footer onto its own composited layer and asks the compositor to
+   re-blur what is behind it every frame the parallax moves it --
+   paid for at the bottom of every scroll, for a blur of something
+   that is no longer visible through it anyway. */
 footer{
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    row-gap: 26px;
-    background: rgba(236, 226, 207, 0.78);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    row-gap: 16px;
+    background: var(--washi-deep);
     border-top: 1px solid var(--hairline);
-    padding-block: 46px 56px;
+    padding-block: 30px 34px;
     text-align: center;
 }
 .top-footer p{
     font-family: var(--font-jp);
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
     letter-spacing: .1em;
     color: var(--ai);
 }
 .top-footer .footer-tag{
     display: block;
-    font-size: 12px;
+    font-size: 11.5px;
     letter-spacing: .06em;
     color: var(--shu);
     opacity: .9;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 .middle-footer .footer-menu{
     display: flex;
@@ -1126,19 +1083,27 @@ footer{
     text-decoration: none;
     color: var(--text-color-second);
     font-weight: 500;
-    font-size: 14.5px;
-    margin-inline: 16px;
+    font-size: 13.5px;
+    margin-inline: 14px;
     transition: color .3s ease;
 }
 .footer_menu_list a:hover{ color: var(--shu); }
 .footer-social-icons{
     display: flex;
-    gap: 18px;
+    gap: 14px;
 }
+/* A touch smaller than the hero's set. Down here they are a
+   sign-off rather than a call to action, and at full size four
+   42px tiles are the tallest thing in the footer. */
+.footer-social-icons .icon{
+    width: 36px;
+    height: 36px;
+}
+.footer-social-icons .icon i{ font-size: 17px; }
 .bottom-footer{
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-muted);
-    margin-top: 6px;
+    margin-top: 2px;
 }
 .bottom-footer a{ color: var(--ai); }
 
@@ -1199,26 +1164,6 @@ footer{
     .featured-text-info{ max-width: none; }
     .social_icons{ margin-top: 2.2em; }
 
-    /* On desktop this floats free in the empty space below the two
-       columns, absolutely pinned to the hero's bottom edge. On a
-       stacked mobile layout there is no guaranteed empty space there —
-       the hero's height is a min-height, so on a short viewport with
-       enough copy the in-flow content runs right through where the
-       pinned button sits, landing on top of the social icons. Dropping
-       it into normal flow as the last item makes it follow whatever
-       came before it instead of floating over it. */
-    .scroll-btn{
-        position: static;
-        left: auto;
-        bottom: auto;
-        transform: none;
-        order: 3;
-        margin-top: 36px;
-        padding: 9px 18px;
-    }
-    .scroll-btn i{ font-size: 16px; }
-    .scroll-btn p{ font-size: 10px; }
-
     .featured-image{
         order: 1;
         justify-content: center;
@@ -1264,15 +1209,13 @@ footer{
         min-height: auto;
         padding-block: 110px 70px;
     }
-    .scroll-btn{ display: none; }
 }
 
 /* ----- REDUCED MOTION ----- */
 @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior: auto; }
     .image,
-    .enso,
-    .scroll-btn i{ animation: none !important; }
+    .enso{ animation: none !important; }
     .project-box:hover,
     .btn:hover,
     .icon:hover{ transform: none; }

@@ -21,6 +21,23 @@
 
 
 /* ============================================================
+   OFF-SCREEN PERFORMANCE
+   Nine cards' worth of these loops running continuously from page
+   load -- most of them off-screen at any given time -- is real,
+   constant paint work on a phone, and it is exactly the kind of
+   work that shows up as scroll jank on the way down to Projects
+   and Contact. interactive.js adds .is-onscreen to a .project-box
+   via IntersectionObserver a little before it actually enters
+   view; until then, every animation inside it is paused rather
+   than quietly spending frames nobody can see.
+   ============================================================ */
+.project-box:not(.is-onscreen) .project-art,
+.project-box:not(.is-onscreen) .project-art *{
+    animation-play-state: paused !important;
+}
+
+
+/* ============================================================
    1. ArchX3D — 立体化
    A gold cutting plane rises through the floor plan; hairline
    wireframe becomes solid wall in its wake, under a floating

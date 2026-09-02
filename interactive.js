@@ -8,10 +8,10 @@
      1. theme        日／月 day-night, persisted
      2. rail         scroll progress
      3. filter       project selection
+     3b. onscreen    pauses off-screen project card animation
      4. tilt         pointer-tracked card rotation
      5. ripple       click rings
      6. toTop        return-to-top
-     7. omikuji      the fortune-slip easter egg
      8. counters     the About figures counting up
      9. portrait     tilt + highlight on the hero portrait, pointer-tracked
     10. reveal       content rising into place as it is scrolled to
@@ -232,6 +232,27 @@
 
 
     /* ========================================================
+       3b. OFF-SCREEN ANIMATION PAUSE
+       Nine cards' worth of continuous SVG animation is real paint
+       work, and most of it is off-screen at any given moment. Only
+       cards near the viewport keep animating (project-art.css pauses
+       everything inside a card without .is-onscreen); a generous
+       rootMargin starts a card animating a little before it is
+       actually visible, so nothing pops mid-motion on arrival.
+       ======================================================== */
+    if (cards.length && 'IntersectionObserver' in window) {
+        var cardIO = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                entry.target.classList.toggle('is-onscreen', entry.isIntersecting);
+            });
+        }, { rootMargin: '200px 0px' });
+        cards.forEach(function (card) { cardIO.observe(card); });
+    } else {
+        cards.forEach(function (card) { card.classList.add('is-onscreen'); });
+    }
+
+
+    /* ========================================================
        4. TILT
        Fine pointers only. The rotation is deliberately small --
        past about 7 degrees the card stops reading as a print
@@ -332,91 +353,6 @@
             window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
         });
         syncToTop();
-    }
-
-
-    /* ========================================================
-       7. おみくじ — THE FORTUNE SLIP
-       ======================================================== */
-    var FORTUNES = [
-        { rank: 'Excellent', text: 'The build is green, the logs are quiet, and the bug you were dreading was a typo. Ship it.' },
-        { rank: 'Excellent', text: 'Your model generalises. Not because you got lucky — because you held out a proper test set.' },
-        { rank: 'Very good', text: 'A stubborn bug yields today, to the person who reads the stack trace all the way to the bottom.' },
-        { rank: 'Very good', text: 'Someone opens your repository and finds a README that actually explains it. Fortune favours you both.' },
-        { rank: 'Good',      text: 'Merge conflicts ahead, but small ones. Commit early, and often, and the mountain stays a hill.' },
-        { rank: 'Good',      text: 'The feature works on the first run. Be suspicious, then write the test anyway.' },
-        { rank: 'Good',      text: 'Today is a good day to delete code. What you remove, you never have to maintain.' },
-        { rank: 'Promising', text: 'Progress is slow this week. It is not stalled — it is compiling. Keep going.' },
-        { rank: 'Mixed',     text: 'Your accuracy is high and your recall is not. Look again at what you are actually optimising.' },
-        { rank: 'Unlucky',   text: 'You are about to debug production on a Friday. The stars advise: revert first, understand after.' }
-    ];
-
-    var ensoBtn = $('#ensoDraw');
-    var slipWrap = $('#omikuji');
-
-    if (ensoBtn && slipWrap) {
-        var slipRank = $('.omikuji-rank', slipWrap);
-        var slipText = $('.omikuji-text', slipWrap);
-        var slipClose = $('.omikuji-close', slipWrap);
-        var imageWrap = ensoBtn.parentNode;
-        var lastIndex = -1;
-        var returnFocus = null;
-
-        function pickFortune() {
-            /* Never the same slip twice running: drawing 大吉 twice in a
-               row reads as broken randomness even when it is not. */
-            var i = lastIndex;
-            while (i === lastIndex && FORTUNES.length > 1) {
-                i = Math.floor(Math.random() * FORTUNES.length);
-            }
-            lastIndex = i;
-            return FORTUNES[i];
-        }
-
-        function openSlip() {
-            var f = pickFortune();
-            if (slipRank) slipRank.textContent = f.rank;
-            if (slipText) slipText.textContent = f.text;
-
-            returnFocus = document.activeElement;
-            slipWrap.classList.add('is-open');
-            slipWrap.removeAttribute('aria-hidden');
-            if (slipClose) slipClose.focus();
-        }
-
-        function closeSlip() {
-            slipWrap.classList.remove('is-open');
-            slipWrap.setAttribute('aria-hidden', 'true');
-            if (returnFocus && returnFocus.focus) returnFocus.focus();
-        }
-
-        ensoBtn.addEventListener('click', function () {
-            if (!reduced && imageWrap) {
-                imageWrap.classList.remove('is-shaking');
-                void imageWrap.offsetWidth;
-                imageWrap.classList.add('is-shaking');
-                /* the slip is drawn out only once the box has finished
-                   shaking, which is what makes it feel drawn rather than
-                   handed over */
-                window.setTimeout(openSlip, 480);
-            } else {
-                openSlip();
-            }
-        });
-
-        if (imageWrap) {
-            imageWrap.addEventListener('animationend', function () {
-                imageWrap.classList.remove('is-shaking');
-            });
-        }
-
-        if (slipClose) slipClose.addEventListener('click', closeSlip);
-        slipWrap.addEventListener('click', function (e) {
-            if (e.target === slipWrap) closeSlip();
-        });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && slipWrap.classList.contains('is-open')) closeSlip();
-        });
     }
 
 
@@ -559,12 +495,22 @@
                     revealIO.unobserve(entry.target);
                 });
             }, {
-                /* A little of the element has to be showing, and the
-                   bottom edge is pulled up so things start moving just
-                   before they reach the very bottom of the screen
-                   rather than exactly at it. */
-                threshold: 0.1,
-                rootMargin: '0px 0px -6% 0px'
+                /* threshold 0 -- a single pixel crossing is enough.
+                   A fractional threshold looks tidier but is a trap
+                   here: .project-container is the whole nine-card
+                   grid, and once it stacks to one column it is taller
+                   than the viewport. The largest ratio such an element
+                   can EVER report is viewportHeight / elementHeight,
+                   so a 0.1 threshold means the grid reveals late on a
+                   tall phone and, past roughly ten viewport-heights of
+                   cards, never fires at all and the section stays
+                   blank. Zero has no height ceiling.
+
+                   The bottom edge is pulled up instead, so things
+                   start moving just before they reach the very bottom
+                   of the screen rather than exactly at it. */
+                threshold: 0,
+                rootMargin: '0px 0px -8% 0px'
             });
 
             revealTargets.forEach(function (el) { revealIO.observe(el); });

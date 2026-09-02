@@ -3,7 +3,7 @@
    ------------------------------------------------------------
    Everything on this page a visitor can actually operate: the
    day/night toggle, the reading rail, the project filter, the
-   card tilt, the click ripple, the omikuji, the return-to-top.
+   card tilt, the click ripple, the return-to-top.
 
    House rules, same as the rest of the site:
      - no libraries;
@@ -319,154 +319,6 @@ html[data-theme="dark"] .theme-toggle-face{ transform: rotateX(180deg); }
 
 
 /* ============================================================
-   おみくじ — THE FORTUNE SLIP
-   The ensō beside the portrait is a button. Drawing shakes a
-   wooden box, then a paper slip unrolls with a rank and a line.
-   ============================================================ */
-.enso-draw{
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    display: block;
-    padding: 0;
-    background: transparent;
-    border: 0;
-    border-radius: 50%;
-    cursor: pointer;
-}
-.enso-draw:focus-visible{
-    outline: 2px solid var(--shu);
-    outline-offset: -6px;
-}
-.enso-hint{
-    position: absolute;
-    left: 50%;
-    bottom: 2%;
-    transform: translateX(-50%);
-    font-family: var(--font-jp);
-    font-size: 11px;
-    letter-spacing: .3em;
-    white-space: nowrap;
-    color: var(--shu);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .35s ease;
-}
-.featured-image-wrap:hover .enso-hint,
-.enso-draw:focus-visible + .enso-hint{ opacity: .85; }
-
-/* Shaking the box: a fast, decaying wobble.
-   It goes on the WRAPPER, never on .enso or .image -- both of those
-   already own a long-running transform animation, and replacing the
-   shorthand would restart the 60s ring spin from zero the moment the
-   shake ended, which snaps the ink ring back visibly. */
-.featured-image-wrap.is-shaking{ animation: ensoShake .62s ease-in-out; }
-@keyframes ensoShake{
-    0%,100%{ transform: rotate(0deg)   scale(1); }
-    18%    { transform: rotate(-7deg)  scale(1.03); }
-    38%    { transform: rotate(6deg)   scale(1.02); }
-    58%    { transform: rotate(-4deg)  scale(1.01); }
-    79%    { transform: rotate(2.5deg) scale(1); }
-}
-
-.omikuji{
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-    background: rgba(10, 9, 7, .5);
-    -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .3s ease;
-}
-.omikuji.is-open{ opacity: 1; pointer-events: auto; }
-
-.omikuji-slip{
-    position: relative;
-    width: min(300px, 88vw);
-    padding: 34px 28px 26px;
-    text-align: center;
-    background: linear-gradient(168deg, #fdfaf1 0%, #f2e9d6 100%);
-    border: 1px solid rgba(35, 32, 28, .2);
-    border-radius: 2px;
-    box-shadow: 0 30px 70px -28px rgba(0, 0, 0, .8);
-    /* the slip is pulled out of the box, so it scales from the top */
-    transform-origin: 50% 0;
-    transform: scaleY(.04) translateY(-24px);
-    opacity: 0;
-    transition: transform .5s cubic-bezier(.22, 1.1, .36, 1), opacity .3s ease;
-}
-.omikuji.is-open .omikuji-slip{
-    transform: none;
-    opacity: 1;
-}
-/* the fold marks a real omikuji is printed with */
-.omikuji-slip::before,
-.omikuji-slip::after{
-    content: "";
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    height: 1px;
-    background: rgba(35, 32, 28, .12);
-}
-.omikuji-slip::before{ top: 16px; }
-.omikuji-slip::after { bottom: 16px; }
-
-.omikuji-label{
-    display: block;
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-    color: #8d8375;
-    margin-bottom: 12px;
-}
-/* The rank is a word now rather than one or two kanji, so it cannot
-   carry 46px — and it absorbs the bottom margin the removed English
-   gloss used to provide. */
-.omikuji-rank{
-    display: block;
-    font-family: var(--font-jp);
-    font-size: 30px;
-    font-weight: 700;
-    line-height: 1.15;
-    color: #b23a2b;
-    margin-bottom: 18px;
-}
-.omikuji-text{
-    font-size: 14px;
-    line-height: 1.75;
-    color: #3a342c;
-    margin-bottom: 22px;
-}
-.omikuji-close{
-    font-family: var(--font-jp);
-    font-size: 12.5px;
-    letter-spacing: .24em;
-    color: #3a342c;
-    background: transparent;
-    border: 1px solid rgba(35, 32, 28, .28);
-    border-radius: 2px;
-    padding: 8px 20px;
-    cursor: pointer;
-    transition: background .25s ease, color .25s ease;
-}
-.omikuji-close:hover{
-    background: #23201c;
-    color: #fdfaf1;
-}
-.omikuji-close:focus-visible{
-    outline: 2px solid #b23a2b;
-    outline-offset: 3px;
-}
-
-
-/* ============================================================
    数取り — STAT COUNTERS
    Tabular figures, so the number does not jitter sideways while
    it counts. Reserving the width is the whole trick.
@@ -489,7 +341,5 @@ html[data-theme="dark"] .theme-toggle-face{ transform: rotateX(180deg); }
     .project-box.is-entering{ animation: none; }
     .project-box.is-tilting{ transform: translateY(-6px); }
     .project-art::after{ display: none; }
-    .featured-image-wrap.is-shaking{ animation: none; }
-    .omikuji-slip{ transform: none; }
     .to-top{ transition: opacity .2s ease; transform: none; }
 }

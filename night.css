@@ -65,8 +65,11 @@ html[data-theme="dark"] nav{
 html[data-theme="dark"] .nav-menu{
     background: rgba(11, 13, 18, 0.96);
 }
+/* Opaque for the same reason the light footer is: the parallax
+   backdrop comes to rest behind the last block instead of sliding
+   on under it. */
 html[data-theme="dark"] footer{
-    background: rgba(14, 17, 24, 0.82);
+    background: var(--washi-deep);
 }
 html[data-theme="dark"] .about-info,
 html[data-theme="dark"] .project-box,

@@ -46,6 +46,13 @@
     inset: 0;
     border-radius: 50%;
     overflow: hidden;
+    /* belt-and-braces clip: the sheen below carries mix-blend-mode,
+       and border-radius + overflow:hidden alone is not always enough
+       to keep blended content inside the round window on some mobile
+       WebKit builds -- it can bleed past the corner as a square patch.
+       clip-path is a true geometric clip nothing can escape. */
+    -webkit-clip-path: circle(50%);
+            clip-path: circle(50%);
     border: 1px solid rgba(35, 32, 28, .22);
     box-shadow: 0 18px 50px -22px rgba(60, 48, 32, .55),
                 inset 0 0 0 5px rgba(255, 253, 247, .5),
@@ -170,9 +177,29 @@
    SMALL VIEWPORTS
    The seal is the first thing to go: below about 300px of disc it
    stops reading as a seal and becomes a red square.
+
+   The ground halo and the figure's drop shadow are both authored
+   with a directional light source (glow upper-left, shadow falling
+   down) -- believable depth at desktop size, but on a ~150-210px
+   disc the two rings it produces read as off-centre rather than as
+   lighting, like the border was drawn eccentric. Centring both here
+   keeps the ring even all the way round.
    ============================================================ */
 @media (max-width: 560px){
     .portrait-seal{ display: none; }
+
+    .portrait-ground{
+        background: radial-gradient(circle at 50% 50%,
+            rgba(255, 253, 247, .55) 0%,
+            rgba(246, 241, 230, .22) 46%,
+            rgba(246, 241, 230, 0)   72%);
+    }
+    .portrait-figure,
+    .image.is-tilting .portrait-figure{
+        box-shadow: 0 0 22px -6px rgba(60, 48, 32, .55),
+                    inset 0 0 0 5px rgba(255, 253, 247, .5),
+                    inset 0 0 0 6px rgba(35, 32, 28, .07);
+    }
 }
 
 
