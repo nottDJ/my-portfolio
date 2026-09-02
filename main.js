@@ -90,27 +90,96 @@
        and this one stays the page's core mechanics. */
 
 
-    /* ----- HIGHLIGHT THE SECTION YOU ARE IN ----- */
-    var sections = document.querySelectorAll('section[id]');
+    /* ----- HIGHLIGHT THE SECTION YOU ARE IN -----
+       Three things here exist to keep this off the scroll critical
+       path, because the obvious version of it is a classic jank
+       source: it used to read offsetTop and offsetHeight for every
+       section, and query the DOM for every nav link, on every single
+       scroll event.
 
-    function scrollActive() {
-        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+       Reading offsetTop forces the browser to flush pending layout
+       before it can answer. Doing that from a scroll handler means a
+       synchronous layout per event, and scroll events fire far more
+       often than frames -- so the work is not just repeated, it is
+       repeated more times than it can ever be painted.
 
-        Array.prototype.forEach.call(sections, function (current) {
-            var sectionHeight = current.offsetHeight;
-            var sectionTop = current.offsetTop - 90;
-            var sectionId = current.getAttribute('id');
-            var link = document.querySelector('.nav-menu a[href="#' + sectionId + '"]');
+       So: the links are resolved once, the offsets are measured into
+       a table that only a resize can invalidate, and the handler is
+       throttled to one run per animation frame. What is left on the
+       scroll path is an integer comparison per section. */
+    var sections = Array.prototype.slice.call(
+        document.querySelectorAll('section[id]')
+    );
+
+    var marks = [];
+    var activeLink = null;
+    var activeTicking = false;
+
+    function measureSections() {
+        marks = [];
+        sections.forEach(function (section) {
+            var link = document.querySelector(
+                '.nav-menu a[href="#' + section.getAttribute('id') + '"]'
+            );
             if (!link) return;
-
-            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-                link.classList.add('active-link');
-            } else {
-                link.classList.remove('active-link');
-            }
+            marks.push({
+                link: link,
+                top: section.offsetTop - 90,
+                bottom: section.offsetTop - 90 + section.offsetHeight
+            });
         });
     }
-    window.addEventListener('scroll', scrollActive, { passive: true });
+
+    function scrollActive() {
+        activeTicking = false;
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+        var hit = null;
+        for (var i = 0; i < marks.length; i++) {
+            if (scrollY > marks[i].top && scrollY <= marks[i].bottom) {
+                hit = marks[i].link;
+                break;
+            }
+        }
+
+        /* Only the link that changed is touched. Clearing the class off
+           every link and re-adding it is what turns a highlight into a
+           style recalculation across the whole nav, every frame. */
+        if (hit === activeLink) return;
+        if (activeLink) activeLink.classList.remove('active-link');
+        if (hit) hit.classList.add('active-link');
+        activeLink = hit;
+    }
+
+    window.addEventListener('scroll', function () {
+        if (activeTicking) return;
+        activeTicking = true;
+        window.requestAnimationFrame(scrollActive);
+    }, { passive: true });
+
+    /* The offsets move when the layout reflows, and the two things
+       that reflow this page are a resize and the fonts landing. */
+    var measureTimer = null;
+    window.addEventListener('resize', function () {
+        window.clearTimeout(measureTimer);
+        measureTimer = window.setTimeout(function () {
+            measureSections();
+            scrollActive();
+        }, 150);
+    }, { passive: true });
+
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () {
+            measureSections();
+            scrollActive();
+        });
+    }
+    window.addEventListener('load', function () {
+        measureSections();
+        scrollActive();
+    });
+
+    measureSections();
     scrollActive();
 
 })();

@@ -31,13 +31,28 @@
    exactly what happens under reduced motion, since the whole
    file sits inside a `no-preference` query.
 
-   NOTE ON .project-box: the project cards are deliberately NOT
-   revealed individually. The filter in interactive.js already
-   owns opacity and transform on those cards through
-   .is-leaving / .is-entering, and a second system writing the
-   same two properties on the same element would mean the two
-   fighting over specificity. The grid reveals as one block via
-   .project-container instead, which nothing else touches.
+   NOTE ON .project-box: the cards reveal individually, and NOT
+   through the transition pair the rest of this file uses. The
+   whole grid used to be revealed as one block via
+   .project-container, to keep clear of the filter in
+   interactive.js, which already owns opacity and transform on
+   these cards through .is-leaving / .is-entering. That avoided
+   the collision but bought a worse bug: an IntersectionObserver
+   cannot usefully watch an element several times taller than the
+   viewport, and once the grid stacks to one column that is
+   exactly what it is (see the threshold note in interactive.js).
+   The grid arrived late on a phone and, on a short enough
+   viewport, never arrived at all.
+
+   So the cards are watched one at a time, and the collision is
+   settled by using an ANIMATION rather than a transition. A
+   transition needs a resting state to sit in, and that state is
+   the thing the filter wants to control. An animation with no
+   fill mode leaves nothing behind: it plays once on arrival and
+   then hands opacity and transform straight back, so by the time
+   anyone can click a filter chip there is nothing left here to
+   argue with. The two are kept off each other's toes in the
+   meantime by the :not() guards below.
    ============================================================ */
 
 @media (prefers-reduced-motion: no-preference){
@@ -60,8 +75,7 @@
     html.reveal-ready .awards-list li,
     html.reveal-ready .contact-info,
     html.reveal-ready .form-control,
-    html.reveal-ready .projects-footnote,
-    html.reveal-ready .project-container{
+    html.reveal-ready .projects-footnote{
         opacity: 0;
         transform: translateY(32px);
         transition: opacity .7s cubic-bezier(.2, .7, .3, 1),
@@ -90,8 +104,7 @@
     html.reveal-ready .awards-list li.is-revealed,
     html.reveal-ready .contact-info.is-revealed,
     html.reveal-ready .form-control.is-revealed,
-    html.reveal-ready .projects-footnote.is-revealed,
-    html.reveal-ready .project-container.is-revealed{
+    html.reveal-ready .projects-footnote.is-revealed{
         opacity: 1;
         transform: none;
     }
@@ -129,4 +142,48 @@
     html.reveal-ready .awards-list li:nth-child(2){ transition-delay:  90ms; }
     html.reveal-ready .awards-list li:nth-child(3){ transition-delay: 180ms; }
     html.reveal-ready .awards-list li:nth-child(4){ transition-delay: 270ms; }
+
+    /* ----- THE PROJECT CARDS -----
+       The pre-state is opacity only. No transform: a card that has
+       not arrived yet is still laid out where it belongs, and
+       nudging it 30px down here would mean the flex grid measuring
+       one thing while the card is drawn somewhere else. Opacity
+       alone also keeps the pre-state cheap, which matters when
+       nine of them are pending at once.
+
+       Guarded on :not(.is-revealed) so the rule stops applying the
+       instant the card arrives, rather than being overridden by a
+       second rule that then has to out-specify it. */
+    html.reveal-ready .project-box:not(.is-revealed){
+        opacity: 0;
+    }
+
+    /* `backwards` and nothing else -- deliberately not `both` or
+       `forwards`. A filling animation keeps writing opacity and
+       transform after it has finished, and would sit permanently on
+       top of .is-leaving, so filtered-out cards would fade to
+       nothing and then snap back to full. Without a forward fill
+       the card simply reverts to its own styles on the last frame,
+       which is where the filter takes over cleanly.
+
+       The :not() pair covers the narrow overlap where someone
+       clicks a chip while a card is still arriving: the reveal
+       drops out and pbEnter/.is-leaving takes the card from there,
+       instead of both animations naming the same properties. */
+    html.reveal-ready .project-box.is-revealed:not(.is-entering):not(.is-leaving){
+        animation: pbReveal .62s cubic-bezier(.2, .7, .3, 1) backwards;
+    }
+    @keyframes pbReveal{
+        from{ opacity: 0; transform: translateY(26px); }
+        to  { opacity: 1; transform: none; }
+    }
+
+    /* A short stagger across each row of three. Cards further down
+       the page scroll into view one at a time and never see this;
+       it is for the first row, which arrives as a group. Keyed on
+       nth-child modulo 3 rather than a running count, so the
+       cascade restarts every row instead of the ninth card sitting
+       on a half-second delay. */
+    html.reveal-ready .project-box:nth-child(3n+2){ animation-delay:  70ms; }
+    html.reveal-ready .project-box:nth-child(3n)  { animation-delay: 140ms; }
 }

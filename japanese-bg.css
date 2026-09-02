@@ -36,7 +36,27 @@
    ------------------------------------------------------------ */
 .jp-bg{
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    /* NOT `inset: 0`, and not a percentage height either. On mobile
+       Safari and Chrome the URL bar collapses as you scroll down and
+       expands as you scroll up, and a fixed element sized to the
+       viewport is RESIZED each time it does. Every layer in here is
+       `preserveAspectRatio: slice`, so a resize re-crops all of them
+       at once -- Fuji, the waves and the clouds all jump sideways
+       mid-scroll, in the opposite direction to the parallax.
+
+       `lvh` is the LARGE viewport height: the page as it is with the
+       URL bar already retracted. It is a fixed number that does not
+       track the bar, so the backdrop is sized once and stays put; the
+       bar can come and go over the top of it without the scene
+       moving. The vh line above it is the fallback for engines
+       without the unit -- on desktop the two are identical anyway. */
+    height: 100vh;
+    height: 100lvh;
+
     z-index: -10;
     overflow: hidden;
     pointer-events: none;

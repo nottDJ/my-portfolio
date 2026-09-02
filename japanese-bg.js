@@ -68,8 +68,23 @@
        ------------------------------------------------------------ */
     function measure() {
         var rect = root.getBoundingClientRect();
-        vw = Math.max(1, Math.round(rect.width));
-        vh = Math.max(1, Math.round(rect.height));
+        var w = Math.max(1, Math.round(rect.width));
+        var h = Math.max(1, Math.round(rect.height));
+
+        /* Bail if nothing actually changed size. This is not a
+           micro-optimisation -- it is what keeps the scene still on a
+           phone. `visualViewport` fires resize every time the URL bar
+           slides in or out, which is constantly while you scroll, and
+           without this guard each of those rebuilt the canvas backing
+           store and threw away every petal for a fresh random set. The
+           bar moving would visibly re-roll the blossom. .jp-bg is
+           pinned to 100lvh precisely so this comparison comes out
+           equal for a URL-bar event and unequal for a real rotation
+           or window resize. */
+        if (w === vw && h === vh && ctx) return;
+
+        vw = w;
+        vh = h;
 
         if (!ctx) return;
 

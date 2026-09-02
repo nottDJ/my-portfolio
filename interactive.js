@@ -475,7 +475,7 @@
         '.featured-text-btn', '.social_icons', '.featured-image',
         '.top-header', '.about-info', '.skills-box', '.timeline-item',
         '.awards-list li', '.contact-info', '.form-control',
-        '.projects-footnote', '.project-container'
+        '.projects-footnote', '.project-box'
     ].join(',');
 
     var revealTargets = $$(REVEAL_SELECTOR);
@@ -495,16 +495,16 @@
                     revealIO.unobserve(entry.target);
                 });
             }, {
-                /* threshold 0 -- a single pixel crossing is enough.
-                   A fractional threshold looks tidier but is a trap
-                   here: .project-container is the whole nine-card
-                   grid, and once it stacks to one column it is taller
-                   than the viewport. The largest ratio such an element
-                   can EVER report is viewportHeight / elementHeight,
-                   so a 0.1 threshold means the grid reveals late on a
-                   tall phone and, past roughly ten viewport-heights of
-                   cards, never fires at all and the section stays
-                   blank. Zero has no height ceiling.
+                /* threshold 0 -- a single pixel crossing is enough. A
+                   fractional threshold looks tidier and is a trap: the
+                   largest ratio an element can EVER report is
+                   viewportHeight / elementHeight, so anything taller
+                   than the screen reveals late, and anything more than
+                   1/threshold screens tall never reveals AT ALL. That
+                   is not hypothetical here -- .about-info and a
+                   stacked .project-box both cross it on a phone. Zero
+                   has no height ceiling, so the same config is correct
+                   for a 40px form field and a 900px card.
 
                    The bottom edge is pulled up instead, so things
                    start moving just before they reach the very bottom
